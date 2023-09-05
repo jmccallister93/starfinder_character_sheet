@@ -7,7 +7,6 @@ import { useAuth } from "../contexts/AuthContext"; // import the hook
 const Header = (props) => {
   const { isAuthenticated, userEmail, setIsAuthenticated, setUserEmail } =
     useAuth(); // use the hook
-    console.log('Header values:', isAuthenticated, userEmail);
 
   const logout = () => {
     // Perform logout logic here, and then:
@@ -32,7 +31,7 @@ const Header = (props) => {
           </>
         ) : (
           <>
-            <Text p={4}>{`Logged in as ${userEmail}`}</Text>
+            <Text p={4} color='black'>{`Logged in as ${userEmail}`}</Text>
             <Button colorScheme="teal" variant="outline" onClick={logout}>
               Logout
             </Button>

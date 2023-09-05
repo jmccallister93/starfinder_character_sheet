@@ -39,7 +39,6 @@ const Login = (props) => {
       setErrorMsg("");
       if (res.status === 200) {
         console.log('Login successful');
-        console.log('Setting isAuthenticated to true and userEmail to', loginEmail);
         setIsAuthenticated(true);
         setUserEmail(loginEmail);
         navigate('/');
@@ -70,7 +69,7 @@ const Login = (props) => {
           onChange={(e) => setLoginPassword(e.target.value)}
         />
         <button onClick={login}>Submit</button>
-        {errorMsg && <p className="error-message">{errorMsg}</p>}
+        {errorMsg && <p className="error-message">{errorMsg.error || errorMsg}</p>}
         {isAuthenticated && <p className="success-message">Login successful!</p>} {/* New line */}
       </div>
     </>

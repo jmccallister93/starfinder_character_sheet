@@ -27,28 +27,6 @@ function ensureAuthenticated(req, res, next) {
 }
 
 // Register Route
-// app.post("/register", async (req, res) => {
-//   const { email, password } = req.body; // Removed username
-
-//   const { user, error } = await supabase.auth.signUp({
-//     email: email,
-//     password: password,
-//   });
-
-//   if (error) {
-//     console.error("Registration error:", error);
-//     return res.status(400).send(error.message);
-//   }
-
-//   if (error.code === '23505') {
-//     return res.status(409).json({
-//       error: 'Email already registered' 
-//     });
-//   }
-
-// });
-
-// Register Route
 app.post('/register', async (req, res) => {
 
   const { email, password } = req.body;
@@ -82,7 +60,7 @@ app.post("/login", async (req, res) => {
 
   // Validate input
   if (!email || !password) {
-    return res.status(400).json({ error: "Email and password required" });
+    return res.status(400).json({ error: "Email and password required" }); // Added return
   }
 
   // Sign in user
@@ -93,16 +71,17 @@ app.post("/login", async (req, res) => {
 
   if (error) {
     console.log("Login error:", error);
-    res.status(401).json({ error: error.message });
+    return res.status(401).json({ error: error.message }); // Added return
   }
 
   console.log("Login successful");
 
-  res.status(200).json({
+  return res.status(200).json({ // Added return
     success: true,
     message: "Login successful",
   });
 });
+
 
 // Logout Route
 app.post("/logout", async (req, res) => {
