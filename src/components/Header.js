@@ -16,7 +16,7 @@ const Header = (props) => {
 
   return (
     <Box bg="teal.400" p={4} color="white">
-      <Flex align="center">
+      <Flex align="center" justifyContent="flex-end">
         <Text p={4}>
           <Link to="/">Home</Link>
         </Text>
