@@ -1,19 +1,21 @@
 const express = require('express');
 const { createClient } = require("@supabase/supabase-js");
-require('dotenv').config();
+require('dotenv').config({ path: '../.env' });
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
+console.log('Backend Supabase URL:', process.env.SUPABASE_URL);
+console.log('Backend Supabase Anon Key:', process.env.SUPABASE_ANON_KEY);
+
+
 const app = express();
 app.use(express.json());
-
-const session = require('express-session');
-
-app.use(session({
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: true,
+const cors = require('cors');
+app.use(cors({
+  origin: 'http://localhost:3000', // replace with your frontend application's URL
+  credentials: true,
 }));
+
 
 // Ensure Authentication Middleware
 function ensureAuthenticated(req, res, next) {
@@ -25,37 +27,43 @@ function ensureAuthenticated(req, res, next) {
 
 // Register Route
 app.post('/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;  // Removed username
 
   const { user, error } = await supabase.auth.signUp({
-    email: username,
+    email: email,
     password: password,
   });
 
   if (error) {
+    console.error("Registration error:", error);
     return res.status(400).send(error.message);
   }
 
   req.session.user = user;
   res.redirect('/dashboard');
 });
+
 
 // Login Route
 app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  
+  console.log('Request Body:', req.body);
+  const { email, password } = req.body;
 
-  const { user, error } = await supabase.auth.signIn({
-    email: username,
-    password: password,
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
   });
 
   if (error) {
+    console.log("Login error:", error);
     return res.status(400).send(error.message);
   }
 
-  req.session.user = user;
-  res.redirect('/dashboard');
+  console.log("Login successful:", data);  // Log success and data.
+  res.status(200).json({ message: 'Login successful' });
 });
+
 
 // Logout Route
 app.post('/logout', async (req, res) => {
@@ -71,9 +79,8 @@ app.get('/dashboard', ensureAuthenticated, (req, res) => {
 
 // ... (other routes and middleware)
 
-app.listen(3000, () => {
-  console.log('Server running on http://localhost:3000/');
+app.listen(3001, () => {
+  console.log('Server running on http://localhost:3001/');
 });
-
 
 
