@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const navigate = useNavigate();  // Initialize navigate
 
   const validatePassword = (password) => {
     // Assuming you require at least 6 characters as mentioned in the Supabase settings
@@ -35,11 +37,16 @@ const Register = () => {
       .then((res) => {
         setErrorMsg("");
         setSuccessMsg("Registration successful. A verification email has been sent to you.");
-        console.log(res);
+        navigate('/login', { state: { email: registerEmail }}); // Navigate to login with email as state
       })
       .catch((err) => {
         if (err.response && err.response.data) {
-          setErrorMsg(err.response.data);
+          if (err.response.data.includes("Email already in use")) {
+            setErrorMsg("Email already in use.");
+            navigate('/login', { state: { email: registerEmail }}); // Navigate to login with email as state
+          } else {
+            setErrorMsg("An error occurred.");
+          }
         }
       });
   };

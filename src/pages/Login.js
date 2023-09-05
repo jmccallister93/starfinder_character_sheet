@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';  // Import the hook
 
 
 const Login = (props) => {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // New state variable
   const navigate = useNavigate();
+  const location = useLocation();  // Initialize location
+
+  const { isAuthenticated, setIsAuthenticated, setUserEmail } = useAuth();
+
+  useEffect(() => {
+    if (location.state && location.state.email) {
+      setLoginEmail(location.state.email);  // Set email from state if exists
+    }
+  }, [location.state]);
 
 
   const login = async () => {
@@ -30,6 +39,9 @@ const Login = (props) => {
       setErrorMsg("");
       if (res.status === 200) {
         console.log('Login successful');
+        console.log('Setting isAuthenticated to true and userEmail to', loginEmail);
+        setIsAuthenticated(true);
+        setUserEmail(loginEmail);
         navigate('/');
       }
     } catch (err) {

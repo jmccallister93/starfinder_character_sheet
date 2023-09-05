@@ -7,9 +7,6 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY
 );
 
-console.log("Backend Supabase URL:", process.env.SUPABASE_URL);
-console.log("Backend Supabase Anon Key:", process.env.SUPABASE_ANON_KEY);
-
 const app = express();
 app.use(express.json());
 const cors = require("cors");
@@ -22,28 +19,61 @@ app.use(
 
 // Ensure Authentication Middleware
 function ensureAuthenticated(req, res, next) {
-  if (req.session.user) {
+  if (req.user && req.user.id) {
     return next();
   }
-  res.redirect("/login");
+
+  res.redirect('/login');;
 }
 
 // Register Route
-app.post("/register", async (req, res) => {
-  const { email, password } = req.body; // Removed username
+// app.post("/register", async (req, res) => {
+//   const { email, password } = req.body; // Removed username
+
+//   const { user, error } = await supabase.auth.signUp({
+//     email: email,
+//     password: password,
+//   });
+
+//   if (error) {
+//     console.error("Registration error:", error);
+//     return res.status(400).send(error.message);
+//   }
+
+//   if (error.code === '23505') {
+//     return res.status(409).json({
+//       error: 'Email already registered' 
+//     });
+//   }
+
+// });
+
+// Register Route
+app.post('/register', async (req, res) => {
+
+  const { email, password } = req.body;
 
   const { user, error } = await supabase.auth.signUp({
-    email: email,
-    password: password,
+    email, 
+    password
   });
 
   if (error) {
-    console.error("Registration error:", error);
-    return res.status(400).send(error.message);
+    // Check for duplicate email error
+    if (error.code === '23505') {
+      return res.status(409).json({
+        error: 'Email already registered'
+      });
+    } else {
+      // Handle other errors
+      console.error('Registration error:', error);
+      return res.status(400).send(error.message);
+    }
   }
 
-  req.session.user = user;
-  res.redirect("/dashboard");
+  // Sign up succeeded
+  res.json({message: 'Registration successful'}); 
+
 });
 
 // Login Route
