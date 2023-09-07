@@ -2,12 +2,13 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, Button, Spacer } from "@chakra-ui/react";
 import SessionContext from "../client/SessionContex";
+import { supabase } from "../client/supabaseClient";
 
 const Header = (props) => {
   const contextValue = React.useContext(SessionContext);
-  const { session, signOut } = contextValue || {};
+  const { session, signOut } = contextValue;
   const isAuthenticated = !!session; // Check if the session 
-  const userEmail = session?.user?.email || "";
+  const userEmail = session?.session?.user?.email || "";
 
   return (
     <Box
@@ -113,9 +114,9 @@ const Header = (props) => {
               borderRadius="0.25rem"
               colorScheme="pink"
               variant="solid"
-              onClick={signOut}
               _hover={{ bg: "red", transition: "0.3s" }}
               p="0.25rem"
+              onClick={signOut}
             >
               Logout
             </Button>

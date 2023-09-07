@@ -11,17 +11,19 @@ import {
 } from "@chakra-ui/react";
 import { supabase } from "../client/supabaseClient";
 import spaceBackground from "../assets/space4.jpg";
+import SessionContext from "../client/SessionContex";
 
 const CharacterCreate = () => {
+  const contextValue = React.useContext(SessionContext);
+  const { session, signOut } = contextValue;
   const [characterName, setCharacterName] = useState("");
   const [race, setRace] = useState("");
   const [characterClass, setCharacterClass] = useState("");
   const [theme, setTheme] = useState("");
 
-  const { session } = useContext();
 
   // Access properties from the session object
-  const userEmail = session?.user?.email;
+  const userEmail = session?.session?.user?.email;
   const token = session?.access_token; 
 
   const handleSubmit = async () => {

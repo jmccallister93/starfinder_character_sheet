@@ -15,38 +15,8 @@ import SessionProvider from "./client/SessionProvider";
 function App() {
   const { session } = useContext(SessionContext);
 
-  // useEffect(() => {
-  //   // Check for session data in cookie or local storage
-  //   const storedSession = localStorage.getItem("session");
-  //   if (storedSession) {
-  //     setSession(JSON.parse(storedSession));
-  //   }
-
-  //   // Listen for changes to session state and update the context and storage
-  //   const { data: authListener } = supabase.auth.onAuthStateChange(
-  //     (event, newSession) => {
-  //       setSession(newSession);
-  //       console.log(authListener)
-  //       if (event === "SIGNED_IN") {
-  //         localStorage.setItem("session", JSON.stringify(newSession));
-  //       } else if (event === "SIGNED_OUT") {
-  //         localStorage.removeItem("session");
-  //       }
-  //     }
-  //   );
-    
-  //   // Clean up the listener when the component unmounts
-  //   return () => {
-  //     if (authListener && authListener.unsubscribe) {
-  //       authListener.unsubscribe();
-  //     }
-  //   };
-    
-  // }, []);
-
-
   return (
-    <SessionProvider>
+    <SessionProvider >
 
       <Router>
           <Header />
