@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -12,15 +12,24 @@ import {
 import { supabase } from "../client/supabaseClient";
 import spaceBackground from "../assets/space4.jpg";
 import SessionContext from "../client/SessionContex";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const CharacterCreate = () => {
   const contextValue = React.useContext(SessionContext);
   const { session, signOut } = contextValue;
-  const [characterName, setCharacterName] = useState("");
+  const [name, setName] = useState("");
+  const [size, setSize] = useState("")
   const [race, setRace] = useState("");
   const [characterClass, setCharacterClass] = useState("");
   const [theme, setTheme] = useState("");
+  const navigate = useNavigate();
+  const isAuthenticated = !!session; // Check if the session 
 
+  useEffect(() => {
+    if(!isAuthenticated){
+      navigate("/");
+    }
+  }, [isAuthenticated])
 
   // Access properties from the session object
   const userEmail = session?.session?.user?.email;
@@ -29,10 +38,40 @@ const CharacterCreate = () => {
   const handleSubmit = async () => {
     try {
       const { data, error, status } = await supabase
-        .from("aaa")
+        .from("DBCharacter")
         .insert({
           email: userEmail,
-          characterName: characterName,
+          name: name,
+          size: size,
+          // speed,
+          // hp,
+          // stamina,
+          // resolve,
+          // theme,
+          // archtype,
+          // specialisation,
+          // baseAttackBonus,
+          // currentHp,
+          // currentStamina,
+          // currentResolve,
+          // abilityScores,
+          // savingThrows,
+          // skills,
+          // equipment,
+          // ac,
+          // kc,
+          // bulk,
+          // feats,
+          // initative,
+          // meleeAttack,
+          // rangedAttack,
+          // thrownAttack,
+          // weapons,
+          // ammunition,
+          // resistances,
+          // armorType,
+          // abilities,
+          // spells,
         })
         .select();
       console.log("Status: ", status); // Log the status
@@ -75,7 +114,7 @@ const CharacterCreate = () => {
         <FormControl id="characterName" mb={4}>
           <Input
             placeholder="Character Name"
-            onChange={(e) => setCharacterName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
           />
         </FormControl>
         <FormControl id="race" mb={4}>
