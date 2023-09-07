@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import {
   Box,
@@ -11,56 +11,59 @@ import {
   FormControl,
 } from "@chakra-ui/react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { supabase } from "../client/supabaseClient";
+import { SessionContext } from "../client/SessionContex";
+
 
 const Login = (props) => {
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+    // Use the SessionContext
+    // const contextValue = useContext(SessionContext);
+    // const { session, updateSession } = contextValue;
+    const [session, setSession] = useState()
 
-  const { isAuthenticated, setIsAuthenticated, setUserEmail } = useAuth();
-
-  useEffect(() => {
-    if (location.state && location.state.email) {
-      setLoginEmail(location.state.email);
+  async function signInWithEmail(email, password) {
+    if (!email || !password) {
+      setErrorMessage(<h2>Please fill out all fields</h2>);
+      return;
     }
-  }, [location.state]);
+  
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  const login = async () => {
-    try {
-      const res = await axios({
-        method: "POST",
-        data: {
-          email: loginEmail,
-          password: loginPassword,
-        },
-        withCredentials: true,
-        url: "http://localhost:3001/login",
-      });
-  
-      // If this line executes, the call was successful
-     
-  
-      setIsAuthenticated(true);
-      setErrorMsg("");
-      if (res.status === 200) {
-        console.log('Login successful');
-        setIsAuthenticated(true);
-        setUserEmail(loginEmail);
-        navigate('/');
-      }
-    } catch (err) {
-      // If this block executes, the call failed
-      console.log("Axios error:", err);
-      setIsAuthenticated(false);
-      if (err.response && err.response.data) {
-        setErrorMsg(err.response.data);
-      }
+    if (error) {
+      console.log(error.message);
+      setErrorMessage(<h2>{error.message}</h2>);
+    } 
+    else {
+         // Fetch the session after successfully logging in
+         const { data: currentSession, error: sessionError } = await supabase.auth.getSession();
+      if (currentSession) {
+        // const lastUrl = sessionStorage.getItem("lastUrl");
+        // navigate(lastUrl || "/");
+        setSession(currentSession)
+       
+      } else if (sessionError) {
+        console.log("Error fetching session:", error.message);
     }
-  };
+    
+  }}
 
+useEffect(() => {
+  console.log(session)
+}, [session])
+
+//Submit login
+const handleSubmit = (event) => {
+  event.preventDefault();
+  signInWithEmail(email, password);
+};
   return (
     <Center
       h="92.25vh"
@@ -91,7 +94,7 @@ const Login = (props) => {
               fontSize="1.5rem"
               w="300px"
               m="1rem"
-              onChange={(e) => setLoginEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </Flex>
         </FormControl>
@@ -107,7 +110,7 @@ const Login = (props) => {
               fontSize="1.5rem"
               w="300px"
               m="1rem"
-              onChange={(e) => setLoginPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </Flex>
         </FormControl>
@@ -118,13 +121,13 @@ const Login = (props) => {
           bg="#009688"
           color="white"
           border="none"
-          onClick={login}
+          onClick={handleSubmit}
           _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
         >
           Submit
         </Button>
       </Flex>
-      {errorMsg && <Text color="red.500">{errorMsg}</Text>}
+      {errorMessage && <Text color="red.500">{errorMessage}</Text>}
     </Center>
   );
 };

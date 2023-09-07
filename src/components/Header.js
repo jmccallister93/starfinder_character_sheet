@@ -1,16 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, Button, Spacer } from "@chakra-ui/react";
-import { useAuth } from "../contexts/AuthContext"; // import the hook
+import { SessionContext } from "../client/SessionContex";
 
 const Header = (props) => {
-  const { isAuthenticated, userEmail, setIsAuthenticated, setUserEmail } =
-    useAuth();
-
-  const logout = () => {
-    setIsAuthenticated(false);
-    setUserEmail("");
-  };
+  const contextValue = React.useContext(SessionContext);
+  const { session, signOut } = contextValue || {};
+  const isAuthenticated = !!session; // Check if the session 
+  const userEmail = session?.user?.email || "";
 
   return (
     <Box
@@ -116,7 +113,7 @@ const Header = (props) => {
               borderRadius="0.25rem"
               colorScheme="pink"
               variant="solid"
-              onClick={logout}
+              onClick={signOut}
               _hover={{ bg: "red", transition: "0.3s" }}
               p="0.25rem"
             >

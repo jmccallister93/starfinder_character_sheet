@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Box,
   Flex,
@@ -8,6 +8,7 @@ import {
   Heading,
   Input,
   FormControl,
+  useConst,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -19,7 +20,7 @@ const Register = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const navigate = useNavigate();
-  const { isAuthenticated, setIsAuthenticated, setUserEmail } = useAuth();
+  const { session } = useContext();
 
   const validatePassword = (password) => {
     // Assuming you require at least 6 characters as mentioned in the Supabase settings

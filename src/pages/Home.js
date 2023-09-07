@@ -1,10 +1,12 @@
 import React from "react";
-import { useAuth } from "../contexts/AuthContext"; // import the hook
+import { SessionContext } from "../client/SessionContex";
 import { Box, Flex, Text, Button, Center, Heading } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
 const Home = (props) => {
-  const { isAuthenticated } = useAuth();
+  const contextValue = React.useContext(SessionContext);
+  const { session, signOut } = contextValue || {};
+  const isAuthenticated = !!session; // Check if the session
   const navigate = useNavigate();
 
   const handleSignup = () => {
@@ -20,8 +22,12 @@ const Home = (props) => {
   };
 
   return (
-    <Center h="92.25vh" flexDirection="column" style={{background: "linear-gradient(to left, #7928CA, #FF0080)"}}>
-      <Box >
+    <Center
+      h="92.25vh"
+      flexDirection="column"
+      style={{ background: "linear-gradient(to left, #7928CA, #FF0080)" }}
+    >
+      <Box>
         <Heading
           color="white"
           borderRadius="md"
@@ -35,7 +41,7 @@ const Home = (props) => {
       <Flex>
         {!isAuthenticated ? (
           <Button
-          bg="#FF4080"
+            bg="#2F80ED"
             color="white"
             variant="solid"
             size="md"
@@ -44,14 +50,14 @@ const Home = (props) => {
             border="none"
             borderRadius="0.25rem"
             fontSize="2rem"
-            _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
+            _hover={{ bg: "#56CCF2", cursor: "pointer", transition: "0.3s" }}
             onClick={handleSignup}
           >
             Sign Up
           </Button>
         ) : null}
         <Button
-          bg="#9638FF"
+          bg="#16A085"
           color="white"
           variant="outline"
           size="md"

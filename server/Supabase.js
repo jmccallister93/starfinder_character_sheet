@@ -57,55 +57,31 @@ app.post('/register', async (req, res) => {
 
 });
 
-// Login Route
-// app.post("/login", async (req, res) => {
-//   const { email, password } = req.body;
-
-//   // Validate input
-//   if (!email || !password) {
-//     return res.status(400).json({ error: "Email and password required" }); // Added return
-//   }
-
-//   // Sign in user
-//   const { data, error } = await supabase.auth.signInWithPassword({
-//     email,
-//     password,
-//   });
-  
-
-//   if (error) {
-//     console.log("Login error:", error);
-//     return res.status(401).json({ error: error.message }); // Added return
-//   }
-
-//   console.log("Login successful");
-
-//   return res.status(200).json({ // Added return
-//     success: true,
-//     message: "Login successful",
-//   });
-// });
-// Login Route
+//Login route
 app.post("/login", async (req, res) => {
-  console.log("Received login request")
+  
   const { email, password } = req.body;
 
   // Sign in user
-  const { user, session, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
+    
   });
-
+  console.log("Response:", data, error);
   if (error) {
     console.log("Login error:", error);
     return res.status(401).json({ error: error.message });
   }
 
-
-  return res.status(200).json({
+  res.json({
     success: true,
     message: "Login successful",
+    token: data.session.access_token, // Send JWT token to client
+    userData: data.user
   });
+
+  
 });
 
 // Logout Route
@@ -120,7 +96,20 @@ app.get("/dashboard", ensureAuthenticated, (req, res) => {
   res.send("Welcome to the dashboard!");
 });
 
-// ... (other routes and middleware)
+//Extract tokens
+function extractToken(req, res, next) {
+  const authHeader = req.headers.authorization;
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    req.token = token;
+  }
+  
+  next();
+}
+
+app.use(extractToken);
+
 
 app.listen(3001, () => {
   console.log("Server running on http://localhost:3001/");

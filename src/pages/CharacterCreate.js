@@ -1,8 +1,16 @@
-import React, { useState } from "react";
-import { Box, Flex, FormControl, Input, Button, Center, Heading, Text } from "@chakra-ui/react";
-import { useAuth } from "../contexts/AuthContext";
+import React, { useContext, useState } from "react";
+import {
+  Box,
+  Flex,
+  FormControl,
+  Input,
+  Button,
+  Center,
+  Heading,
+  Text,
+} from "@chakra-ui/react";
 import { supabase } from "../client/supabaseClient";
-import spaceBackground from "../assets/space4.jpg"
+import spaceBackground from "../assets/space4.jpg";
 
 const CharacterCreate = () => {
   const [characterName, setCharacterName] = useState("");
@@ -10,33 +18,28 @@ const CharacterCreate = () => {
   const [characterClass, setCharacterClass] = useState("");
   const [theme, setTheme] = useState("");
 
-  const { userEmail } = useAuth(); // Assumes you store the user email in the AuthContext
-  
+  const { session } = useContext();
+
+  // Access properties from the session object
+  const userEmail = session?.user?.email;
+  const token = session?.access_token; 
+
   const handleSubmit = async () => {
     try {
-      console.log("User Email from Context: ", userEmail);
-      console.log("Values to insert: ", { email: userEmail, characterName, race, characterClass, theme });
       const { data, error, status } = await supabase
-        .from("userCharacters")
-        .insert(
-          { 
-            email: userEmail, 
-            characterName, 
-            race, 
-            characterClass, 
-            theme 
-          },
-        );
-      console.log("Status: ", status);  // Log the status
+        .from("aaa")
+        .insert({
+          email: userEmail,
+          characterName: characterName,
+        })
+        .select();
+      console.log("Status: ", status); // Log the status
       if (error) throw error;
       console.log("Character Created: ", data);
     } catch (error) {
       console.log("Error creating character: ", error);
     }
   };
-  
-  
-
 
   return (
     <Center
@@ -44,9 +47,9 @@ const CharacterCreate = () => {
       flexDirection="column"
       style={{
         backgroundImage: `url(${spaceBackground})`,
-        backgroundSize: "cover",  // Cover the entire container
+        backgroundSize: "cover", // Cover the entire container
         backgroundRepeat: "no-repeat",
-        backgroundPosition: "center center",  // Center the image
+        backgroundPosition: "center center", // Center the image
       }}
     >
       <Box>
@@ -63,7 +66,7 @@ const CharacterCreate = () => {
       <Flex
         flexDirection="column"
         alignItems="center"
-        bg="rgba(0, 0, 0, 0.7)"  // semi-transparent black background
+        bg="rgba(0, 0, 0, 0.7)" // semi-transparent black background
         p={5}
         borderRadius="md"
       >
@@ -83,13 +86,12 @@ const CharacterCreate = () => {
           />
         </FormControl>
         <FormControl id="theme" mb={4}>
-          <Input placeholder="Theme" onChange={(e) => setTheme(e.target.value)} />
+          <Input
+            placeholder="Theme"
+            onChange={(e) => setTheme(e.target.value)}
+          />
         </FormControl>
-        <Button
-          bg="blue.500"
-          color="white"
-          onClick={handleSubmit}
-        >
+        <Button bg="blue.500" color="white" onClick={handleSubmit}>
           Submit
         </Button>
       </Flex>

@@ -9,11 +9,12 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { SessionContext } from "../client/SessionContex";
 
 const Dashboard = (props) => {
+  const { session, signOut } = React.useContext(SessionContext); // Use the new context here
+  const isAuthenticated = !!session; // Check if the session 
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (!isAuthenticated) {
