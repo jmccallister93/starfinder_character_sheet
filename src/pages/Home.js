@@ -44,7 +44,7 @@ const Home = (props) => {
             border="none"
             borderRadius="0.25rem"
             fontSize="2rem"
-            
+            _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
             onClick={handleSignup}
           >
             Sign Up
@@ -63,6 +63,7 @@ const Home = (props) => {
           onClick={() => {
             isAuthenticated ? handleDashboard() : handleSignin();
           }}
+          _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
         >
           {isAuthenticated ? "Visit Dashboard" : "Sign In"}
         </Button>

@@ -2,13 +2,14 @@ const express = require("express");
 const { createClient } = require("@supabase/supabase-js");
 require("dotenv").config({ path: "../.env" });
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
-console.log('Supabase URL:', process.env.SUPABASE_URL);
-console.log('Supabase Anon Key:', process.env.SUPABASE_ANON_KEY);
+const SUPABASE_URL='https://zyiwnpgbyyveqwhiusnw.supabase.co'
+const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5aXducGdieXl2ZXF3aGl1c253Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTM5NDQxMDQsImV4cCI6MjAwOTUyMDEwNH0.UFJcB6YxjU7WYCfDaEy6AMkQ1OzIVQ2Fb2cPdUdaiAs"
 
+
+const supabase = createClient(
+SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 
 const app = express();
 app.use(express.json());
@@ -34,10 +35,13 @@ app.post('/register', async (req, res) => {
 
   const { email, password } = req.body;
 
-  const { user, error } = await supabase.auth.signUp({
+  const {session, user, error } = await supabase.auth.signUp({
     email, 
     password
   });
+  console.log("Login successful");
+  console.log("User Data: ", user); // Log all the user data
+  console.log("Session Data: ", session); // Log all session data
 
   if (error) {
     // Check for duplicate email error
@@ -58,55 +62,33 @@ app.post('/register', async (req, res) => {
 });
 
 // Login Route
-// app.post("/login", async (req, res) => {
-//   const { email, password } = req.body;
-
-//   // Validate input
-//   if (!email || !password) {
-//     return res.status(400).json({ error: "Email and password required" }); // Added return
-//   }
-
-//   // Sign in user
-//   const { data, error } = await supabase.auth.signInWithPassword({
-//     email,
-//     password,
-//   });
-  
-
-//   if (error) {
-//     console.log("Login error:", error);
-//     return res.status(401).json({ error: error.message }); // Added return
-//   }
-
-//   console.log("Login successful");
-
-//   return res.status(200).json({ // Added return
-//     success: true,
-//     message: "Login successful",
-//   });
-// });
-// Login Route
 app.post("/login", async (req, res) => {
-  console.log("Received login request")
   const { email, password } = req.body;
 
+  // Validate input
+  if (!email || !password) {
+    return res.status(400).json({ error: "Email and password required" }); // Added return
+  }
+
   // Sign in user
-  const { user, session, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
 
   if (error) {
     console.log("Login error:", error);
-    return res.status(401).json({ error: error.message });
+    return res.status(401).json({ error: error.message }); // Added return
   }
 
+  console.log("Login successful");
 
-  return res.status(200).json({
+  return res.status(200).json({ // Added return
     success: true,
     message: "Login successful",
   });
 });
+
 
 // Logout Route
 app.post("/logout", async (req, res) => {
@@ -125,4 +107,3 @@ app.get("/dashboard", ensureAuthenticated, (req, res) => {
 app.listen(3001, () => {
   console.log("Server running on http://localhost:3001/");
 });
-

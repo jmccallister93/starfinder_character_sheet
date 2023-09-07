@@ -1,13 +1,25 @@
 import React, { useState } from "react";
+import {
+  Box,
+  Flex,
+  Text,
+  Button,
+  Center,
+  Heading,
+  Input,
+  FormControl,
+} from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-  const navigate = useNavigate();  // Initialize navigate
+  const navigate = useNavigate();
+  const { isAuthenticated, setIsAuthenticated, setUserEmail } = useAuth();
 
   const validatePassword = (password) => {
     // Assuming you require at least 6 characters as mentioned in the Supabase settings
@@ -52,25 +64,74 @@ const Register = () => {
   };
 
   return (
-    <>
-      <div>
-        <h1>Register</h1>
-        <input
-          placeholder="email"
-          type="email"
-          onChange={(e) => setRegisterEmail(e.target.value)}
-        />
-        <input
-          placeholder="password"
-          type="password"
-          onChange={(e) => setRegisterPassword(e.target.value)}
-        />
-        <p>Password should be at least 6 characters.</p>
-        <button onClick={register}>Submit</button>
-        {errorMsg && <p className="error-message">{errorMsg}</p>}
-        {successMsg && <p className="success-message">{successMsg}</p>}
-      </div>
-    </>
+    <Center
+      h="92.25vh"
+      flexDirection="column"
+      style={{ background: "linear-gradient(to right, #16A085, #2ECC71)" }}
+    >
+      <Box>
+        <Heading
+          color="white"
+          borderRadius="md"
+          p={5}
+          shadow="md"
+          fontSize="4rem"
+        >
+          Register
+        </Heading>
+      </Box>
+      <Flex flexDirection="column" alignItems="center">
+        <FormControl id="email" mb={4}>
+          <Flex>
+            <Text color="white" fontSize="1.5rem" p={2} w="100px">
+              Email:
+            </Text>
+            <Input
+              placeholder="Email"
+              type="email"
+              size="lg"
+              fontSize="1.5rem"
+              w="300px"
+              m="1rem"
+              onChange={(e) => setRegisterEmail(e.target.value)}
+            />
+          </Flex>
+        </FormControl>
+        <FormControl id="password" mb={4}>
+          <Flex>
+            <Text color="white" fontSize="1.5rem" p={2} w="100px">
+              Password:
+            </Text>
+            <Input
+              placeholder="Password"
+              type="password"
+              size="lg"
+              fontSize="1.5rem"
+              w="300px"
+              m="1rem"
+              onChange={(e) => setRegisterPassword(e.target.value)}
+            />
+          </Flex>
+        </FormControl>
+        <Text fontSize="1rem" color="white">
+          Password should be at least 6 characters.
+        </Text>
+        <Button
+          fontSize="2rem"
+          p="1rem"
+          borderRadius="0.25rem"
+          bg="#10AC84"
+          color="white"
+          border="none"
+          _hover={{ bg: "#0D8B70", cursor: "pointer", transition: "0.3s" }}
+          onClick={register}
+        >
+          Submit
+        </Button>
+      </Flex>
+      {errorMsg && <Text color="red.500">{errorMsg}</Text>}
+      {successMsg && <Text color="green.500">{successMsg}</Text>}
+    </Center>
   );
 };
 

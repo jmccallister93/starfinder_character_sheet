@@ -29,7 +29,36 @@ const Login = (props) => {
   }, [location.state]);
 
   const login = async () => {
-    // your login logic
+    try {
+      const res = await axios({
+        method: "POST",
+        data: {
+          email: loginEmail,
+          password: loginPassword,
+        },
+        withCredentials: true,
+        url: "http://localhost:3001/login",
+      });
+  
+      // If this line executes, the call was successful
+     
+  
+      setIsAuthenticated(true);
+      setErrorMsg("");
+      if (res.status === 200) {
+        console.log('Login successful');
+        setIsAuthenticated(true);
+        setUserEmail(loginEmail);
+        navigate('/');
+      }
+    } catch (err) {
+      // If this block executes, the call failed
+      console.log("Axios error:", err);
+      setIsAuthenticated(false);
+      if (err.response && err.response.data) {
+        setErrorMsg(err.response.data);
+      }
+    }
   };
 
   return (
@@ -90,6 +119,7 @@ const Login = (props) => {
           color="white"
           border="none"
           onClick={login}
+          _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
         >
           Submit
         </Button>
