@@ -1,11 +1,12 @@
-import React from "react";
-import { SessionContext } from "../client/SessionContex";
+import React, { useContext } from "react";
+// import SessionContext from "../client/SessionContext"
 import { Box, Flex, Text, Button, Center, Heading } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import SessionContext from "../client/SessionContex";
 
 const Home = (props) => {
-  const contextValue = React.useContext(SessionContext);
-  const { session, signOut } = contextValue || {};
+  const { session } = useContext(SessionContext);
+
   const isAuthenticated = !!session; // Check if the session
   const navigate = useNavigate();
 

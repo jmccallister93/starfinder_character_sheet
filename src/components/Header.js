@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, Button, Spacer } from "@chakra-ui/react";
-import { SessionContext } from "../client/SessionContex";
+import SessionContext from "../client/SessionContex";
 
 const Header = (props) => {
   const contextValue = React.useContext(SessionContext);

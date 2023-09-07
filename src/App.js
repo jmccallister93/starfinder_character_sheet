@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Link, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -8,12 +8,12 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import CharacterCreate from "./pages/CharacterCreate";
 import CharacterView from "./pages/CharacterView";
-import { SessionContext } from "./client/SessionContex";
+import SessionContext from "./client/SessionContex";
 import { supabase } from "./client/supabaseClient";
 import SessionProvider from "./client/SessionProvider";
 
 function App() {
-  const [session, setSession] = useState();
+  const { session } = useContext(SessionContext);
 
   // useEffect(() => {
   //   // Check for session data in cookie or local storage
@@ -44,9 +44,6 @@ function App() {
     
   // }, []);
 
-  useEffect(() => {
-    console.log("Session from App: " + session)
-  }, [session])
 
   return (
     <SessionProvider>

@@ -1,8 +1,7 @@
 //Session Provider
 import { createContext, useEffect, useState } from "react";
 import { supabase } from "./supabaseClient";
-
-export const SessionContext = createContext();
+import SessionContext from "./SessionContex";
 
 const SessionProvider = (props) => {
   const [session, setSession] = useState();
@@ -49,9 +48,16 @@ const SessionProvider = (props) => {
   //   console.log('Session from SessionProvider: ' + session )
   // }, [session])
   
+  const updateSession = (newSession) => {
+    setSession(newSession);
+  }
+
+  useEffect(() => {
+    console.log("from session provider " +session)
+  }, [session])
 
   return (
-    <SessionContext.Provider value={{ session}}>
+    <SessionContext.Provider value={{ session, updateSession }}>
       {props.children}
     </SessionContext.Provider>
   );

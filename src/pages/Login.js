@@ -12,7 +12,7 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../client/supabaseClient";
-import { SessionContext } from "../client/SessionContex";
+import SessionContext from "../client/SessionContex";
 
 
 const Login = (props) => {
@@ -25,6 +25,7 @@ const Login = (props) => {
     // const contextValue = useContext(SessionContext);
     // const { session, updateSession } = contextValue;
     const [session, setSession] = useState()
+    const { updateSession } = useContext(SessionContext);
 
   async function signInWithEmail(email, password) {
     if (!email || !password) {
@@ -45,19 +46,15 @@ const Login = (props) => {
          // Fetch the session after successfully logging in
          const { data: currentSession, error: sessionError } = await supabase.auth.getSession();
       if (currentSession) {
+        setSession(currentSession)
+        updateSession(currentSession);
         // const lastUrl = sessionStorage.getItem("lastUrl");
         // navigate(lastUrl || "/");
-        setSession(currentSession)
-       
       } else if (sessionError) {
         console.log("Error fetching session:", error.message);
     }
     
   }}
-
-useEffect(() => {
-  console.log(session)
-}, [session])
 
 //Submit login
 const handleSubmit = (event) => {

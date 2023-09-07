@@ -9,7 +9,7 @@ import {
   Divider,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { SessionContext } from "../client/SessionContex";
+import SessionContext from "../client/SessionContex";
 
 const Dashboard = (props) => {
   const { session, signOut } = React.useContext(SessionContext); // Use the new context here
