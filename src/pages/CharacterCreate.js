@@ -13,87 +13,53 @@ import { supabase } from "../client/supabaseClient";
 import spaceBackground from "../assets/space4.jpg";
 import SessionContext from "../client/SessionContex";
 import { useNavigate, useLocation } from "react-router-dom";
+import Step1 from "../CharacterCreator/Step1";
+import Step2 from "../CharacterCreator/Step2";
+import Step3 from "../CharacterCreator/Step3";
 
 const CharacterCreate = () => {
+  const navigate = useNavigate();
   const contextValue = React.useContext(SessionContext);
   const { session, signOut } = contextValue;
-  const [name, setName] = useState("");
-  const [size, setSize] = useState("")
-  const [race, setRace] = useState("");
-  const [characterClass, setCharacterClass] = useState("");
-  const [theme, setTheme] = useState("");
-  const navigate = useNavigate();
-  const isAuthenticated = !!session; // Check if the session 
+  const isAuthenticated = !!session; // Check if the session
 
   useEffect(() => {
-    if(!isAuthenticated){
+    if (!isAuthenticated) {
       navigate("/");
     }
-  }, [isAuthenticated])
-
+  }, [isAuthenticated]);
   // Access properties from the session object
   const userEmail = session?.session?.user?.email;
-  const token = session?.access_token; 
+  const token = session?.access_token;
 
-  const handleSubmit = async () => {
-    try {
-      const { data, error, status } = await supabase
-        .from("DBCharacter")
-        .insert({
-          email: userEmail,
-          name: name,
-          size: size,
-          // speed,
-          // hp,
-          // stamina,
-          // resolve,
-          // theme,
-          // archtype,
-          // specialisation,
-          // baseAttackBonus,
-          // currentHp,
-          // currentStamina,
-          // currentResolve,
-          // abilityScores,
-          // savingThrows,
-          // skills,
-          // equipment,
-          // ac,
-          // kc,
-          // bulk,
-          // feats,
-          // initative,
-          // meleeAttack,
-          // rangedAttack,
-          // thrownAttack,
-          // weapons,
-          // ammunition,
-          // resistances,
-          // armorType,
-          // abilities,
-          // spells,
-        })
-        .select();
-      console.log("Status: ", status); // Log the status
-      if (error) throw error;
-      console.log("Character Created: ", data);
-    } catch (error) {
-      console.log("Error creating character: ", error);
-    }
+  //Character form
+  const [formData, setFormData] = useState({});
+
+  // Stepper for setup
+  const [currentStep, setCurrentStep] = useState(1);
+  const [totalSteps, setTotalSteps] = useState(6)
+
+  const handleNext = () => {
+    // Validation logic here...
+    setCurrentStep((prevStep) => prevStep + 1);
   };
+
+  const handlePrevious = () => {
+    setCurrentStep((prevStep) => prevStep - 1);
+  };
+
+    // This function will update the formData state with data from each step
+    const updateFormData = (field, value) => {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    };
 
   return (
     <Center
       h="92.25vh"
       flexDirection="column"
-      style={{
-        backgroundImage: `url(${spaceBackground})`,
-        backgroundSize: "cover", // Cover the entire container
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "center center", // Center the image
-      }}
+      background="linear-gradient(to right, #3B3D5B, #B0B0B0)"
     >
-      <Box>
+      <Box >
         <Heading
           color="white"
           borderRadius="md"
@@ -107,34 +73,24 @@ const CharacterCreate = () => {
       <Flex
         flexDirection="column"
         alignItems="center"
-        bg="rgba(0, 0, 0, 0.7)" // semi-transparent black background
+        color="white" background="grey"
         p={5}
         borderRadius="md"
       >
-        <FormControl id="characterName" mb={4}>
-          <Input
-            placeholder="Character Name"
-            onChange={(e) => setName(e.target.value)}
-          />
-        </FormControl>
-        <FormControl id="race" mb={4}>
-          <Input placeholder="Race" onChange={(e) => setRace(e.target.value)} />
-        </FormControl>
-        <FormControl id="charClass" mb={4}>
-          <Input
-            placeholder="Class"
-            onChange={(e) => setCharacterClass(e.target.value)}
-          />
-        </FormControl>
-        <FormControl id="theme" mb={4}>
-          <Input
-            placeholder="Theme"
-            onChange={(e) => setTheme(e.target.value)}
-          />
-        </FormControl>
-        <Button bg="blue.500" color="white" onClick={handleSubmit}>
-          Submit
-        </Button>
+       {currentStep === 1 && <Step1 setFormData={updateFormData} formData={formData} />}
+       {currentStep === 2 && <Step2 setFormData={updateFormData} formData={formData} />}
+       {currentStep === 3 && <Step3 setFormData={updateFormData} formData={formData} />}
+        
+        
+        {currentStep > 1 && <Button onClick={handlePrevious}>Previous</Button>}
+        {currentStep < totalSteps ? (
+          <>
+          <Button ml={4} onClick={handleNext}>Next</Button>
+          <Button ml={4} onClick={handleNext}>Save as Draft</Button>
+          </>
+        ) : (
+          <Button bg="black" color="white">Submit</Button>
+        )}
       </Flex>
     </Center>
   );
