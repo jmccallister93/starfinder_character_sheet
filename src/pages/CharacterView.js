@@ -10,11 +10,11 @@ const CharacterView = (props) => {
     const navigate = useNavigate();
     const isAuthenticated = !!session; // Check if the session 
   
-    useEffect(() => {
-      if(!isAuthenticated){
-        navigate("/");
-      }
-    }, [isAuthenticated])
+    // useEffect(() => {
+    //   if(!isAuthenticated){
+    //     navigate("/");
+    //   }
+    // }, [isAuthenticated])
     return ( <></> );
 }
  

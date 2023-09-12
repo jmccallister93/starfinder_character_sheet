@@ -22,12 +22,84 @@ const DetailsModal = ({
   option,
   options,
   onSelect,
-  classDetails,
+  details,
 }) => {
-  const handleSelectClass = (className) => {
-    onSelect(className);
+  const handleSelectOption = (optionName) => {
+    onSelect(optionName);
     onClose();
   };
+
+  const renderDetails = (detailType, details) => {
+    switch (detailType) {
+      case "class":
+        return (
+          <>
+            <Text>
+              <strong>Name:</strong> {details.Name}
+            </Text>
+            <Text>
+              <strong>Stamina Points:</strong> {details.StaminaPoints}
+            </Text>
+            <Text>
+              <strong>HP:</strong> {details.HP}
+            </Text>
+            <Text>
+              <strong>Description:</strong> {details.Description}
+            </Text>
+            <Text>
+              <strong>Key Ability Description:</strong>{" "}
+              {details.KeyAbilityDescription}
+            </Text>
+            <Text>
+              <strong>Key Ability:</strong> {details.KeyAbility}
+            </Text>
+          </>
+        );
+      case "race":
+        return (
+          <>
+            <Text>
+              <strong>Name:</strong> {details.Name}
+            </Text>
+            <Text>
+              <strong>Ability:</strong> {details.Ability}
+            </Text>
+            <Text>
+              <strong>HP:</strong> {details.HP}
+            </Text>
+            <Text>
+              <strong>Size:</strong> {details.Size}
+            </Text>
+            <Text>
+              <strong>Type:</strong> {details.Type}
+            </Text>
+            <Text>
+              <strong>Description:</strong> {details.Description}
+            </Text>
+          </>
+        );
+      case "theme":
+        return (
+          <>
+            <Text>
+              <strong>Name:</strong> {details.Name}
+            </Text>
+            <Text>
+              <strong>Ability:</strong> {details.Ability}
+            </Text>
+            <Text>
+              <strong>Class Skill:</strong> {details.ClassSkill}
+            </Text>
+            <Text>
+              <strong>Description:</strong> {details.Description}
+            </Text>
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay bg="rgba(0, 0, 0, 0.6)" />
@@ -71,74 +143,35 @@ const DetailsModal = ({
             height="70vh"
             overflowY="auto"
           >
-            {option === "class" ? (
-              <Accordion allowToggle>
-                {options.map((opt, index) => (
-                  <AccordionItem key={index}>
-                    <h2>
-                      <AccordionButton>
-                        <Box flex="1" textAlign="left">
-                          {opt}
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                    </h2>
-                    <AccordionPanel pb={4}>
-                      {classDetails[opt].Name ? (
-                        <>
-                          <Text>
-                            <strong>Name:</strong> {classDetails[opt].Name}
-                          </Text>
-                          <Text>
-                            <strong>Stamina Points:</strong>{" "}
-                            {classDetails[opt].StaminaPoints}
-                          </Text>
-                          <Text>
-                            <strong>HP:</strong> {classDetails[opt].HP}
-                          </Text>
-                          <Text>
-                            <strong>Description:</strong>{" "}
-                            {classDetails[opt].Description}
-                          </Text>
-                          <Text>
-                            <strong>Key Ability Description:</strong>{" "}
-                            {classDetails[opt].KeyAbilityDescription}
-                          </Text>
-                          <Text>
-                            <strong>Key Ability:</strong>{" "}
-                            {classDetails[opt].KeyAbility}
-                          </Text>
-                          <Button
-                            mt={2}
-                            onClick={() =>
-                              handleSelectClass(classDetails[opt].Name)
-                            }
-                          >
-                            Select {classDetails[opt].Name}
-                          </Button>
-                        </>
-                      ) : (
-                        <Text>No details available for {opt}</Text>
-                      )}
-                    </AccordionPanel>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            ) : (
-              options.map((opt, index) => (
-                <Button
-                  key={index}
-                  onClick={() => onSelect(opt)}
-                  size="lg"
-                  variant="outline"
-                  borderColor="gray.400"
-                  _hover={{ backgroundColor: "gray.200" }}
-                  width="fit-content"
-                >
-                  {opt}
-                </Button>
-              ))
-            )}
+            <Accordion allowToggle>
+              {options.map((opt, index) => (
+                <AccordionItem key={index}>
+                  <h2>
+                    <AccordionButton>
+                      <Box flex="1" textAlign="left">
+                        {opt}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel pb={4}>
+                    {details[opt] ? (
+                      <>
+                        {renderDetails(option, details[opt])}
+                        <Button
+                          mt={2}
+                          onClick={() => handleSelectOption(details[opt].Name)}
+                        >
+                          Select {details[opt].Name}
+                        </Button>
+                      </>
+                    ) : (
+                      <Text>No details available for {opt}</Text>
+                    )}
+                  </AccordionPanel>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </VStack>
         </ModalBody>
       </ModalContent>

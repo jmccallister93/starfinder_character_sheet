@@ -21,7 +21,6 @@ const Step2 = ({ setFormData, formData }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedOption, setSelectedOption] = useState(null);
   const [modalOptions, setModalOptions] = useState([]);
-  const [selectedClassDetails, setSelectedClassDetails] = useState("");
 
   const handleButtonClick = (type, options) => {
     setSelectedOption(type);
@@ -63,16 +62,33 @@ const Step2 = ({ setFormData, formData }) => {
   });
 
   const [classDetails, setClassDetails] = useState({});
+  const [raceDetails, setRaceDetails] = useState({});
+  const [themeDetails, setThemeDetails] = useState({});
 
   useEffect(() => {
     fetchData().then((fetchedData) => {
       setData(fetchedData);
+
       // Create an object with class names as keys and their details as values
-      const details = {};
+      const classDetailsObj = {};
       fetchedData.classes.forEach((cls) => {
-        details[cls.Name] = cls;
+        classDetailsObj[cls.Name] = cls;
       });
-      setClassDetails(details);
+      setClassDetails(classDetailsObj);
+
+      // Do the same for races
+      const raceDetailsObj = {};
+      fetchedData.races.forEach((race) => {
+        raceDetailsObj[race.Name] = race;
+      });
+      setRaceDetails(raceDetailsObj);
+
+      // And for themes
+      const themeDetailsObj = {};
+      fetchedData.themes.forEach((theme) => {
+        themeDetailsObj[theme.Name] = theme;
+      });
+      setThemeDetails(themeDetailsObj);
     });
   }, []);
 
@@ -103,6 +119,7 @@ const Step2 = ({ setFormData, formData }) => {
   //   fetchData().then(fetchedData => setData(fetchedData));
   // }, []);
 
+  
   return (
     <Box color="white" background="grey">
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
@@ -110,17 +127,33 @@ const Step2 = ({ setFormData, formData }) => {
       </Text>
       <FormControl id="race" mb={4}>
         <FormLabel>Race</FormLabel>
-        <Button onClick={() => handleButtonClick("race", data.races)}>
+        <Button
+          onClick={() =>
+            handleButtonClick(
+              "race",
+              data.races.map((race) => race.Name)
+            )
+          }
+        >
           Select Race
         </Button>
+
         <Text mt={2}>{formData.race}</Text>
       </FormControl>
 
       <FormControl id="theme" mb={4}>
         <FormLabel>Theme</FormLabel>
-        <Button onClick={() => handleButtonClick("theme", data.themes)}>
+        <Button
+          onClick={() =>
+            handleButtonClick(
+              "theme",
+              data.themes.map((theme) => theme.Name)
+            )
+          }
+        >
           Select Theme
         </Button>
+
         <Text mt={2}>{formData.theme}</Text>
       </FormControl>
 
@@ -147,7 +180,13 @@ const Step2 = ({ setFormData, formData }) => {
         option={selectedOption}
         options={modalOptions}
         onSelect={handleModalSelect}
-        classDetails={classDetails}
+        details={
+          selectedOption === "class"
+            ? classDetails
+            : selectedOption === "race"
+            ? raceDetails
+            : themeDetails
+        }
       />
     </Box>
   );

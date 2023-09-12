@@ -20,14 +20,35 @@ import Step3 from "../CharacterCreator/Step3";
 const CharacterCreate = () => {
   const navigate = useNavigate();
   const contextValue = React.useContext(SessionContext);
-  const { session, signOut } = contextValue;
+  const { session, updateSession  } = contextValue;
+  const [isLoading, setIsLoading] = useState(true);
   const isAuthenticated = !!session; // Check if the session
 
+  // useEffect(() => {
+  //   if (!isAuthenticated) {
+  //     navigate("/");
+  //   }
+  // }, [isAuthenticated]);
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/");
+    async function checkSession() {
+      const { data: currentSession, error: sessionError } =
+        await supabase.auth.getSession();
+
+      if (currentSession) {
+        updateSession(currentSession);
+        setIsLoading(false);
+      } else {
+        // No active session or an error occurred
+        if (sessionError) {
+          console.log("Error fetching session:", sessionError.message);
+        }
+        navigate("/");
+      }
     }
-  }, [isAuthenticated]);
+
+    checkSession();
+  }, []);
+
   // Access properties from the session object
   const userEmail = session?.session?.user?.email;
   const token = session?.access_token;
