@@ -10,7 +10,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-const Step3 = ({ setFormData }) => {
+const Step3 = ({ setFormData, formData  }) => {
   const [method, setMethod] = useState(""); // 'pointBuy', 'quickPick', 'rollForScore'
   const [scores, setScores] = useState({
     STR: 10,
@@ -20,6 +20,25 @@ const Step3 = ({ setFormData }) => {
     WIS: 10,
     CHA: 10,
   });
+
+  console.log(formData.race)
+
+//   useEffect(() => {
+//     // Assuming you have a function or method to get the ability score adjustments based on selected race, theme, and class.
+//     const raceAdjustments = getAbilityAdjustmentsForRace(formData.race);
+//     const themeAdjustments = getAbilityAdjustmentsForTheme(formData.theme);
+//     const classAdjustments = getAbilityAdjustmentsForClass(formData.class);
+
+//     // Apply the adjustments to the scores.
+//     setScores((prevScores) => {
+//         // Loop over all stats (STR, DEX, CON, etc.)
+//         return Object.keys(prevScores).reduce((newScores, stat) => {
+//             newScores[stat] = prevScores[stat] + (raceAdjustments[stat] || 0) + (themeAdjustments[stat] || 0) + (classAdjustments[stat] || 0);
+//             return newScores;
+//         }, {});
+//     });
+// }, [formData]);
+
   //   Point Buy
   const [remainingPoints, setRemainingPoints] = useState(10);
   const handlePointBuy = (stat, change) => {

@@ -28,11 +28,16 @@ const Step2 = ({ setFormData, formData }) => {
     onOpen();
   };
 
+  // Select function for Modal
   const handleModalSelect = (value) => {
+    console.log("Selected Option:", selectedOption);
+    console.log("Value:", value);
     setFormData(selectedOption, value);
     onClose();
-  };
+};
 
+
+  // Fetch data function
   const fetchData = async () => {
     const categories = ["classes", "races", "themes"];
 
@@ -55,6 +60,7 @@ const Step2 = ({ setFormData, formData }) => {
     return data;
   };
 
+  // Empty data arrays
   const [data, setData] = useState({
     classes: [],
     races: [],
@@ -65,6 +71,7 @@ const Step2 = ({ setFormData, formData }) => {
   const [raceDetails, setRaceDetails] = useState({});
   const [themeDetails, setThemeDetails] = useState({});
 
+  // Fetch Data
   useEffect(() => {
     fetchData().then((fetchedData) => {
       setData(fetchedData);
@@ -92,34 +99,6 @@ const Step2 = ({ setFormData, formData }) => {
     });
   }, []);
 
-  // const fetchData = async () => {
-  //   let { data: classesData, error: classError } = await supabase.from("classes").select("Name");
-  //   if (classError) console.error("Error fetching classes:", classError);
-
-  //   let { data: racesData, error: raceError } = await supabase.from("races").select("Name");
-  //   if (raceError) console.error("Error fetching races:", raceError);
-
-  //   let { data: themesData, error: themeError } = await supabase.from("themes").select("Name");
-  //   if (themeError) console.error("Error fetching themes:", themeError);
-
-  //   return {
-  //     classes: classesData ? classesData.map(item => item.Name) : [],
-  //     races: racesData ? racesData.map(item => item.Name) : [],
-  //     themes: themesData ? themesData.map(item => item.Name) : []
-  //   };
-  // };
-
-  // const [data, setData] = useState({
-  //   classes: [],
-  //   races: [],
-  //   themes: []
-  // });
-
-  // useEffect(() => {
-  //   fetchData().then(fetchedData => setData(fetchedData));
-  // }, []);
-
-  
   return (
     <Box color="white" background="grey">
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
@@ -137,8 +116,28 @@ const Step2 = ({ setFormData, formData }) => {
         >
           Select Race
         </Button>
-
-        <Text mt={2}>{formData.race}</Text>
+        {formData.race ? (
+          <>
+            <Text mt={2}>
+              <strong>Name:</strong> {formData.race?.Name}
+            </Text>
+            <Text mt={2}>
+              <strong>Ability:</strong> {formData.race?.Ability}
+            </Text>
+            <Text mt={2}>
+              <strong>HP:</strong> {formData.race?.HP}
+            </Text>
+            <Text mt={2}>
+              <strong>Size:</strong> {formData.race?.Size}
+            </Text>
+            <Text mt={2}>
+              <strong>Type:</strong> {formData.race?.Type}
+            </Text>
+            <Text mt={2}>
+              <strong>Description:</strong> {formData.race?.Description}
+            </Text>
+          </>
+        ) : null}
       </FormControl>
 
       <FormControl id="theme" mb={4}>
@@ -153,8 +152,22 @@ const Step2 = ({ setFormData, formData }) => {
         >
           Select Theme
         </Button>
-
-        <Text mt={2}>{formData.theme}</Text>
+        {formData.theme ? (
+          <>
+            <Text mt={2}>
+              <strong>Name:</strong> {formData.theme?.Name}
+            </Text>
+            <Text mt={2}>
+              <strong>Ability:</strong> {formData.theme?.Ability}
+            </Text>
+            <Text mt={2}>
+              <strong>Class Skill:</strong> {formData.theme?.ClassSkill}
+            </Text>
+            <Text mt={2}>
+              <strong>Description:</strong> {formData.theme?.Description}
+            </Text>
+          </>
+        ) : null}
       </FormControl>
 
       <FormControl id="class" mb={4}>
@@ -169,8 +182,29 @@ const Step2 = ({ setFormData, formData }) => {
         >
           Select Class
         </Button>
-
-        <Text mt={2}>{formData.class}</Text>
+        {formData.class ? (
+          <>
+            <Text mt={2}>
+              <strong>Name:</strong> {formData.class?.Name}
+            </Text>
+            <Text mt={2}>
+              <strong>Stamina Points:</strong> {formData.class?.StaminaPoints}
+            </Text>
+            <Text mt={2}>
+              <strong>HP:</strong> {formData.class?.HP}
+            </Text>
+            <Text mt={2}>
+              <strong>Description:</strong> {formData.class?.Description}
+            </Text>
+            <Text mt={2}>
+              <strong>Key Ability Description:</strong>{" "}
+              {formData.class?.KeyAbilityDescription}
+            </Text>
+            <Text mt={2}>
+              <strong>Key Ability:</strong> {formData.class?.KeyAbility}
+            </Text>
+          </>
+        ) : null}
       </FormControl>
 
       {/* Modal for details */}

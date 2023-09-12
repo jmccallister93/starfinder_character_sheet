@@ -46,7 +46,7 @@ const Step1 = ({ setFormData, formData }) => {
 
             <FormControl id="height" mb={4}>
                 <FormLabel>Height</FormLabel>
-                <Box display="flex" gap={2}>
+                <Box display="flex" flexDirection="column" gap={2}>
                     <Input type="number" placeholder="ft"  value={formData.height_ft || ''} onChange={(e) => setFormData('height_ft', e.target.value)} />
                     <Input type="number" placeholder="in"  value={formData.height_in || ''} onChange={(e) => setFormData('height_in', e.target.value)} />
                 </Box>

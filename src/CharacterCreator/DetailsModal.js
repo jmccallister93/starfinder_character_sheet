@@ -160,7 +160,7 @@ const DetailsModal = ({
                         {renderDetails(option, details[opt])}
                         <Button
                           mt={2}
-                          onClick={() => handleSelectOption(details[opt].Name)}
+                          onClick={() => handleSelectOption(details[opt])}
                         >
                           Select {details[opt].Name}
                         </Button>

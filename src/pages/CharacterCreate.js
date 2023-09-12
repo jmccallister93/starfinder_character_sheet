@@ -24,11 +24,6 @@ const CharacterCreate = () => {
   const [isLoading, setIsLoading] = useState(true);
   const isAuthenticated = !!session; // Check if the session
 
-  // useEffect(() => {
-  //   if (!isAuthenticated) {
-  //     navigate("/");
-  //   }
-  // }, [isAuthenticated]);
   useEffect(() => {
     async function checkSession() {
       const { data: currentSession, error: sessionError } =
