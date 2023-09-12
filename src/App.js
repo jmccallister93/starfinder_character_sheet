@@ -11,14 +11,15 @@ import CharacterView from "./pages/CharacterView";
 import SessionContext from "./client/SessionContex";
 import { supabase } from "./client/supabaseClient";
 import SessionProvider from "./client/SessionProvider";
+import { ChakraProvider } from "@chakra-ui/react";
 
 function App() {
   const { session } = useContext(SessionContext);
 
   return (
-    <SessionProvider >
-
-      <Router>
+    <SessionProvider>
+      <ChakraProvider>
+        <Router>
           <Header />
           <Routes>
             <Route path="/login" element={<Login />} />
@@ -26,11 +27,11 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/characterCreate" element={<CharacterCreate />} />
             <Route path="/characterView" element={<CharacterView />} />
-            <Route path="/" element={<Home/>} />
+            <Route path="/" element={<Home />} />
           </Routes>
-      </Router>
-
-      </SessionProvider>
+        </Router>
+      </ChakraProvider>
+    </SessionProvider>
   );
 }
 

@@ -15,6 +15,7 @@ import {
   AccordionIcon,
   Box,
 } from "@chakra-ui/react";
+import { useState } from "react";
 
 const DetailsModal = ({
   isOpen,
@@ -23,12 +24,39 @@ const DetailsModal = ({
   options,
   onSelect,
   details,
+  selectedAbility,
+  setSelectedAbility,
 }) => {
-  const handleSelectOption = (optionName) => {
-    onSelect(optionName);
-    onClose();
-  };
 
+      
+    // Selected Option for each
+    const handleSelectOption = (optionDetail) => {
+        // Check if an ability option has been selected and overwrite it
+        setSelectedAbility(null)
+        if (selectedAbility) {
+          optionDetail.Ability = selectedAbility;
+        }
+        onSelect(optionDetail);
+        onClose();
+      };
+
+//   Format description
+  const formatDescription = (desc) => {
+    if (!desc) return null;  // Add this line
+    return desc.split('.').map((chunk, index) => {
+        const parts = chunk.split(':');
+        if (parts.length > 1) {
+            return (
+                <Text key={index}>
+                    <strong>{parts[0].trim() + ':'}</strong> {parts[1]}
+                </Text>
+            );
+        }
+        return <Text key={index}>{chunk}</Text>;
+    });
+};
+
+// Render out details of each
   const renderDetails = (detailType, details) => {
     switch (detailType) {
       case "class":
@@ -74,7 +102,7 @@ const DetailsModal = ({
               <strong>Type:</strong> {details.Type}
             </Text>
             <Text>
-              <strong>Description:</strong> {details.Description}
+                <strong>Description:</strong> {formatDescription(details.Description)}
             </Text>
           </>
         );

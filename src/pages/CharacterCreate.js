@@ -80,8 +80,9 @@ const CharacterCreate = () => {
           color="white"
           borderRadius="md"
           p={5}
-          shadow="md"
+          shadow="none"
           fontSize="4rem"
+          borer="none"
         >
           Create Character
         </Heading>

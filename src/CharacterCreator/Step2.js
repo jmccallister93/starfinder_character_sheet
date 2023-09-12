@@ -2,16 +2,13 @@ import {
   Box,
   FormControl,
   FormLabel,
-  Select,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
   Button,
   Text,
+  Checkbox,
+  Radio,
+  RadioGroup,
+  Stack,
 } from "@chakra-ui/react";
 import DetailsModal from "./DetailsModal";
 import { useEffect, useState } from "react";
@@ -22,6 +19,40 @@ const Step2 = ({ setFormData, formData }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [modalOptions, setModalOptions] = useState([]);
 
+  // Format Description property
+  const formatDescription = (desc) => {
+    if (!desc) return null;
+
+    return desc.split(".").map((chunk, index) => {
+      const parts = chunk.split(":");
+      if (parts.length > 1) {
+        return (
+          <Text key={index}>
+            <strong>{parts[0].trim() + ":"}</strong> {parts[1]}
+          </Text>
+        );
+      }
+      return <Text key={index}>{chunk}</Text>;
+    });
+  };
+
+  // Theme ability select
+  const [selectedAbility, setSelectedAbility] = useState(null);
+  const handleAbilityChange = (value) => {
+    setSelectedAbility(value);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      theme: {
+        ...prevFormData.theme,
+        Ability: value,
+      },
+     
+    }));
+    console.log(value)
+  };
+  
+
+  // Handle button click for each to show popup
   const handleButtonClick = (type, options) => {
     setSelectedOption(type);
     setModalOptions(options);
@@ -30,12 +61,9 @@ const Step2 = ({ setFormData, formData }) => {
 
   // Select function for Modal
   const handleModalSelect = (value) => {
-    console.log("Selected Option:", selectedOption);
-    console.log("Value:", value);
     setFormData(selectedOption, value);
     onClose();
-};
-
+  };
 
   // Fetch data function
   const fetchData = async () => {
@@ -133,9 +161,11 @@ const Step2 = ({ setFormData, formData }) => {
             <Text mt={2}>
               <strong>Type:</strong> {formData.race?.Type}
             </Text>
-            <Text mt={2}>
-              <strong>Description:</strong> {formData.race?.Description}
-            </Text>
+            {formatDescription(formData.race?.Description).map(
+              (formattedDesc, index) => (
+                <Box key={index}>{formattedDesc}</Box>
+              )
+            )}
           </>
         ) : null}
       </FormControl>
@@ -157,9 +187,35 @@ const Step2 = ({ setFormData, formData }) => {
             <Text mt={2}>
               <strong>Name:</strong> {formData.theme?.Name}
             </Text>
-            <Text mt={2}>
-              <strong>Ability:</strong> {formData.theme?.Ability}
-            </Text>
+            {formData.theme && formData.theme.Ability.includes(",") ? (
+              <>
+                <Text>Select an Ability</Text>
+                <RadioGroup
+                   onChange={handleAbilityChange} value={selectedAbility}
+                >
+                  <Stack spacing={3} direction="column">
+                  {formData.theme.Ability.split(", ").map(
+                    (abilityOption, idx) => (
+                      <Radio
+                        key={idx}
+                        value={abilityOption.trim()}
+                        border="1px solid white"
+                        borderRadius="50px"
+                        borderWidth="0.5rem"
+                      >
+                        {abilityOption.trim()}
+                      </Radio>
+                    )
+                  )}
+                  </Stack>
+                </RadioGroup>
+              </>
+            ) : (
+              <Text mt={2}>
+                <strong>Ability:</strong> {formData.theme?.Ability}
+              </Text>
+            )}
+
             <Text mt={2}>
               <strong>Class Skill:</strong> {formData.theme?.ClassSkill}
             </Text>
@@ -221,6 +277,7 @@ const Step2 = ({ setFormData, formData }) => {
             ? raceDetails
             : themeDetails
         }
+        setSelectedAbility={setSelectedAbility}
       />
     </Box>
   );
