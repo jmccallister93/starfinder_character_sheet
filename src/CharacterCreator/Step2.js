@@ -57,8 +57,6 @@ const Step2 = ({ updateFormData, formData }) => {
     updateFormData("themeAbilityAdjustments", updatedAdjustments);
 };
 
-
-
   // Test log
   useEffect(() => {
     console.log("Updated formData:", formData);
@@ -69,8 +67,17 @@ const Step2 = ({ updateFormData, formData }) => {
   const [selectedKeyAbility, setSelectedKeyAbility] = useState(null);
   const handleKeyAbilityChange = (value) => {
     setSelectedKeyAbility(value);
-    updateFormData(formData.class?.KeyAbility.value);
-  };
+    
+    // Update the KeyAbility for the class
+    const updatedClassData = {
+        ...formData.class,
+        KeyAbility: value
+    };
+    
+    // Update the formData with the new class data
+    updateFormData("class", updatedClassData);
+};
+
 
   //Ability score adjustments based on race/theme
   const extractAbilityAdjustments = (adjustmentString) => {
@@ -198,7 +205,7 @@ const Step2 = ({ updateFormData, formData }) => {
         Step 2
       </Text>
       <FormControl id="race" mb={4}>
-        <FormLabel>Race</FormLabel>
+        <FormLabel fontSize="1.8rem">Race</FormLabel>
         <Button
           onClick={() =>
             handleButtonClick(
@@ -236,7 +243,7 @@ const Step2 = ({ updateFormData, formData }) => {
       </FormControl>
 
       <FormControl id="theme" mb={4}>
-        <FormLabel>Theme</FormLabel>
+        <FormLabel fontSize="1.8rem">Theme</FormLabel>
         <Button
           onClick={() =>
             handleButtonClick(
@@ -254,7 +261,7 @@ const Step2 = ({ updateFormData, formData }) => {
             </Text>
             {formData.theme && formData.theme.Ability.includes(",") ? (
               <>
-                <Text>Select an Ability</Text>
+                <Text fontWeight="bold">Select an Ability</Text>
                 <RadioGroup
                   onChange={handleAbilityChange}
                   value={selectedAbility}
@@ -293,7 +300,7 @@ const Step2 = ({ updateFormData, formData }) => {
       </FormControl>
 
       <FormControl id="class" mb={4}>
-        <FormLabel>Class</FormLabel>
+        <FormLabel fontSize="1.8rem">Class</FormLabel>
         <Button
           onClick={() =>
             handleButtonClick(
@@ -324,7 +331,7 @@ const Step2 = ({ updateFormData, formData }) => {
             </Text>
             {formData.class && formData.class.KeyAbility.includes("or") ? (
               <>
-                <Text>Select a Key Ability</Text>
+                <Text fontWeight="bold">Select a Key Ability</Text>
                 <RadioGroup
                   onChange={handleKeyAbilityChange}
                   value={selectedKeyAbility}
