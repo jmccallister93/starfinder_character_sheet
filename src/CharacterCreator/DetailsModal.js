@@ -27,36 +27,34 @@ const DetailsModal = ({
   selectedAbility,
   setSelectedAbility,
 }) => {
+  // Selected Option for each
+  const handleSelectOption = (optionDetail) => {
+    // Check if an ability option has been selected and overwrite it
+    setSelectedAbility(null);
+    if (selectedAbility) {
+      optionDetail.Ability = selectedAbility;
+    }
+    onSelect(optionDetail);
+    onClose();
+  };
 
-      
-    // Selected Option for each
-    const handleSelectOption = (optionDetail) => {
-        // Check if an ability option has been selected and overwrite it
-        setSelectedAbility(null)
-        if (selectedAbility) {
-          optionDetail.Ability = selectedAbility;
-        }
-        onSelect(optionDetail);
-        onClose();
-      };
-
-//   Format description
+  //   Format description
   const formatDescription = (desc) => {
-    if (!desc) return null;  // Add this line
-    return desc.split('.').map((chunk, index) => {
-        const parts = chunk.split(':');
-        if (parts.length > 1) {
-            return (
-                <Text key={index}>
-                    <strong>{parts[0].trim() + ':'}</strong> {parts[1]}
-                </Text>
-            );
-        }
-        return <Text key={index}>{chunk}</Text>;
+    if (!desc) return null; // Add this line
+    return desc.split(".").map((chunk, index) => {
+      const parts = chunk.split(":");
+      if (parts.length > 1) {
+        return (
+          <Text key={index}>
+            <strong>{parts[0].trim() + ":"}</strong> {parts[1]}
+          </Text>
+        );
+      }
+      return <Text key={index}>{chunk}</Text>;
     });
-};
+  };
 
-// Render out details of each
+  // Render out details of each
   const renderDetails = (detailType, details) => {
     switch (detailType) {
       case "class":
@@ -102,7 +100,8 @@ const DetailsModal = ({
               <strong>Type:</strong> {details.Type}
             </Text>
             <Text>
-                <strong>Description:</strong> {formatDescription(details.Description)}
+              <strong>Description:</strong>{" "}
+              {formatDescription(details.Description)}
             </Text>
           </>
         );
@@ -132,13 +131,7 @@ const DetailsModal = ({
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay bg="rgba(0, 0, 0, 0.6)" />
 
-      <ModalContent
-        borderRadius="md"
-        height="80vh"
-        width="80vw"
-        paddingLeft="12rem"
-        paddingTop="4rem"
-      >
+      <ModalContent borderRadius="md" width="70vw" maxWidth="70vw">
         <ModalHeader
           color="black"
           display="flex"

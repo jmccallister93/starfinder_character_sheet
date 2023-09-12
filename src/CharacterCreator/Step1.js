@@ -29,6 +29,7 @@ const Step1 = ({ setFormData, formData }) => {
             value={formData.name || ""}
             onChange={(e) => setFormData("name", e.target.value)}
             sx={{ "::placeholder": { color: "white" } }}
+            cursor="pointer"
           />
         </FormControl>
 

@@ -10,7 +10,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 
-const Step3 = ({ setFormData, formData  }) => {
+const Step3 = ({ setFormData, formData }) => {
   const [method, setMethod] = useState(""); // 'pointBuy', 'quickPick', 'rollForScore'
   const [scores, setScores] = useState({
     STR: 10,
@@ -20,24 +20,6 @@ const Step3 = ({ setFormData, formData  }) => {
     WIS: 10,
     CHA: 10,
   });
-
-  console.log(formData.race)
-
-//   useEffect(() => {
-//     // Assuming you have a function or method to get the ability score adjustments based on selected race, theme, and class.
-//     const raceAdjustments = getAbilityAdjustmentsForRace(formData.race);
-//     const themeAdjustments = getAbilityAdjustmentsForTheme(formData.theme);
-//     const classAdjustments = getAbilityAdjustmentsForClass(formData.class);
-
-//     // Apply the adjustments to the scores.
-//     setScores((prevScores) => {
-//         // Loop over all stats (STR, DEX, CON, etc.)
-//         return Object.keys(prevScores).reduce((newScores, stat) => {
-//             newScores[stat] = prevScores[stat] + (raceAdjustments[stat] || 0) + (themeAdjustments[stat] || 0) + (classAdjustments[stat] || 0);
-//             return newScores;
-//         }, {});
-//     });
-// }, [formData]);
 
   //   Point Buy
   const [remainingPoints, setRemainingPoints] = useState(10);
@@ -165,22 +147,29 @@ const Step3 = ({ setFormData, formData  }) => {
           <Radio value="pointBuy">Point Buy</Radio>
           <Radio value="quickPick">Quick Pick</Radio>
           <Radio value="rollForScore">Roll for Score</Radio>
+          <Radio value="manualEntry">Manual Entry</Radio>
         </Stack>
       </RadioGroup>
 
       {method === "pointBuy" && (
-        <Box>
+        <Box textAlign="center">
           <Text fontSize="1.5rem">Remaining Points: {remainingPoints}</Text>
-          <Flex wrap="wrap" justifyContent="space-around">
-            {Object.keys(scores).map((stat) => (
+          <Flex           wrap="wrap"
+          justifyContent="space-around"
+          flexDirection="row"
+          height="fit-content">
+            {Object.keys(scores).map((stat, index) => (
               <Box
-                key={stat}
-                w="20%"
-                p={4}
-                textAlign="center"
-                borderRadius="md"
-                border="1px solid gray"
-                m={2}
+              key={index}
+              w="33.33%"
+              p={4}
+              textAlign="center"
+              borderRadius="md"
+              border="1px solid gray"
+              mb={index >= 3 ? "0" : "2rem"}
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
               >
                 <Text fontSize="1.5rem" mb={2}>
                   {stat}
@@ -188,6 +177,7 @@ const Step3 = ({ setFormData, formData  }) => {
                 <Text fontSize="2rem" fontWeight="bold" mb={4}>
                   {scores[stat]}
                 </Text>
+                <Box>
                 <Button
                   size="sm"
                   onClick={() => handlePointBuy(stat, -1)}
@@ -203,6 +193,47 @@ const Step3 = ({ setFormData, formData  }) => {
                 >
                   +
                 </Button>
+                </Box>
+              </Box>
+            ))}
+          </Flex>
+        </Box>
+      )}
+
+      {method === "manualEntry" && (
+        <Box mt={4} textAlign="center">
+          <Text fontSize="1.5rem">Enter your scores manually:</Text>
+          <Flex
+            wrap="wrap"
+            justifyContent="space-around"
+            flexDirection="row"
+            height="fit-content"
+          >
+            {Object.keys(manualScores).map((stat, index) => (
+              <Box
+                key={index}
+                w="33.33%"
+                p={4}
+                textAlign="center"
+                borderRadius="md"
+                border="1px solid gray"
+                mb={index >= 3 ? "0" : "2rem"}
+                display="flex"
+                flexDirection="column"
+                justifyContent="center"
+              >
+                <Box>
+                  <Text fontSize="1.5rem" mb={2}>
+                    {stat}
+                  </Text>
+                  <Input
+                    border="1px solid white"
+                    width="3.5rem"
+                    type="number"
+                    value={manualScores[stat]}
+                    onChange={(e) => handleManualEntry(stat, e.target.value)}
+                  />
+                </Box>
               </Box>
             ))}
           </Flex>
@@ -210,19 +241,20 @@ const Step3 = ({ setFormData, formData  }) => {
       )}
 
       {method === "rollForScore" && (
-        <Box mb={4}>
+        <Box mb={4} textAlign="center">
           <Button onClick={handleRollForScore}>Roll</Button>
           {allocatableScores.length > 0 && (
-            <Text mt={4}>You rolled: {allocatableScores.join(", ")}</Text>
+            <Text mt={4} fontSize="1.5rem">You rolled: {allocatableScores.join(", ")}</Text>
           )}
         </Box>
       )}
 
-{method === "quickPick" && (
-        <Box>
-          <Button onClick={() => handleQuickPick("focused")}>Focused</Button>
-          <Button onClick={() => handleQuickPick("split")}>Split</Button>
-          <Button onClick={() => handleQuickPick("versatile")}>
+      {method === "quickPick" && (
+        <Box  textAlign="center">
+            <Text fontSize="1.5rem">Select Quick Pick Option</Text>
+          <Button onClick={() => handleQuickPick("focused")} margin="0.25rem">Focused</Button>
+          <Button onClick={() => handleQuickPick("split")} margin="0.25rem">Split</Button>
+          <Button onClick={() => handleQuickPick("versatile")} margin="0.25rem">
             Versatile
           </Button>
         </Box>
@@ -230,16 +262,24 @@ const Step3 = ({ setFormData, formData  }) => {
 
       {/* This UI is for both quickPick and rollForScore */}
       {(method === "quickPick" || method === "rollForScore") && (
-        <Flex wrap="wrap" justifyContent="space-around">
-          {Object.keys(scores).map((stat) => (
+        <Flex
+          wrap="wrap"
+          justifyContent="space-around"
+          flexDirection="row"
+          height="fit-content"
+        >
+          {Object.keys(scores).map((stat, index) => (
             <Box
-              key={stat}
-              w="20%"
-              p={4}
-              textAlign="center"
-              borderRadius="md"
-              border="1px solid gray"
-              m={2}
+            key={index}
+            w="33.33%"
+            p={4}
+            textAlign="center"
+            borderRadius="md"
+            border="1px solid gray"
+            mb={index >= 3 ? "0" : "2rem"}
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
             >
               <Text fontSize="1.5rem" mb={2}>
                 {stat}
@@ -247,44 +287,16 @@ const Step3 = ({ setFormData, formData  }) => {
               <Text fontSize="2rem" fontWeight="bold" mb={4}>
                 {scores[stat]}
               </Text>
+              <Box>
               {allocatableScores.map((value, index) => (
                 <Button key={index} onClick={() => allocateScore(stat, value)}>
                   {value}
                 </Button>
               ))}
+              </Box>
             </Box>
           ))}
         </Flex>
-      )}
-
-
-
-{method === "rollForScore" && (
-  <Box mt={4}>
-    <Text>Or enter your scores manually:</Text>
-    <Flex wrap="wrap" justifyContent="space-around">
-      {Object.keys(manualScores).map((stat) => (
-        <Box
-          key={stat}
-          w="20%"
-          p={4}
-          textAlign="center"
-          borderRadius="md"
-          border="1px solid gray"
-          m={2}
-        >
-          <Text fontSize="1.5rem" mb={2}>
-            {stat}
-          </Text>
-          <Input
-            type="number"
-            value={manualScores[stat]}
-            onChange={(e) => handleManualEntry(stat, e.target.value)}
-          />
-        </Box>
-      ))}
-          </Flex>
-        </Box>
       )}
     </Box>
   );

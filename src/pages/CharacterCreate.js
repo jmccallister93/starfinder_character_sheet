@@ -20,7 +20,7 @@ import Step3 from "../CharacterCreator/Step3";
 const CharacterCreate = () => {
   const navigate = useNavigate();
   const contextValue = React.useContext(SessionContext);
-  const { session, updateSession  } = contextValue;
+  const { session, updateSession } = contextValue;
   const [isLoading, setIsLoading] = useState(true);
   const isAuthenticated = !!session; // Check if the session
 
@@ -53,7 +53,7 @@ const CharacterCreate = () => {
 
   // Stepper for setup
   const [currentStep, setCurrentStep] = useState(1);
-  const [totalSteps, setTotalSteps] = useState(6)
+  const [totalSteps, setTotalSteps] = useState(6);
 
   const handleNext = () => {
     // Validation logic here...
@@ -64,10 +64,10 @@ const CharacterCreate = () => {
     setCurrentStep((prevStep) => prevStep - 1);
   };
 
-    // This function will update the formData state with data from each step
-    const updateFormData = (field, value) => {
-      setFormData(prev => ({ ...prev, [field]: value }));
-    };
+  // This function will update the formData state with data from each step
+  const updateFormData = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <Center
@@ -75,7 +75,7 @@ const CharacterCreate = () => {
       flexDirection="column"
       background="linear-gradient(to right, #3B3D5B, #B0B0B0)"
     >
-      <Box >
+      <Box>
         <Heading
           color="white"
           borderRadius="md"
@@ -90,24 +90,45 @@ const CharacterCreate = () => {
       <Flex
         flexDirection="column"
         alignItems="center"
-        color="white" background="grey"
+        color="white"
+        background="grey"
         p={5}
         borderRadius="md"
       >
-       {currentStep === 1 && <Step1 setFormData={updateFormData} formData={formData} />}
-       {currentStep === 2 && <Step2 setFormData={updateFormData} formData={formData} />}
-       {currentStep === 3 && <Step3 setFormData={updateFormData} formData={formData} />}
-        
-        
-        {currentStep > 1 && <Button onClick={handlePrevious}>Previous</Button>}
-        {currentStep < totalSteps ? (
-          <>
-          <Button ml={4} onClick={handleNext}>Next</Button>
-          <Button ml={4} onClick={handleNext}>Save as Draft</Button>
-          </>
-        ) : (
-          <Button bg="black" color="white">Submit</Button>
+        {currentStep === 1 && (
+          <Step1 setFormData={updateFormData} formData={formData} />
         )}
+        {currentStep === 2 && (
+          <Step2 setFormData={updateFormData} formData={formData} />
+        )}
+        {currentStep === 3 && (
+          <Step3 setFormData={updateFormData} formData={formData} />
+        )}
+
+        <Box>
+          <Flex justifyContent="space-between" mb={4}>
+            {currentStep > 1 && (
+              <Button onClick={handlePrevious} margin="0.25rem">
+                Previous
+              </Button>
+            )}
+            {currentStep < totalSteps && (
+              <Button onClick={handleNext} margin="0.25rem">
+                Next
+              </Button>
+            )}
+          </Flex>
+
+          {currentStep < totalSteps ? (
+            <Button onClick={handleNext} margin="0.25rem" mt={4}>
+              Save as Draft
+            </Button>
+          ) : (
+            <Button bg="black" color="white" mt={4}>
+              Submit
+            </Button>
+          )}
+        </Box>
       </Flex>
     </Center>
   );

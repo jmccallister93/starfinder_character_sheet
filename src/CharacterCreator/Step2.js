@@ -46,11 +46,35 @@ const Step2 = ({ setFormData, formData }) => {
         ...prevFormData.theme,
         Ability: value,
       },
-     
     }));
-    console.log(value)
+    console.log(value);
+  };
+
+  //Ability score adjustments based on race/theme
+  const extractAbilityAdjustments = (adjustmentString) => {
+    const adjustments = adjustmentString.split(',').map(s => s.trim());
+    const result = {};
+    adjustments.forEach(adj => {
+      const match = adj.match(/([+-]\d+)\s+(\w+)/);
+      if (match) {
+        const value = parseInt(match[1], 10);
+        const ability = match[2];
+        result[ability] = (result[ability] || 0) + value;
+      }
+    });
+    return result;
   };
   
+  const calculateTotalAdjustments = (themeAdjustment, raceAdjustment) => {
+    // This is just an example with two sources. Add more sources if needed.
+    const allAdjustments = { ...themeAdjustment, ...raceAdjustment };
+    const totalAdjustments = {};
+    for (const ability in allAdjustments) {
+      totalAdjustments[ability] =
+        (totalAdjustments[ability] || 0) + allAdjustments[ability];
+    }
+    return totalAdjustments;
+  };
 
   // Handle button click for each to show popup
   const handleButtonClick = (type, options) => {
@@ -59,11 +83,70 @@ const Step2 = ({ setFormData, formData }) => {
     onOpen();
   };
 
-  // Select function for Modal
+  // Test log
+  useEffect(() => {
+    console.log("Updated formData:", formData);
+  }, [formData]);
+
+  // Selecting from MODAL
+  // const handleModalSelect = (value) => {
+  //   setFormData(selectedOption, value);
+  //   onClose();
+  
+  //   if (selectedOption === "race") {
+  //     const adjustments = extractAbilityAdjustments(value.Ability);
+  //     setRaceAdjustments(adjustments);
+  //   } else if (selectedOption === "theme" && !value.Ability.includes(",")) {
+  //     // Only set theme adjustments if there's only one option
+  //     const adjustments = extractAbilityAdjustments(value.Ability);
+  //     setThemeAdjustments(adjustments);
+  //   }
+  // };
+  const handleRaceSelect = (value) => {
+    const adjustments = extractAbilityAdjustments(value.Ability);
+    setFormData("race", value);
+    setFormData("raceAbilityAdjustments", adjustments);
+  };
+  const handleThemeSelect = (value) => {
+    if (!value.Ability.includes(",")) {
+      const adjustments = extractAbilityAdjustments(value.Ability);
+      setFormData("theme", value);
+      setFormData("themeAbilityAdjustments", adjustments);
+    } else {
+      setFormData("theme", value);
+    }
+  };
   const handleModalSelect = (value) => {
-    setFormData(selectedOption, value);
+    if (selectedOption === "race") {
+      const adjustments = extractAbilityAdjustments(value.Ability);
+      setFormData((prev) => ({
+        ...prev,
+        race: value,
+        raceAbilityAdjustments: adjustments
+      }));
+    } else if (selectedOption === "theme") {
+      let adjustments = {};
+      if (!value.Ability.includes(",")) {
+        // Only set theme adjustments if there's only one option
+        adjustments = extractAbilityAdjustments(value.Ability);
+      }
+      const updatedData = {
+        ...formData,
+        race: value,
+        raceAbilityAdjustments: adjustments
+      };
+      setFormData(updatedData);
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [selectedOption]: value
+      }));
+    }
+  
     onClose();
   };
+  
+  
 
   // Fetch data function
   const fetchData = async () => {
@@ -191,22 +274,23 @@ const Step2 = ({ setFormData, formData }) => {
               <>
                 <Text>Select an Ability</Text>
                 <RadioGroup
-                   onChange={handleAbilityChange} value={selectedAbility}
+                  onChange={handleAbilityChange}
+                  value={selectedAbility}
                 >
                   <Stack spacing={3} direction="column">
-                  {formData.theme.Ability.split(", ").map(
-                    (abilityOption, idx) => (
-                      <Radio
-                        key={idx}
-                        value={abilityOption.trim()}
-                        border="1px solid white"
-                        borderRadius="50px"
-                        borderWidth="0.5rem"
-                      >
-                        {abilityOption.trim()}
-                      </Radio>
-                    )
-                  )}
+                    {formData.theme.Ability.split(", ").map(
+                      (abilityOption, idx) => (
+                        <Radio
+                          key={idx}
+                          value={abilityOption.trim()}
+                          border="1px solid white"
+                          borderRadius="50px"
+                          borderWidth="0.5rem"
+                        >
+                          {abilityOption.trim()}
+                        </Radio>
+                      )
+                    )}
                   </Stack>
                 </RadioGroup>
               </>
@@ -269,7 +353,8 @@ const Step2 = ({ setFormData, formData }) => {
         onClose={onClose}
         option={selectedOption}
         options={modalOptions}
-        onSelect={handleModalSelect}
+        // onSelect={handleModalSelect}
+        onSelect={selectedOption === "race" ? handleRaceSelect : handleThemeSelect}
         details={
           selectedOption === "class"
             ? classDetails
