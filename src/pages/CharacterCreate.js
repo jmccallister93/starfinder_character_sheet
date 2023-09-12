@@ -16,6 +16,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Step1 from "../CharacterCreator/Step1";
 import Step2 from "../CharacterCreator/Step2";
 import Step3 from "../CharacterCreator/Step3";
+import Step4 from "../CharacterCreator/Step4";
 
 const CharacterCreate = () => {
   const navigate = useNavigate();
@@ -69,6 +70,10 @@ const CharacterCreate = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // useEffect(() => {
+  //   console.log(formData)
+  // }, [formData])
+
   return (
     <Center
       h="92.25vh"
@@ -96,13 +101,16 @@ const CharacterCreate = () => {
         borderRadius="md"
       >
         {currentStep === 1 && (
-          <Step1 setFormData={updateFormData} formData={formData} />
+          <Step1 updateFormData={updateFormData} formData={formData} />
         )}
         {currentStep === 2 && (
-          <Step2 setFormData={updateFormData} formData={formData} />
+          <Step2 updateFormData={updateFormData} formData={formData} />
         )}
         {currentStep === 3 && (
-          <Step3 setFormData={updateFormData} formData={formData} />
+          <Step3 updateFormData={updateFormData} formData={formData} />
+        )}
+                {currentStep === 4 && (
+          <Step4 updateFormData={updateFormData} formData={formData} />
         )}
 
         <Box>

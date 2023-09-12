@@ -14,7 +14,7 @@ import DetailsModal from "./DetailsModal";
 import { useEffect, useState } from "react";
 import { supabase } from "../client/supabaseClient";
 
-const Step2 = ({ setFormData, formData }) => {
+const Step2 = ({ updateFormData, formData }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedOption, setSelectedOption] = useState(null);
   const [modalOptions, setModalOptions] = useState([]);
@@ -40,21 +40,43 @@ const Step2 = ({ setFormData, formData }) => {
   const [selectedAbility, setSelectedAbility] = useState(null);
   const handleAbilityChange = (value) => {
     setSelectedAbility(value);
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      theme: {
-        ...prevFormData.theme,
-        Ability: value,
-      },
-    }));
-    console.log(value);
+
+    // Extract the ability name from the value (e.g., extract "STR" from "+1 STR")
+    const abilityName = value.split(" ").pop();
+
+    // Define the adjustments based on the selected ability only
+    const updatedAdjustments = {
+        [abilityName]: parseInt(value)
+    };
+
+    // Update the formData with the new adjustments and selected ability
+    updateFormData("theme", {
+        ...formData.theme,
+        Ability: value
+    });
+    updateFormData("themeAbilityAdjustments", updatedAdjustments);
+};
+
+
+
+  // Test log
+  useEffect(() => {
+    console.log("Updated formData:", formData);
+  }, [formData]);
+  
+
+  // Key Ability Select
+  const [selectedKeyAbility, setSelectedKeyAbility] = useState(null);
+  const handleKeyAbilityChange = (value) => {
+    setSelectedKeyAbility(value);
+    updateFormData(formData.class?.KeyAbility.value);
   };
 
   //Ability score adjustments based on race/theme
   const extractAbilityAdjustments = (adjustmentString) => {
-    const adjustments = adjustmentString.split(',').map(s => s.trim());
+    const adjustments = adjustmentString.split(",").map((s) => s.trim());
     const result = {};
-    adjustments.forEach(adj => {
+    adjustments.forEach((adj) => {
       const match = adj.match(/([+-]\d+)\s+(\w+)/);
       if (match) {
         const value = parseInt(match[1], 10);
@@ -64,7 +86,7 @@ const Step2 = ({ setFormData, formData }) => {
     });
     return result;
   };
-  
+
   const calculateTotalAdjustments = (themeAdjustment, raceAdjustment) => {
     // This is just an example with two sources. Add more sources if needed.
     const allAdjustments = { ...themeAdjustment, ...raceAdjustment };
@@ -83,70 +105,30 @@ const Step2 = ({ setFormData, formData }) => {
     onOpen();
   };
 
-  // Test log
-  useEffect(() => {
-    console.log("Updated formData:", formData);
-  }, [formData]);
+
 
   // Selecting from MODAL
-  // const handleModalSelect = (value) => {
-  //   setFormData(selectedOption, value);
-  //   onClose();
-  
-  //   if (selectedOption === "race") {
-  //     const adjustments = extractAbilityAdjustments(value.Ability);
-  //     setRaceAdjustments(adjustments);
-  //   } else if (selectedOption === "theme" && !value.Ability.includes(",")) {
-  //     // Only set theme adjustments if there's only one option
-  //     const adjustments = extractAbilityAdjustments(value.Ability);
-  //     setThemeAdjustments(adjustments);
-  //   }
-  // };
   const handleRaceSelect = (value) => {
     const adjustments = extractAbilityAdjustments(value.Ability);
-    setFormData("race", value);
-    setFormData("raceAbilityAdjustments", adjustments);
+    updateFormData("race", value);
+    updateFormData("raceAbilityAdjustments", adjustments);
   };
   const handleThemeSelect = (value) => {
-    if (!value.Ability.includes(",")) {
+    if (
+      value.Ability &&
+      typeof value.Ability === "string" &&
+      value.Ability.includes(",")
+    ) {
       const adjustments = extractAbilityAdjustments(value.Ability);
-      setFormData("theme", value);
-      setFormData("themeAbilityAdjustments", adjustments);
+      updateFormData("theme", value);
+      updateFormData("themeAbilityAdjustments", adjustments);
     } else {
-      setFormData("theme", value);
+      updateFormData("theme", value);
     }
   };
-  const handleModalSelect = (value) => {
-    if (selectedOption === "race") {
-      const adjustments = extractAbilityAdjustments(value.Ability);
-      setFormData((prev) => ({
-        ...prev,
-        race: value,
-        raceAbilityAdjustments: adjustments
-      }));
-    } else if (selectedOption === "theme") {
-      let adjustments = {};
-      if (!value.Ability.includes(",")) {
-        // Only set theme adjustments if there's only one option
-        adjustments = extractAbilityAdjustments(value.Ability);
-      }
-      const updatedData = {
-        ...formData,
-        race: value,
-        raceAbilityAdjustments: adjustments
-      };
-      setFormData(updatedData);
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [selectedOption]: value
-      }));
-    }
-  
-    onClose();
+  const handleClassSelect = (value) => {
+    updateFormData("class", value);
   };
-  
-  
 
   // Fetch data function
   const fetchData = async () => {
@@ -340,9 +322,35 @@ const Step2 = ({ setFormData, formData }) => {
               <strong>Key Ability Description:</strong>{" "}
               {formData.class?.KeyAbilityDescription}
             </Text>
-            <Text mt={2}>
-              <strong>Key Ability:</strong> {formData.class?.KeyAbility}
-            </Text>
+            {formData.class && formData.class.KeyAbility.includes("or") ? (
+              <>
+                <Text>Select a Key Ability</Text>
+                <RadioGroup
+                  onChange={handleKeyAbilityChange}
+                  value={selectedKeyAbility}
+                >
+                  <Stack spacing={3} direction="column">
+                    {formData.class.KeyAbility.split("or").map(
+                      (abilityOption, idx) => (
+                        <Radio
+                          key={idx}
+                          value={abilityOption.trim()}
+                          border="1px solid white"
+                          borderRadius="50px"
+                          borderWidth="0.5rem"
+                        >
+                          {abilityOption.trim()}
+                        </Radio>
+                      )
+                    )}
+                  </Stack>
+                </RadioGroup>
+              </>
+            ) : (
+              <Text mt={2}>
+                <strong>Key Ability:</strong> {formData.class?.KeyAbility}
+              </Text>
+            )}
           </>
         ) : null}
       </FormControl>
@@ -354,7 +362,13 @@ const Step2 = ({ setFormData, formData }) => {
         option={selectedOption}
         options={modalOptions}
         // onSelect={handleModalSelect}
-        onSelect={selectedOption === "race" ? handleRaceSelect : handleThemeSelect}
+        onSelect={
+          selectedOption === "race"
+            ? handleRaceSelect
+            : selectedOption === "theme"
+            ? handleThemeSelect
+            : handleClassSelect
+        }
         details={
           selectedOption === "class"
             ? classDetails

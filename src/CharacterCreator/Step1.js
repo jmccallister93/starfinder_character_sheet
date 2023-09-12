@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 import Header from "../components/Header";
 
-const Step1 = ({ setFormData, formData }) => {
+const Step1 = ({ updateFormData, formData }) => {
   return (
     <>
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
@@ -27,7 +27,7 @@ const Step1 = ({ setFormData, formData }) => {
           <Input
             placeholder="Character Name"
             value={formData.name || ""}
-            onChange={(e) => setFormData("name", e.target.value)}
+            onChange={(e) => updateFormData("name", e.target.value)}
             sx={{ "::placeholder": { color: "white" } }}
             cursor="pointer"
           />
@@ -38,7 +38,7 @@ const Step1 = ({ setFormData, formData }) => {
           <Select
             placeholder="Select alignment"
             value={formData.alignment || ""}
-            onChange={(e) => setFormData("alignment", e.target.value)}
+            onChange={(e) => updateFormData("alignment", e.target.value)}
            color="black"
           >
             <option value="lawfulGood" >Lawful Good</option>
@@ -58,7 +58,7 @@ const Step1 = ({ setFormData, formData }) => {
           <Select
             placeholder="Select deity"
             value={formData.deity || ""}
-            onChange={(e) => setFormData("deity", e.target.value)}
+            onChange={(e) => updateFormData("deity", e.target.value)}
           >
             {/* Deity options will be added later */}
           </Select>
@@ -69,7 +69,7 @@ const Step1 = ({ setFormData, formData }) => {
           <Select
             placeholder="Select home world"
             value={formData.homeWorld || ""}
-            onChange={(e) => setFormData("homeWorld", e.target.value)}
+            onChange={(e) => updateFormData("homeWorld", e.target.value)}
           >
             {/* HomeWorld options will be added later */}
           </Select>
@@ -81,7 +81,7 @@ const Step1 = ({ setFormData, formData }) => {
             type="number"
             placeholder="Weight (lbs)"
             value={formData.weight || ""}
-            onChange={(e) => setFormData("weight", e.target.value)}
+            onChange={(e) => updateFormData("weight", e.target.value)}
           />
         </FormControl>
 
@@ -92,13 +92,13 @@ const Step1 = ({ setFormData, formData }) => {
               type="number"
               placeholder="ft"
               value={formData.height_ft || ""}
-              onChange={(e) => setFormData("height_ft", e.target.value)}
+              onChange={(e) => updateFormData("height_ft", e.target.value)}
             />
             <Input
               type="number"
               placeholder="in"
               value={formData.height_in || ""}
-              onChange={(e) => setFormData("height_in", e.target.value)}
+              onChange={(e) => updateFormData("height_in", e.target.value)}
             />
           </Box>
         </FormControl>
@@ -108,7 +108,7 @@ const Step1 = ({ setFormData, formData }) => {
           <Textarea
             placeholder="Character description..."
             value={formData.description || ""}
-            onChange={(e) => setFormData("description", e.target.value)}
+            onChange={(e) => updateFormData("description", e.target.value)}
           />
         </FormControl>
       </Box>
