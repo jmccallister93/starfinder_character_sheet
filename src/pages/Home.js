@@ -24,7 +24,7 @@ const Home = (props) => {
 
   return (
     <Center
-      h="92.25vh"
+      h="91vh"
       flexDirection="column"
       style={{ background: "linear-gradient(to left, #7928CA, #FF0080)" }}
     >
@@ -33,7 +33,7 @@ const Home = (props) => {
           color="white"
           borderRadius="md"
           p={5}
-          shadow="md"
+          // shadow="md"
           fontSize="4rem"
         >
           Welcome to Starfinder Character Creator
@@ -46,7 +46,7 @@ const Home = (props) => {
             color="white"
             variant="solid"
             size="md"
-            p="1rem"
+            p="2rem"
             m="1rem"
             border="none"
             borderRadius="0.25rem"
@@ -62,7 +62,7 @@ const Home = (props) => {
           color="white"
           variant="outline"
           size="md"
-          p="1rem"
+          p="2rem"
           m="1rem"
           border="none"
           borderRadius="0.25rem"

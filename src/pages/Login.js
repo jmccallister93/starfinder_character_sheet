@@ -59,7 +59,7 @@ const Login = (props) => {
   };
   return (
     <Center
-      h="92.25vh"
+      h="91vh"
       flexDirection="column"
       style={{ background: "linear-gradient(to right, #2F80ED, #56CCF2)" }}
     >
@@ -68,7 +68,7 @@ const Login = (props) => {
           color="white"
           borderRadius="md"
           p={5}
-          shadow="md"
+          
           fontSize="4rem"
         >
           Login
@@ -77,7 +77,7 @@ const Login = (props) => {
       <Flex flexDirection="column" alignItems="center">
         <FormControl id="email" mb={4}>
           <Flex>
-            <Text color="white" fontSize="1.5rem" p={2} w="100px">
+            <Text color="white" fontSize="2rem" p={4} w="12rem">
               Email:
             </Text>
             <Input
@@ -93,7 +93,7 @@ const Login = (props) => {
         </FormControl>
         <FormControl id="password" mb={4}>
           <Flex>
-            <Text color="white" fontSize="1.5rem" p={2} w="100px">
+            <Text color="white" fontSize="2rem" p={4} w="12rem">
               Password:
             </Text>
             <Input
@@ -109,7 +109,7 @@ const Login = (props) => {
         </FormControl>
         <Button
           fontSize="2rem"
-          p="1rem"
+          p="2rem"
           borderRadius="0.25rem"
           bg="#009688"
           color="white"

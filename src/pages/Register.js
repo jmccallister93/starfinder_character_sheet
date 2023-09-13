@@ -11,8 +11,9 @@ import {
   useConst,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
-import axios from "axios";
+import SessionContext from "../client/SessionContex";
+import { supabase } from "../client/supabaseClient";
+
 
 const Register = () => {
   const [registerEmail, setRegisterEmail] = useState("");
@@ -20,7 +21,7 @@ const Register = () => {
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const navigate = useNavigate();
-  const { session } = useContext();
+  const { updateSession } = useContext(SessionContext);
 
   const validatePassword = (password) => {
     // Assuming you require at least 6 characters as mentioned in the Supabase settings
@@ -32,41 +33,36 @@ const Register = () => {
     return /\S+@\S+\.\S+/.test(email);
   };
 
-  const register = () => {
+  const register = async () => {
     if (!validatePassword(registerPassword) || !validateEmail(registerEmail)) {
       setErrorMsg("Invalid email or password");
       return;
     }
-
-    axios({
-      method: "POST",
-      data: {
-        email: registerEmail,
-        password: registerPassword,
-      },
-      withCredentials: true,
-      url: "http://localhost:3001/register",
-    })
-      .then((res) => {
-        setErrorMsg("");
-        setSuccessMsg("Registration successful. A verification email has been sent to you.");
-        navigate('/login', { state: { email: registerEmail }}); // Navigate to login with email as state
-      })
-      .catch((err) => {
-        if (err.response && err.response.data) {
-          if (err.response.data.includes("Email already in use")) {
-            setErrorMsg("Email already in use.");
-            navigate('/login', { state: { email: registerEmail }}); // Navigate to login with email as state
-          } else {
-            setErrorMsg("An error occurred.");
-          }
-        }
-      });
+  
+    const { error } = await supabase.auth.signUp({
+      email: registerEmail,
+      password: registerPassword,
+    });
+  
+    if (error) {
+      console.log(error.message);
+      if (error.message.includes("Email already in use")) {
+        setErrorMsg("Email already in use.");
+        navigate('/login', { state: { email: registerEmail }});
+      } else {
+        setErrorMsg("An error occurred.");
+      }
+    } else {
+      setErrorMsg("");
+      setSuccessMsg("Registration successful. A verification email has been sent to you.");
+      navigate('/login', { state: { email: registerEmail }}); 
+    }
   };
+  
 
   return (
     <Center
-      h="92.25vh"
+      h="91vh"
       flexDirection="column"
       style={{ background: "linear-gradient(to right, #16A085, #2ECC71)" }}
     >
@@ -75,7 +71,7 @@ const Register = () => {
           color="white"
           borderRadius="md"
           p={5}
-          shadow="md"
+          
           fontSize="4rem"
         >
           Register
@@ -84,7 +80,7 @@ const Register = () => {
       <Flex flexDirection="column" alignItems="center">
         <FormControl id="email" mb={4}>
           <Flex>
-            <Text color="white" fontSize="1.5rem" p={2} w="100px">
+            <Text  color="white" fontSize="2rem" p={4} w="12rem">
               Email:
             </Text>
             <Input
@@ -100,7 +96,7 @@ const Register = () => {
         </FormControl>
         <FormControl id="password" mb={4}>
           <Flex>
-            <Text color="white" fontSize="1.5rem" p={2} w="100px">
+            <Text  color="white" fontSize="2rem" p={4} w="12rem">
               Password:
             </Text>
             <Input
@@ -119,12 +115,12 @@ const Register = () => {
         </Text>
         <Button
           fontSize="2rem"
-          p="1rem"
+          p="2rem"
           borderRadius="0.25rem"
-          bg="#10AC84"
+          bg="#2F80ED"
           color="white"
           border="none"
-          _hover={{ bg: "#0D8B70", cursor: "pointer", transition: "0.3s" }}
+          _hover={{ bg: "#56CCF2", cursor: "pointer", transition: "0.3s" }}
           onClick={register}
         >
           Submit

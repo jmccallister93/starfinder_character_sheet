@@ -15,12 +15,12 @@ const Header = (props) => {
       bg="black"
       p={4}
       color="white"
-      h="7vh"
+      h="9vh"
       justifyContent="center"
       textAlign="center"
     >
       <Flex align="center" >
-        <Text p={4} fontSize="xl"  _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}>
+        <Text p={4} fontSize="xl"  _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }} >
           <Link
             style={{
               fontSize: "1.5rem",

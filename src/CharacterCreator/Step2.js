@@ -46,38 +46,31 @@ const Step2 = ({ updateFormData, formData }) => {
 
     // Define the adjustments based on the selected ability only
     const updatedAdjustments = {
-        [abilityName]: parseInt(value)
+      [abilityName]: parseInt(value),
     };
 
     // Update the formData with the new adjustments and selected ability
     updateFormData("theme", {
-        ...formData.theme,
-        Ability: value
+      ...formData.theme,
+      Ability: value,
     });
     updateFormData("themeAbilityAdjustments", updatedAdjustments);
-};
-
-  // Test log
-  useEffect(() => {
-    console.log("Updated formData:", formData);
-  }, [formData]);
-  
+  };
 
   // Key Ability Select
   const [selectedKeyAbility, setSelectedKeyAbility] = useState(null);
   const handleKeyAbilityChange = (value) => {
     setSelectedKeyAbility(value);
-    
+
     // Update the KeyAbility for the class
     const updatedClassData = {
-        ...formData.class,
-        KeyAbility: value
+      ...formData.class,
+      KeyAbility: value,
     };
-    
+
     // Update the formData with the new class data
     updateFormData("class", updatedClassData);
-};
-
+  };
 
   //Ability score adjustments based on race/theme
   const extractAbilityAdjustments = (adjustmentString) => {
@@ -112,8 +105,6 @@ const Step2 = ({ updateFormData, formData }) => {
     onOpen();
   };
 
-
-
   // Selecting from MODAL
   const handleRaceSelect = (value) => {
     const adjustments = extractAbilityAdjustments(value.Ability);
@@ -123,8 +114,7 @@ const Step2 = ({ updateFormData, formData }) => {
   const handleThemeSelect = (value) => {
     if (
       value.Ability &&
-      typeof value.Ability === "string" &&
-      value.Ability.includes(",")
+      typeof value.Ability === "string"
     ) {
       const adjustments = extractAbilityAdjustments(value.Ability);
       updateFormData("theme", value);

@@ -70,9 +70,9 @@ const CharacterCreate = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // useEffect(() => {
-  //   console.log(formData)
-  // }, [formData])
+  useEffect(() => {
+    console.log(formData)
+  }, [formData])
 
   return (
     <Center
@@ -109,7 +109,7 @@ const CharacterCreate = () => {
         {currentStep === 3 && (
           <Step3 updateFormData={updateFormData} formData={formData} />
         )}
-                {currentStep === 4 && (
+        {currentStep === 4 && (
           <Step4 updateFormData={updateFormData} formData={formData} />
         )}
 

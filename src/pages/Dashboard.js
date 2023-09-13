@@ -28,7 +28,7 @@ const handleCreate = () =>{
 
   return (
     <Center
-      h="92.25vh"
+      h="91vh"
     //   flexDirection="column"
       style={{
         background: "linear-gradient(to right, #F2994A, #F2C94C)",
@@ -38,14 +38,14 @@ const handleCreate = () =>{
         <Heading
           color="white"
           borderRadius="md"
-          shadow="md"
+          
           fontSize="6rem"
           p="2rem"
         >
           Dashboard
         </Heading>
       </Box>
-      <Divider borderColor="white" />
+     
       <Flex flexDirection="column" alignItems="center" w="100%" mt={8} p="2rem">
         <Flex
           flexDirection="column"
@@ -59,7 +59,7 @@ const handleCreate = () =>{
             color="white"
             variant="solid"
             size="md"
-            p="1rem"
+            p="2rem"
             m="1rem"
             border="none"
             borderRadius="0.25rem"
