@@ -99,6 +99,7 @@ const CharacterCreate = () => {
         background="grey"
         p={5}
         borderRadius="md"
+        margin="2rem"
       >
         {currentStep === 1 && (
           <Step1 updateFormData={updateFormData} formData={formData} />
