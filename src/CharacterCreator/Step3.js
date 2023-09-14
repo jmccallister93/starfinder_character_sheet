@@ -156,6 +156,7 @@ const Step3 = ({ updateFormData, formData }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedKeyAbility, setSelectedKeyAbility] = useState(null);
   const [modalOptions, setModalOptions] = useState([]);
+  const [proficiencies, setProficiencies] = useState([]);
 
   // Format Description property
   const formatDescription = (desc) => {
@@ -194,13 +195,16 @@ const Step3 = ({ updateFormData, formData }) => {
     if (value.KeyAbility.includes("or") && selectedKeyAbility) {
       value.KeyAbility = selectedKeyAbility;
     }
-    
+
     // Fetch the class features
     value.features = classFeatures[value.Name];
     updateFormData("class", value);
+
+    // Fetch proficiencies for the selected class
+    fetchProficiencies(value.id); // Assuming the class object has an `id` field representing its unique ID
+
     onClose();
   };
-  
 
   // Fetch data function
   const fetchData = async () => {
@@ -228,12 +232,21 @@ const Step3 = ({ updateFormData, formData }) => {
     });
   }, []);
 
+  const fetchProficiencies = async (classId) => {
+    const result = await supabase
+      .from("classProficiency")
+      .select("*")
+      .eq("class_id", classId);
+
+    setProficiencies(result.data || []);
+  };
+
   return (
     <Box color="white" background="grey" width="70vw">
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
         Step 3: Class
       </Text>
-      <FormControl id="class" mb={4} >
+      <FormControl id="class" mb={4}>
         <FormLabel fontSize="1.8rem">Class</FormLabel>
         <Button
           onClick={() => handleButtonClick(data.classes.map((cls) => cls.Name))}
@@ -299,6 +312,19 @@ const Step3 = ({ updateFormData, formData }) => {
               <strong>Skill Points Per Level:</strong>{" "}
               {skillPointsPerLevel[formData.class?.Name]}
             </Text>
+            {/* Proficiencies */}
+            <Box mt={4}>
+              <Text fontWeight="bold" fontSize="1.5rem">
+                Proficiencies:
+              </Text>
+              {proficiencies.map((proficiency, idx) => (
+                <Box key={idx} mt={2}>
+                  <Text fontWeight="bold">{proficiency.proficiency_type}:</Text>
+                  <Text>{proficiency.description}</Text>
+                </Box>
+              ))}
+            </Box>
+
             {/* Class Features Section */}
             {formData.class?.features && (
               <Box mt={4}>
