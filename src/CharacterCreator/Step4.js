@@ -160,6 +160,8 @@ const skillPointsPerLevel = {
     "Vanguard": 6,
     "Witchwarper": 4
   };
+
+
   const Step4 = ({ updateFormData, formData }) => {
     const [skills, setSkills] = React.useState({});
   
@@ -170,14 +172,24 @@ const skillPointsPerLevel = {
   
     // This function handles the changes made to skill ranks by the user
     const handleSkillChange = (skillName, value) => {
-      const totalSkillRanksAllocated = Object.values(skills).reduce((acc, curr) => acc + curr, 0);
-      if (value >= 0 && totalSkillRanksAllocated + value <= skillPointsPerLevel[formData.class.Name]) {
-        setSkills((prevSkills) => ({
-          ...prevSkills,
-          [skillName]: value
-        }));
-      }
+        const totalSkillRanksAllocated = Object.values(skills).reduce((acc, curr) => acc + (curr || 0), 0);
+        
+        if (value >= 0 && totalSkillRanksAllocated + value - (skills[skillName] || 0) <= skillPointsPerLevel[formData.class?.Name]) {
+            setSkills((prevSkills) => ({
+                ...prevSkills,
+                [skillName]: value
+            }));
+        }
     };
+    
+    
+
+    const getSkillBonus = (skillName) => {
+        const rankBonus = skills[skillName] || 0; // Bonus from the ranks invested
+        const classSkillBonus = isClassSkill(skillName) ? 3 : 0; // +3 bonus if it's a class skill
+        return rankBonus + classSkillBonus;
+    };
+    
   
     React.useEffect(() => {
       updateFormData("skills", skills);
@@ -185,13 +197,16 @@ const skillPointsPerLevel = {
   
     const incrementSkill = (skillName) => {
         const currentRank = skills[skillName] || 0;
-        handleSkillChange(skillName, currentRank + 1);
-      };
-    
-      const decrementSkill = (skillName) => {
+        if (currentRank < 1) { // Ensure that a skill doesn't get more than 1 rank
+            handleSkillChange(skillName, currentRank + 1);
+        }
+    };
+      
+    const decrementSkill = (skillName) => {
         const currentRank = skills[skillName] || 0;
         handleSkillChange(skillName, currentRank - 1);
-      };
+    };
+    
     
       const totalSkillRanksAllocated = Object.values(skills).reduce((acc, curr) => acc + (curr || 0), 0);
       const skillPointsForClass = skillPointsPerLevel[formData.class.Name] || 0;
@@ -206,21 +221,24 @@ const skillPointsPerLevel = {
           <Text fontSize="1.5rem">Skill Points Remaining: {skillPointsRemaining}</Text>
     
           <Flex wrap="wrap" justifyContent="space-between" mt={4}>
-            {skillsList.map((skill, index) => (
-              <Flex key={index} mb={3} w="30%" alignItems="center" justifyContent="space-between">
-                <Text fontSize="1.2rem" flex="1">
-                  {skill} {isClassSkill(skill) && "(Class Skill)"}
-                </Text>
-                <Box>
-                  <Button size="sm" onClick={() => decrementSkill(skill)}>-</Button>
-                  <Text ml={2} mr={2} display="inline">
-                    {skills[skill] || 0}
-                  </Text>
-                  <Button size="sm" onClick={() => incrementSkill(skill)}>+</Button>
-                </Box>
-              </Flex>
-            ))}
-          </Flex>
+                {skillsList.map((skill, index) => (
+                    <Flex key={index} mb={3} w="30%" alignItems="center" justifyContent="space-between">
+                        <Text fontSize="1.2rem" flex="1">
+                            {skill} {isClassSkill(skill) ? "(Class Skill)" : ""}
+                        </Text>
+                        <Text ml={2} mr={2} display="inline">
+                            +{getSkillBonus(skill)}
+                        </Text>
+                        <Box>
+                            <Button size="sm" onClick={() => decrementSkill(skill)} disabled={skills[skill] <= 0}>-</Button>
+                            <Text ml={2} mr={2} display="inline">
+                                {skills[skill] || 0}
+                            </Text>
+                            <Button size="sm" onClick={() => incrementSkill(skill)}>+</Button>
+                        </Box>
+                    </Flex>
+                ))}
+            </Flex>
         </Box>
       );
   };
