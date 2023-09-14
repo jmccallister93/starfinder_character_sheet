@@ -157,6 +157,7 @@ const Step3 = ({ updateFormData, formData }) => {
   const [selectedKeyAbility, setSelectedKeyAbility] = useState(null);
   const [modalOptions, setModalOptions] = useState([]);
   const [proficiencies, setProficiencies] = useState([]);
+  const [classAbilities, setClassAbilities] = useState([]);
 
   // Format Description property
   const formatDescription = (desc) => {
@@ -196,12 +197,11 @@ const Step3 = ({ updateFormData, formData }) => {
       value.KeyAbility = selectedKeyAbility;
     }
 
-    // Fetch the class features
-    value.features = classFeatures[value.Name];
     updateFormData("class", value);
 
-    // Fetch proficiencies for the selected class
-    fetchProficiencies(value.id); // Assuming the class object has an `id` field representing its unique ID
+    // Fetch proficiencies and class abilities for the selected class
+    fetchProficiencies(value.id);
+    fetchClassAbilities(value.id);
 
     onClose();
   };
@@ -240,6 +240,39 @@ const Step3 = ({ updateFormData, formData }) => {
 
     setProficiencies(result.data || []);
   };
+  const fetchClassAbilities = async (classId) => {
+    const result = await supabase
+      .from("classAbilities")
+      .select("*")
+      .eq("class_id", classId);
+
+    setClassAbilities(result.data || []);
+  };
+
+  const formatAbilityText = (abilityText) => {
+    // Remove starting and ending quotes
+    const cleanText = abilityText.slice(1, -1);
+    
+    // Split the text on periods
+    const sections = cleanText.split('.');
+    
+    return (
+        <Box background="rgb(105,105,105)">
+            {sections.map((section, idx) => {
+                // If the section is not empty, render it
+                if (section.trim()) {
+                    return (
+                        <Text mt={2} key={idx}>
+                            {section.trim() + "."}
+                        </Text>
+                    );
+                }
+                return null;  // If the section is empty, don't render anything
+            })}
+        </Box>
+    );
+};
+
 
   return (
     <Box color="white" background="grey" width="70vw">
@@ -326,21 +359,20 @@ const Step3 = ({ updateFormData, formData }) => {
             </Box>
 
             {/* Class Features Section */}
-            {formData.class?.features && (
-              <Box mt={4}>
-                <Text fontWeight="bold" fontSize="1.5rem">
-                  Class Features:
-                </Text>
-                {formData.class.features.map((feature, idx) => (
-                  <Box key={idx} mt={2}>
-                    <Text fontWeight="bold">
-                      {feature.name} (Level {feature.level}):
-                    </Text>
-                    <Text>{feature.description}</Text>
-                  </Box>
-                ))}
-              </Box>
-            )}
+            <Box mt={4}>
+              <Text fontWeight="bold" fontSize="1.5rem">
+                Class Features:
+              </Text>
+              {classAbilities.map((ability, idx) => (
+                <Box key={idx} mt={2}>
+                  <Text fontWeight="bold">
+                    {ability.ability_name} (Level {ability.ability_level}):
+                  </Text>
+                  {formatAbilityText(ability.ability_description)}
+
+                </Box>
+              ))}
+            </Box>
           </Box>
         ) : null}
       </FormControl>
