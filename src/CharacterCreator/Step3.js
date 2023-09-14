@@ -153,7 +153,7 @@ const Step3 = ({ updateFormData, formData }) => {
   return (
     <Box>
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
-        Step 3
+        Step 3: Ability Scores
       </Text>
       <RadioGroup onChange={setMethod} value={method}>
         <Stack spacing={5}>

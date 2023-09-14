@@ -13,7 +13,7 @@ const Step1 = ({ updateFormData, formData }) => {
   return (
     <>
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
-        Step 1
+        Step 1: Basic Details
       </Text>
       <Box
         color="white"

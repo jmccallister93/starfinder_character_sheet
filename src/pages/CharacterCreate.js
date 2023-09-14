@@ -17,6 +17,7 @@ import Step1 from "../CharacterCreator/Step1";
 import Step2 from "../CharacterCreator/Step2";
 import Step3 from "../CharacterCreator/Step3";
 import Step4 from "../CharacterCreator/Step4";
+import Step5 from "../CharacterCreator/Step5";
 
 const CharacterCreate = () => {
   const navigate = useNavigate();
@@ -112,6 +113,9 @@ const CharacterCreate = () => {
         )}
         {currentStep === 4 && (
           <Step4 updateFormData={updateFormData} formData={formData} />
+        )}
+        {currentStep === 5 && (
+          <Step5 updateFormData={updateFormData} formData={formData} />
         )}
 
         <Box>

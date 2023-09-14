@@ -192,7 +192,7 @@ const Step2 = ({ updateFormData, formData }) => {
   return (
     <Box color="white" background="grey">
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
-        Step 2
+        Step 2: Race, Theme, Class
       </Text>
       <FormControl id="race" mb={4}>
         <FormLabel fontSize="1.8rem">Race</FormLabel>
