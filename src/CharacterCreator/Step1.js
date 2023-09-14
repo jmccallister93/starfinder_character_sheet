@@ -11,7 +11,7 @@ import Header from "../components/Header";
 
 const Step1 = ({ updateFormData, formData }) => {
   return (
-    <>
+    <Box width="70vw" >
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
         Step 1: Basic Details
       </Text>
@@ -112,7 +112,7 @@ const Step1 = ({ updateFormData, formData }) => {
           />
         </FormControl>
       </Box>
-    </>
+    </Box>
   );
 };
 

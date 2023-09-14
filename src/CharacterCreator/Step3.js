@@ -229,11 +229,11 @@ const Step3 = ({ updateFormData, formData }) => {
   }, []);
 
   return (
-    <Box color="white" background="grey">
+    <Box color="white" background="grey" width="70vw">
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
         Step 3: Class
       </Text>
-      <FormControl id="class" mb={4}>
+      <FormControl id="class" mb={4} >
         <FormLabel fontSize="1.8rem">Class</FormLabel>
         <Button
           onClick={() => handleButtonClick(data.classes.map((cls) => cls.Name))}
@@ -241,7 +241,7 @@ const Step3 = ({ updateFormData, formData }) => {
           Select Class
         </Button>
         {formData.class ? (
-          <>
+          <Box>
             <Text mt={2}>
               <strong>Name:</strong> {formData.class?.Name}
             </Text>
@@ -315,7 +315,7 @@ const Step3 = ({ updateFormData, formData }) => {
                 ))}
               </Box>
             )}
-          </>
+          </Box>
         ) : null}
       </FormControl>
 

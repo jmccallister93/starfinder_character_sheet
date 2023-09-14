@@ -206,8 +206,8 @@ const Step6 = ({ updateFormData, formData }) => {
   }, [scores]);
 
   return (
-    <Box>
-      <Text fontSize="2rem" textAlign="center" fontWeight="bold">
+    <Box width="70vw">
+      <Text fontSize="2rem" textAlign="center" fontWeight="bold" >
         Step 6: Ability Scores
       </Text>
       <RadioGroup onChange={setMethod} value={method}>

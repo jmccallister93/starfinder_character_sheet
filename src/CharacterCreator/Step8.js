@@ -41,9 +41,9 @@ const Step8 = ({ updateFormData, formData }) => {
     }, [selectedFeats]);
 
     return (
-        <Box>
+        <Box width="70vw" >
             <Text fontSize="2rem" textAlign="center" fontWeight="bold">
-                Step 5: Feats
+                Step 8: Feats
             </Text>
 
             <Flex direction="column" mb={4}>
@@ -60,7 +60,7 @@ const Step8 = ({ updateFormData, formData }) => {
                 mt={4}
                 direction="column"
                 height="20rem"
-                overflowY="auto"
+                overflowX="auto"
             >
                 {featsList.map((feat, index) => (
                     <Flex key={index} mb={3} w="25%" alignItems="center" justifyContent="center">

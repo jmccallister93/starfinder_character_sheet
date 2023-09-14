@@ -87,7 +87,7 @@ const Step2 = ({ updateFormData, formData }) => {
   }, []);
 
   return (
-    <Box color="white" background="grey">
+    <Box color="white" background="grey" width="70vw">
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
         Step 2: Race
       </Text>

@@ -213,7 +213,7 @@ const skillPointsPerLevel = {
       const skillPointsRemaining = skillPointsForClass - totalSkillRanksAllocated;
   
       return (
-        <Box>
+        <Box width="70vw">
           <Text fontSize="2rem" textAlign="center" fontWeight="bold">
             Step 7: Skills
           </Text>

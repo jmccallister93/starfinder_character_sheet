@@ -123,7 +123,7 @@ const Step4 = ({ updateFormData, formData, themeData }) => {
   }, []);
 
   return (
-    <Box color="white" background="grey">
+    <Box color="white" background="grey" width="70vw" >
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
         Step 4: Theme
       </Text>

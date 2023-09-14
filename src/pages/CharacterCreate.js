@@ -83,11 +83,11 @@ const CharacterCreate = () => {
 
   return (
     <Center
-      h="92.25vh"
+      h="91vh"
       flexDirection="column"
       background="linear-gradient(to right, #3B3D5B, #B0B0B0)"
     >
-      <Box>
+      <Box >
         <Heading
           color="white"
           borderRadius="md"
@@ -107,6 +107,8 @@ const CharacterCreate = () => {
         p={5}
         borderRadius="md"
         margin="2rem"
+        overflowX="auto"
+        justifyContent="space-between"
       >
         {currentStep === 1 && (
           <Step1 updateFormData={updateFormData} formData={formData} />
