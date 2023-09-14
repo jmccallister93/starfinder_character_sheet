@@ -9,15 +9,20 @@ import {
   RadioGroup,
   Stack,
   useDisclosure,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionIcon,
+  AccordionPanel,
+  Table, Thead, Tbody, Tr, Th, Td
 } from "@chakra-ui/react";
 import DetailsModal from "./DetailsModal"; // Ensure you have this imported
 import { supabase } from "../client/supabaseClient";
 import skillPointsPerLevel from "./skillPointsPerLevel";
 import classSkills from "./classSkills";
 import classFeatures from "./classFeatures";
-import classProgressionTable from "./classProgressionTable";
+import ClassProgressionTable from "./classProgressionTable";
 
-//   Envoy: [
 //     "Bluff",
 //     "Computers",
 //     "Culture",
@@ -253,27 +258,26 @@ const Step3 = ({ updateFormData, formData }) => {
   const formatAbilityText = (abilityText) => {
     // Remove starting and ending quotes
     const cleanText = abilityText.slice(1, -1);
-    
-    // Split the text on periods
-    const sections = cleanText.split('.');
-    
-    return (
-        <Box background="rgb(105,105,105)">
-            {sections.map((section, idx) => {
-                // If the section is not empty, render it
-                if (section.trim()) {
-                    return (
-                        <Text mt={2} key={idx}>
-                            {section.trim() + "."}
-                        </Text>
-                    );
-                }
-                return null;  // If the section is empty, don't render anything
-            })}
-        </Box>
-    );
-};
 
+    // Split the text on periods
+    const sections = cleanText.split(".");
+
+    return (
+      <Box background="rgb(105,105,105)">
+        {sections.map((section, idx) => {
+          // If the section is not empty, render it
+          if (section.trim()) {
+            return (
+              <Text mt={2} key={idx}>
+                {section.trim() + "."}
+              </Text>
+            );
+          }
+          return null; // If the section is empty, don't render anything
+        })}
+      </Box>
+    );
+  };
 
   return (
     <Box color="white" background="grey" width="70vw">
@@ -359,21 +363,32 @@ const Step3 = ({ updateFormData, formData }) => {
               ))}
             </Box>
 
-                {/* MAKE ME A DROP DOWN ARROW */}
+                {/* Class progression table */}
+                <ClassProgressionTable className={formData.class?.Name}/>
+
             {/* Class Features Section */}
             <Box mt={4}>
               <Text fontWeight="bold" fontSize="1.5rem">
                 Class Features:
               </Text>
-              {classAbilities.map((ability, idx) => (
-                <Box key={idx} mt={2}>
-                  <Text fontWeight="bold">
-                    {ability.ability_name} (Level {ability.ability_level}):
-                  </Text>
-                  {formatAbilityText(ability.ability_description)}
-
-                </Box>
-              ))}
+              <Accordion allowMultiple>
+                {classAbilities.map((ability, idx) => (
+                  <AccordionItem key={idx}>
+                    <h2>
+                      <AccordionButton>
+                        <Box flex="1" textAlign="left" fontWeight="bold">
+                          {ability.ability_name} (Level {ability.ability_level}
+                          ):
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={4}>
+                      {formatAbilityText(ability.ability_description)}
+                    </AccordionPanel>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </Box>
           </Box>
         ) : null}
