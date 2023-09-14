@@ -15,6 +15,7 @@ import { supabase } from "../client/supabaseClient";
 import skillPointsPerLevel from "./skillPointsPerLevel";
 import classSkills from "./classSkills";
 import classFeatures from "./classFeatures";
+import classProgressionTable from "./classProgressionTable";
 
 //   Envoy: [
 //     "Bluff",
@@ -358,6 +359,7 @@ const Step3 = ({ updateFormData, formData }) => {
               ))}
             </Box>
 
+                {/* MAKE ME A DROP DOWN ARROW */}
             {/* Class Features Section */}
             <Box mt={4}>
               <Text fontWeight="bold" fontSize="1.5rem">
