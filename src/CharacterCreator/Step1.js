@@ -39,9 +39,9 @@ const Step1 = ({ updateFormData, formData }) => {
             placeholder="Select alignment"
             value={formData.alignment || ""}
             onChange={(e) => updateFormData("alignment", e.target.value)}
-           color="black"
+            color="black"
           >
-            <option value="lawfulGood" >Lawful Good</option>
+            <option value="lawfulGood">Lawful Good</option>
             <option value="neutralGood">Neutral Good</option>
             <option value="chaoticGood">Chaotic Good</option>
             <option value="lawfulNeutral">Lawful Neutral</option>

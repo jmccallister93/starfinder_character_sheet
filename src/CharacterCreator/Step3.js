@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -11,15 +11,25 @@ import {
 } from "@chakra-ui/react";
 
 const Step3 = ({ updateFormData, formData }) => {
-  const [method, setMethod] = useState(""); // 'pointBuy', 'quickPick', 'rollForScore'
-  const [scores, setScores] = useState({
+  const [method, setMethod] = useState(formData.method || "");
+
+  const initialScores = formData.scores || {
     STR: 10,
     DEX: 10,
     CON: 10,
     INT: 10,
     WIS: 10,
     CHA: 10,
-  });
+  };
+  const [scores, setScores] = useState(initialScores);
+  const initialRemainingPoints = formData.remainingPoints || 10;
+  const [remainingPoints, setRemainingPoints] = useState(
+    initialRemainingPoints
+  );
+  const initialRolledScores = formData.rolledScores || [];
+  const [allocatableScores, setAllocatableScores] =
+    useState(initialRolledScores);
+  const [previousMethod, setPreviousMethod] = useState(null);
 
   //   KeyAbility highlights
   const isKeyAbility = (stat) => formData.class?.KeyAbility === stat;
@@ -36,32 +46,68 @@ const Step3 = ({ updateFormData, formData }) => {
     return { raceAdj, themeAdj };
   };
 
-  //   Point Buy
-  const [remainingPoints, setRemainingPoints] = useState(10);
+  // Reset logic
+  const resetToBaseScores = () => {
+    const adjustedScores = {
+      STR:
+        10 +
+        (totalAdjustment("STR").raceAdj || 0) +
+        (totalAdjustment("STR").themeAdj || 0),
+      DEX:
+        10 +
+        (totalAdjustment("DEX").raceAdj || 0) +
+        (totalAdjustment("DEX").themeAdj || 0),
+      CON:
+        10 +
+        (totalAdjustment("CON").raceAdj || 0) +
+        (totalAdjustment("CON").themeAdj || 0),
+      INT:
+        10 +
+        (totalAdjustment("INT").raceAdj || 0) +
+        (totalAdjustment("INT").themeAdj || 0),
+      WIS:
+        10 +
+        (totalAdjustment("WIS").raceAdj || 0) +
+        (totalAdjustment("WIS").themeAdj || 0),
+      CHA:
+        10 +
+        (totalAdjustment("CHA").raceAdj || 0) +
+        (totalAdjustment("CHA").themeAdj || 0),
+    };
+    setRemainingPoints(10)
+    setScores(adjustedScores);
+  };
+  
+
+  // Point Buy
   const calculateRemainingPoints = (currentScores) => {
-    // Calculate the total adjustments
-    const totalAdjustments = Object.keys(currentScores).reduce(
-      (acc, key) =>
-        acc + totalAdjustment(key).raceAdj + totalAdjustment(key).themeAdj,
-      0
-    );
-
     // Calculate the total points used excluding adjustments
-    const totalPointsUsed = Object.values(currentScores).reduce(
-      (acc, score, index, arr) =>
-        acc + (score - 10 - totalAdjustments / arr.length),
+    const totalPointsUsed = Object.keys(currentScores).reduce(
+      (acc, ability) => {
+        const adj =
+          totalAdjustment(ability).raceAdj + totalAdjustment(ability).themeAdj;
+        return acc + (currentScores[ability] - 10 - adj);
+      },
       0
     );
-
+    // console.log("Remaining p from calc: " + remainingPoints)
     return 10 - totalPointsUsed;
   };
-  const handlePointBuy = (stat, change) => {
-    const newScores = { ...scores, [stat]: scores[stat] + change };
-    const newRemainingPoints = calculateRemainingPoints(newScores);
 
-    setScores(newScores);
-    setRemainingPoints(newRemainingPoints);
-    updateFormData("scores", newScores);
+  const handlePointBuy = (stat, change) => {
+    setScores((prevScores) => {
+      const newScores = { ...prevScores, [stat]: prevScores[stat] + change };
+      const newRemainingPoints = calculateRemainingPoints(newScores);
+
+      // Update the formData right here
+      updateFormData("scores", newScores);
+
+      // Update the remaining points
+      setRemainingPoints(newRemainingPoints);
+
+      return newScores;
+    });
+    // console.log("Remaining p from pointbuy: " + remainingPoints)
   };
 
   // Roll for scores
@@ -74,8 +120,7 @@ const Step3 = ({ updateFormData, formData }) => {
     CHA: "",
   });
 
-  //Manual entry logic
-  //Roll dice logic
+  //Manual/Dice Roll entry logic
   const rollDice = () => {
     let rolls = [];
     for (let i = 0; i < 4; i++) {
@@ -86,8 +131,6 @@ const Step3 = ({ updateFormData, formData }) => {
     return rolls.reduce((a, b) => a + b); // Sum up the rolls
   };
   //Roll button click
-  const [allocatableScores, setAllocatableScores] = useState([]);
-
   const handleRollForScore = () => {
     let rolledScores = [];
     for (let i = 0; i < 6; i++) {
@@ -95,23 +138,25 @@ const Step3 = ({ updateFormData, formData }) => {
     }
     setAllocatableScores(rolledScores);
   };
-  const handleManualEntry = (stat, value) => {
-    setScores((prevScores) => ({
-      ...prevScores,
-      [stat]: value,
-    }));
-    updateFormData("scores", scores);
-  };
   const handleScoreAdjust = (stat, change) => {
     const newScores = { ...scores, [stat]: scores[stat] + change };
     setScores(newScores);
     updateFormData("scores", newScores);
-};
+  };
 
   //Set adjusted base scores
-  const [previousMethod, setPreviousMethod] = useState(null);
+
+  //Needed for previous rerender
   useEffect(() => {
-    if (method !== previousMethod) {
+    if (method === "pointBuy") {
+      const newRemainingPoints = calculateRemainingPoints(scores);
+      setRemainingPoints(newRemainingPoints);
+    }
+    setPreviousMethod(method);
+  }, [method]);
+  // Neede dfor previous rerender
+  useEffect(() => {
+    if (formData.method !== method) {
       const adjustedScores = {
         STR:
           10 +
@@ -140,11 +185,21 @@ const Step3 = ({ updateFormData, formData }) => {
       };
 
       setScores(adjustedScores);
-      setRemainingPoints(10);
-      setPreviousMethod(method);
     }
-  }, [method, formData, previousMethod]);
+  }, [formData]);
 
+  // Keep method persistent
+  useEffect(() => {
+    updateFormData("method", method);
+  }, [method]);
+  // Keep points persistent
+  useEffect(() => {
+    updateFormData("remainingPoints", remainingPoints);
+  }, [remainingPoints]);
+  // Keep rolled scores persistent
+  useEffect(() => {
+    updateFormData("rolledScores", allocatableScores);
+  }, [allocatableScores]);
   //Update Scores to formData
   useEffect(() => {
     updateFormData("scores", scores);
@@ -161,6 +216,7 @@ const Step3 = ({ updateFormData, formData }) => {
           <Radio value="manualEntry">Manual/Rolled Entry</Radio>
         </Stack>
       </RadioGroup>
+      <Button onClick={resetToBaseScores} mt={4}>Reset to Base Scores</Button>
 
       {method === "pointBuy" && (
         <Box textAlign="center">
@@ -273,8 +329,8 @@ const Step3 = ({ updateFormData, formData }) => {
                     {stat}
                   </Text>
                   <Text fontSize="2rem" fontWeight="bold" mb={4}>
-                  {scores[stat]}
-                </Text>
+                    {scores[stat]}
+                  </Text>
                   {totalAdjustment(stat).raceAdj !== 0 && (
                     <Box>
                       <Text as="span" fontSize="1.2rem">
@@ -295,24 +351,23 @@ const Step3 = ({ updateFormData, formData }) => {
                           "Theme"
                         )}
                       </Text>
-                    
                     </Box>
                   )}
-                    <Box>
-                        <Button
-                            size="sm"
-                            onClick={() => handleScoreAdjust(stat, -1)}
-                        >
-                            -
-                        </Button>
-                        <Button
-                            size="sm"
-                            ml={4}
-                            onClick={() => handleScoreAdjust(stat, 1)}
-                        >
-                            +
-                        </Button>
-                    </Box>
+                  <Box>
+                    <Button
+                      size="sm"
+                      onClick={() => handleScoreAdjust(stat, -1)}
+                    >
+                      -
+                    </Button>
+                    <Button
+                      size="sm"
+                      ml={4}
+                      onClick={() => handleScoreAdjust(stat, 1)}
+                    >
+                      +
+                    </Button>
+                  </Box>
                 </Box>
               </Box>
             ))}

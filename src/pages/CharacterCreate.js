@@ -71,9 +71,10 @@ const CharacterCreate = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  useEffect(() => {
-    console.log(formData)
-  }, [formData])
+  // useEffect(() => {
+  //   console.log(formData)
+  // }, [formData])
+  
 
   return (
     <Center
