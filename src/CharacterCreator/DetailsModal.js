@@ -15,32 +15,17 @@ import {
   AccordionIcon,
   Box,
 } from "@chakra-ui/react";
-import { useState } from "react";
 
-const DetailsModal = ({
-  isOpen,
-  onClose,
-  option,
-  options,
-  onSelect,
-  details,
-  selectedAbility,
-  setSelectedAbility,
-}) => {
+const DetailsModal = ({ isOpen, onClose, option, options, onSelect, details }) => {
   // Selected Option for each
   const handleSelectOption = (optionDetail) => {
-    // Check if an ability option has been selected and overwrite it
-    setSelectedAbility(null);
-    if (selectedAbility) {
-      optionDetail.Ability = selectedAbility;
-    }
     onSelect(optionDetail);
     onClose();
   };
 
-  //   Format description
+  // Format description
   const formatDescription = (desc) => {
-    if (!desc) return null; // Add this line
+    if (!desc) return null;
     return desc.split(".").map((chunk, index) => {
       const parts = chunk.split(":");
       if (parts.length > 1) {
@@ -57,30 +42,6 @@ const DetailsModal = ({
   // Render out details of each
   const renderDetails = (detailType, details) => {
     switch (detailType) {
-      case "class":
-        return (
-          <>
-            <Text>
-              <strong>Name:</strong> {details.Name}
-            </Text>
-            <Text>
-              <strong>Stamina Points:</strong> {details.StaminaPoints}
-            </Text>
-            <Text>
-              <strong>HP:</strong> {details.HP}
-            </Text>
-            <Text>
-              <strong>Description:</strong> {details.Description}
-            </Text>
-            <Text>
-              <strong>Key Ability Description:</strong>{" "}
-              {details.KeyAbilityDescription}
-            </Text>
-            <Text>
-              <strong>Key Ability:</strong> {details.KeyAbility}
-            </Text>
-          </>
-        );
       case "race":
         return (
           <>
@@ -102,6 +63,30 @@ const DetailsModal = ({
             <Text>
               <strong>Description:</strong>{" "}
               {formatDescription(details.Description)}
+            </Text>
+          </>
+        );
+      case "class":
+        return (
+          <>
+            <Text>
+              <strong>Name:</strong> {details.Name}
+            </Text>
+            <Text>
+              <strong>Stamina Points:</strong> {details.StaminaPoints}
+            </Text>
+            <Text>
+              <strong>HP:</strong> {details.HP}
+            </Text>
+            <Text>
+              <strong>Description:</strong> {details.Description}
+            </Text>
+            <Text>
+              <strong>Key Ability Description:</strong>{" "}
+              {details.KeyAbilityDescription}
+            </Text>
+            <Text>
+              <strong>Key Ability:</strong> {details.KeyAbility}
             </Text>
           </>
         );
@@ -130,7 +115,6 @@ const DetailsModal = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay bg="rgba(0, 0, 0, 0.6)" />
-
       <ModalContent borderRadius="md" width="70vw" maxWidth="70vw">
         <ModalHeader
           color="black"
@@ -152,7 +136,6 @@ const DetailsModal = ({
             bg="none"
           />
         </ModalHeader>
-
         <ModalBody>
           <VStack
             spacing={4}

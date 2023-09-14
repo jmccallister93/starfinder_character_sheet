@@ -15,9 +15,14 @@ import SessionContext from "../client/SessionContex";
 import { useNavigate, useLocation } from "react-router-dom";
 import Step1 from "../CharacterCreator/Step1";
 import Step2 from "../CharacterCreator/Step2";
+
+
+import Step5 from "../CharacterCreator/Step8";
+import Step6 from "../CharacterCreator/Step6";
+import Step7 from "../CharacterCreator/Step7";
+import Step8 from "../CharacterCreator/Step8";
 import Step3 from "../CharacterCreator/Step3";
 import Step4 from "../CharacterCreator/Step4";
-import Step5 from "../CharacterCreator/Step5";
 
 const CharacterCreate = () => {
   const navigate = useNavigate();
@@ -55,7 +60,7 @@ const CharacterCreate = () => {
 
   // Stepper for setup
   const [currentStep, setCurrentStep] = useState(1);
-  const [totalSteps, setTotalSteps] = useState(6);
+  const [totalSteps, setTotalSteps] = useState(12);
 
   const handleNext = () => {
     // Validation logic here...
@@ -71,9 +76,9 @@ const CharacterCreate = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // useEffect(() => {
-  //   console.log(formData)
-  // }, [formData])
+  useEffect(() => {
+    console.log(formData)
+  }, [formData])
   
 
   return (
@@ -115,8 +120,17 @@ const CharacterCreate = () => {
         {currentStep === 4 && (
           <Step4 updateFormData={updateFormData} formData={formData} />
         )}
-        {currentStep === 5 && (
+        {/* {currentStep === 5 && (
           <Step5 updateFormData={updateFormData} formData={formData} />
+        )} */}
+          {currentStep === 6 && (
+          <Step6 updateFormData={updateFormData} formData={formData} />
+        )}
+          {currentStep === 7 && (
+          <Step7 updateFormData={updateFormData} formData={formData} />
+        )}
+          {currentStep === 8 && (
+          <Step8 updateFormData={updateFormData} formData={formData} />
         )}
 
         <Box>

@@ -1,247 +1,224 @@
-import React from "react";
-import { Box, Text, Button, Input, Flex } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  FormControl,
+  FormLabel,
+  Button,
+  Text,
+  Radio,
+  RadioGroup,
+  Stack,
+  useDisclosure,
+} from "@chakra-ui/react";
+import DetailsModal from "./DetailsModal";
+import { supabase } from "../client/supabaseClient";
 
-const skillsList = [
-  "Acrobatics",
-  "Athletics",
-  "Bluff",
-  "Computers",
-  "Culture",
-  "Diplomacy",
-  "Disguise",
-  "Engineering",
-  "Intimidate",
-  "Life Science",
-  "Medicine",
-  "Mysticism",
-  "Perception",
-  "Physical Science",
-  "Piloting",
-  "Profession",
-  "Sense Motive",
-  "Sleight of Hand",
-  "Stealth",
-  "Survival",
-];
+const Step4 = ({ updateFormData, formData, themeData }) => {
+  const [selectedAbility, setSelectedAbility] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalOptions, setModalOptions] = useState([]);
+  const [selectedClassSkill, setSelectedClassSkill] = useState(null);
 
-const classSkills = {
-  Envoy: [
-    "Bluff",
-    "Computers",
-    "Culture",
-    "Diplomacy",
-    "Disguise",
-    "Intimidate",
-    "Perception",
-    "Profession",
-    "Sense Motive",
-  ],
-  Mechanic: [
-    "Athletics",
-    "Computers",
-    "Engineering",
-    "Medicine",
-    "Perception",
-    "Physical Science",
-    "Piloting",
-    "Profession",
-  ],
-  Mystic: [
-    "Culture",
-    "Diplomacy",
-    "Life Science",
-    "Medicine",
-    "Mysticism",
-    "Perception",
-    "Profession",
-    "Sense Motive",
-    "Survival",
-  ],
-  Operative: [
-    "Acrobatics",
-    "Athletics",
-    "Bluff",
-    "Computers",
-    "Culture",
-    "Disguise",
-    "Engineering",
-    "Intimidate",
-    "Medicine",
-    "Perception",
-    "Piloting",
-    "Profession",
-    "Sense Motive",
-    "Sleight of Hand",
-    "Stealth",
-    "Survival",
-  ],
-  Solarian: [
-    "Acrobatics",
-    "Athletics",
-    "Diplomacy",
-    "Intimidate",
-    "Mysticism",
-    "Perception",
-    "Physical Science",
-    "Profession",
-    "Sense Motive",
-    "Stealth",
-  ],
-  Soldier: [
-    "Acrobatics",
-    "Athletics",
-    "Engineering",
-    "Intimidate",
-    "Medicine",
-    "Piloting",
-    "Profession",
-    "Survival",
-  ],
-  Technomancer: [
-    "Computers",
-    "Engineering",
-    "Life Science",
-    "Mysticism",
-    "Physical Science",
-    "Piloting",
-    "Profession",
-  ],
-  Biohacker: [
-    "Bluff",
-    "Computers",
-    "Culture",
-    "Diplomacy",
-    "Engineering",
-    "Life Science",
-    "Medicine",
-    "Perception",
-    "Physical Science",
-    "Profession",
-    "Sense Motive",
-    "Sleight of Hand",
-  ],
-  Vanguard: [
-    "Acrobatics",
-    "Athletics",
-    "Culture",
-    "Diplomacy",
-    "Intimidate",
-    "Life Science",
-    "Medicine",
-    "Mysticism",
-    "Perception",
-    "Profession",
-    "Stealth",
-    "Survival",
-  ],
-  Witchwarper: [
-    "Acrobatics",
-    "Bluff",
-    "Culture",
-    "Diplomacy",
-    "Intimidate",
-    "Mysticism",
-    "Physical Science",
-    "Profession",
-  ],
-};
-const skillPointsPerLevel = {
-    "Biohacker": 4,
-    "Envoy": 8,
-    "Evolutionist": 4,
-    "Mechanic": 4,
-    "Mystic": 6,
-    "Nanocyte": 6,
-    "Operative": 8,
-    "Precog": 6,
-    "Solarian": 4,
-    "Soldier": 4,
-    "Technomancer":4,
-    "Vanguard": 6,
-    "Witchwarper": 4
-  };
+  // Format Description property
+  const formatDescription = (desc) => {
+    if (!desc) return null;
 
-
-  const Step4 = ({ updateFormData, formData }) => {
-    const [skills, setSkills] = React.useState({});
-  
-    // This function determines if the given skill is a class skill for the selected class
-    const isClassSkill = (skillName) => {
-        return classSkills[formData.class.Name]?.includes(skillName);
-    };
-  
-    // This function handles the changes made to skill ranks by the user
-    const handleSkillChange = (skillName, value) => {
-        const totalSkillRanksAllocated = Object.values(skills).reduce((acc, curr) => acc + (curr || 0), 0);
-        
-        if (value >= 0 && totalSkillRanksAllocated + value - (skills[skillName] || 0) <= skillPointsPerLevel[formData.class?.Name]) {
-            setSkills((prevSkills) => ({
-                ...prevSkills,
-                [skillName]: value
-            }));
-        }
-    };
-    
-    
-
-    const getSkillBonus = (skillName) => {
-        const rankBonus = skills[skillName] || 0; // Bonus from the ranks invested
-        const classSkillBonus = isClassSkill(skillName) ? 3 : 0; // +3 bonus if it's a class skill
-        return rankBonus + classSkillBonus;
-    };
-    
-  
-    React.useEffect(() => {
-      updateFormData("skills", skills);
-    }, [skills]);
-  
-    const incrementSkill = (skillName) => {
-        const currentRank = skills[skillName] || 0;
-        if (currentRank < 1) { // Ensure that a skill doesn't get more than 1 rank
-            handleSkillChange(skillName, currentRank + 1);
-        }
-    };
-      
-    const decrementSkill = (skillName) => {
-        const currentRank = skills[skillName] || 0;
-        handleSkillChange(skillName, currentRank - 1);
-    };
-    
-    
-      const totalSkillRanksAllocated = Object.values(skills).reduce((acc, curr) => acc + (curr || 0), 0);
-      const skillPointsForClass = skillPointsPerLevel[formData.class.Name] || 0;
-      const skillPointsRemaining = skillPointsForClass - totalSkillRanksAllocated;
-  
-      return (
-        <Box>
-          <Text fontSize="2rem" textAlign="center" fontWeight="bold">
-            Step 4: Skills
+    return desc.split(".").map((chunk, index) => {
+      const parts = chunk.split(":");
+      if (parts.length > 1) {
+        return (
+          <Text key={index}>
+            <strong>{parts[0].trim() + ":"}</strong> {parts[1]}
           </Text>
-    
-          <Text fontSize="1.5rem">Skill Points Remaining: {skillPointsRemaining}</Text>
-    
-          <Flex wrap="wrap" justifyContent="space-between" mt={4}>
-                {skillsList.map((skill, index) => (
-                    <Flex key={index} mb={3} w="30%" alignItems="center" justifyContent="space-between">
-                        <Text fontSize="1.2rem" flex="1">
-                            {skill} {isClassSkill(skill) ? "(Class Skill)" : ""}
-                        </Text>
-                        <Text ml={2} mr={2} display="inline">
-                            +{getSkillBonus(skill)}
-                        </Text>
-                        <Box>
-                            <Button size="sm" onClick={() => decrementSkill(skill)} disabled={skills[skill] <= 0}>-</Button>
-                            <Text ml={2} mr={2} display="inline">
-                                {skills[skill] || 0}
-                            </Text>
-                            <Button size="sm" onClick={() => incrementSkill(skill)}>+</Button>
-                        </Box>
-                    </Flex>
-                ))}
-            </Flex>
-        </Box>
-      );
+        );
+      }
+      return <Text key={index}>{chunk}</Text>;
+    });
   };
-  
+
+  const handleAbilityChange = (value) => {
+    setSelectedAbility(value);
+
+    // Extract the ability name from the value (e.g., extract "STR" from "+1 STR")
+    const abilityName = value.split(" ").pop();
+
+    // Define the adjustments based on the selected ability only
+    const updatedAdjustments = {
+      [abilityName]: parseInt(value),
+    };
+
+    // Update the formData with the new adjustments and selected ability
+    updateFormData("theme", {
+      ...formData.theme,
+      Ability: value,
+    });
+    updateFormData("themeAbilityAdjustments", updatedAdjustments);
+  };
+
+  const handleClassSkillChange = (value) => {
+    setSelectedClassSkill(value);
+
+    const updatedThemeData = {
+      ...formData.theme,
+      ClassSkill: value,
+    };
+
+    updateFormData("theme", updatedThemeData);
+  };
+
+  // Handle button click for each to show popup
+  const handleButtonClick = (options) => {
+    setModalOptions(options);
+    onOpen();
+  };
+
+  const handleThemeSelect = (value) => {
+    if (value.Ability && typeof value.Ability === "string") {
+      const adjustments = extractAbilityAdjustments(value.Ability);
+      updateFormData("theme", value);
+      updateFormData("themeAbilityAdjustments", adjustments);
+    } else {
+      updateFormData("theme", value);
+    }
+    onClose();
+  };
+
+  const extractAbilityAdjustments = (adjustmentString) => {
+    const adjustments = adjustmentString.split(",").map((s) => s.trim());
+    const result = {};
+    adjustments.forEach((adj) => {
+      const match = adj.match(/([+-]\d+)\s+(\w+)/);
+      if (match) {
+        const value = parseInt(match[1], 10);
+        const ability = match[2];
+        result[ability] = (result[ability] || 0) + value;
+      }
+    });
+    return result;
+  };
+  // Fetch data function
+  const fetchData = async () => {
+    const result = await supabase.from("themes").select("*");
+    return result.data || [];
+  };
+
+  // Empty data arrays
+  const [data, setData] = useState({
+    themes: [],
+  });
+
+  const [themeDetails, setThemeDetails] = useState({});
+
+  // Fetch Data
+  useEffect(() => {
+    fetchData().then((fetchedData) => {
+      setData({ themes: fetchedData });
+
+      const themeDetailsObj = {};
+      fetchedData.forEach((theme) => {
+        themeDetailsObj[theme.Name] = theme;
+      });
+      setThemeDetails(themeDetailsObj);
+    });
+  }, []);
+
+  return (
+    <Box color="white" background="grey">
+      <Text fontSize="2rem" textAlign="center" fontWeight="bold">
+        Step 4: Theme
+      </Text>
+      <FormControl id="theme" mb={4}>
+        <FormLabel fontSize="1.8rem">Theme</FormLabel>
+        <Button
+          onClick={() =>
+            handleButtonClick(data.themes.map((theme) => theme.Name))
+          }
+        >
+          Select Theme
+        </Button>
+        {formData.theme ? (
+          <>
+            <Text mt={2}>
+              <strong>Name:</strong> {formData.theme?.Name}
+            </Text>
+            {formData.theme.Ability.includes(",") ? (
+              <>
+                <Text fontWeight="bold">Select an Ability</Text>
+                <RadioGroup
+                  onChange={handleAbilityChange}
+                  value={selectedAbility}
+                >
+                  <Stack spacing={3} direction="column">
+                    {formData.theme.Ability.split(", ").map(
+                      (abilityOption, idx) => (
+                        <Radio
+                          key={idx}
+                          value={abilityOption.trim()}
+                          border="1px solid white"
+                          borderRadius="50px"
+                          borderWidth="0.5rem"
+                        >
+                          {abilityOption.trim()}
+                        </Radio>
+                      )
+                    )}
+                  </Stack>
+                </RadioGroup>
+              </>
+            ) : (
+              <Text mt={2}>
+                <strong>Ability:</strong> {formData.theme?.Ability}
+              </Text>
+            )}
+
+            {formData.theme?.ClassSkill?.includes("or") ? (
+              <>
+                <Text fontWeight="bold">Select a Class Skill</Text>
+                <RadioGroup
+                  onChange={handleClassSkillChange}
+                  value={selectedClassSkill}
+                >
+                  <Stack spacing={3} direction="column">
+                    {formData.theme.ClassSkill.split("or").map(
+                      (abilityOption, idx) => (
+                        <Radio
+                          key={idx}
+                          value={abilityOption.trim()}
+                          border="1px solid white"
+                          borderRadius="50px"
+                          borderWidth="0.5rem"
+                        >
+                          {abilityOption.trim()}
+                        </Radio>
+                      )
+                    )}
+                  </Stack>
+                </RadioGroup>
+              </>
+            ) : (
+                <Text mt={2}>
+                  <strong>Class Skill:</strong> {formData.theme?.ClassSkill}
+                </Text>
+              )}
+          
+              <Text mt={2}>
+                <strong>Description:</strong> {formData.theme?.Description}
+              </Text>
+            </>
+        ) : null}
+      </FormControl>
+
+      {/* Modal for theme details */}
+      <DetailsModal
+        isOpen={isOpen}
+        onClose={onClose}
+        option="theme"
+        options={modalOptions}
+        onSelect={handleThemeSelect}
+        details={themeDetails}
+      />
+    </Box>
+  );
+};
 
 export default Step4;

@@ -5,7 +5,7 @@ import featPrerequisites from "./featsPrerequisites";
 
 const MAX_FEATS = 1;
 
-const Step5 = ({ updateFormData, formData }) => {
+const Step8 = ({ updateFormData, formData }) => {
     const [featsList, setFeatsList] = useState([]);
     const [selectedFeats, setSelectedFeats] = useState([]);
 
@@ -99,4 +99,4 @@ const Step5 = ({ updateFormData, formData }) => {
     );
 };
 
-export default Step5;
+export default Step8;

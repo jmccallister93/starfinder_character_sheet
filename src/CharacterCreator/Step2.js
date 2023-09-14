@@ -5,10 +5,6 @@ import {
   useDisclosure,
   Button,
   Text,
-  Checkbox,
-  Radio,
-  RadioGroup,
-  Stack,
 } from "@chakra-ui/react";
 import DetailsModal from "./DetailsModal";
 import { useEffect, useState } from "react";
@@ -16,7 +12,6 @@ import { supabase } from "../client/supabaseClient";
 
 const Step2 = ({ updateFormData, formData }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedOption, setSelectedOption] = useState(null);
   const [modalOptions, setModalOptions] = useState([]);
 
   // Format Description property
@@ -36,43 +31,7 @@ const Step2 = ({ updateFormData, formData }) => {
     });
   };
 
-  // Theme ability select
-  const [selectedAbility, setSelectedAbility] = useState(null);
-  const handleAbilityChange = (value) => {
-    setSelectedAbility(value);
-
-    // Extract the ability name from the value (e.g., extract "STR" from "+1 STR")
-    const abilityName = value.split(" ").pop();
-
-    // Define the adjustments based on the selected ability only
-    const updatedAdjustments = {
-      [abilityName]: parseInt(value),
-    };
-
-    // Update the formData with the new adjustments and selected ability
-    updateFormData("theme", {
-      ...formData.theme,
-      Ability: value,
-    });
-    updateFormData("themeAbilityAdjustments", updatedAdjustments);
-  };
-
-  // Key Ability Select
-  const [selectedKeyAbility, setSelectedKeyAbility] = useState(null);
-  const handleKeyAbilityChange = (value) => {
-    setSelectedKeyAbility(value);
-
-    // Update the KeyAbility for the class
-    const updatedClassData = {
-      ...formData.class,
-      KeyAbility: value,
-    };
-
-    // Update the formData with the new class data
-    updateFormData("class", updatedClassData);
-  };
-
-  //Ability score adjustments based on race/theme
+  // Ability score adjustments based on race
   const extractAbilityAdjustments = (adjustmentString) => {
     const adjustments = adjustmentString.split(",").map((s) => s.trim());
     const result = {};
@@ -87,20 +46,8 @@ const Step2 = ({ updateFormData, formData }) => {
     return result;
   };
 
-  const calculateTotalAdjustments = (themeAdjustment, raceAdjustment) => {
-    // This is just an example with two sources. Add more sources if needed.
-    const allAdjustments = { ...themeAdjustment, ...raceAdjustment };
-    const totalAdjustments = {};
-    for (const ability in allAdjustments) {
-      totalAdjustments[ability] =
-        (totalAdjustments[ability] || 0) + allAdjustments[ability];
-    }
-    return totalAdjustments;
-  };
-
   // Handle button click for each to show popup
-  const handleButtonClick = (type, options) => {
-    setSelectedOption(type);
+  const handleButtonClick = (options) => {
     setModalOptions(options);
     onOpen();
   };
@@ -110,99 +57,44 @@ const Step2 = ({ updateFormData, formData }) => {
     const adjustments = extractAbilityAdjustments(value.Ability);
     updateFormData("race", value);
     updateFormData("raceAbilityAdjustments", adjustments);
-  };
-  const handleThemeSelect = (value) => {
-    if (
-      value.Ability &&
-      typeof value.Ability === "string"
-    ) {
-      const adjustments = extractAbilityAdjustments(value.Ability);
-      updateFormData("theme", value);
-      updateFormData("themeAbilityAdjustments", adjustments);
-    } else {
-      updateFormData("theme", value);
-    }
-  };
-  const handleClassSelect = (value) => {
-    updateFormData("class", value);
+    onClose();
   };
 
   // Fetch data function
   const fetchData = async () => {
-    const categories = ["classes", "races", "themes"];
-
-    const results = await Promise.all(
-      categories.map((category) => supabase.from(category).select("*")) // Change "Name" to "*" to fetch all columns
-    );
-
-    const data = {};
-
-    results.forEach((result, index) => {
-      const category = categories[index];
-      if (result.error) {
-        console.error(`Error fetching ${category}:`, result.error);
-        data[category] = [];
-      } else {
-        data[category] = result.data;
-      }
-    });
-
-    return data;
+    const result = await supabase.from("races").select("*");
+    return result.data || [];
   };
 
   // Empty data arrays
   const [data, setData] = useState({
-    classes: [],
     races: [],
-    themes: [],
   });
 
-  const [classDetails, setClassDetails] = useState({});
   const [raceDetails, setRaceDetails] = useState({});
-  const [themeDetails, setThemeDetails] = useState({});
 
   // Fetch Data
   useEffect(() => {
     fetchData().then((fetchedData) => {
-      setData(fetchedData);
+      setData({ races: fetchedData });
 
-      // Create an object with class names as keys and their details as values
-      const classDetailsObj = {};
-      fetchedData.classes.forEach((cls) => {
-        classDetailsObj[cls.Name] = cls;
-      });
-      setClassDetails(classDetailsObj);
-
-      // Do the same for races
       const raceDetailsObj = {};
-      fetchedData.races.forEach((race) => {
+      fetchedData.forEach((race) => {
         raceDetailsObj[race.Name] = race;
       });
       setRaceDetails(raceDetailsObj);
-
-      // And for themes
-      const themeDetailsObj = {};
-      fetchedData.themes.forEach((theme) => {
-        themeDetailsObj[theme.Name] = theme;
-      });
-      setThemeDetails(themeDetailsObj);
     });
   }, []);
 
   return (
     <Box color="white" background="grey">
       <Text fontSize="2rem" textAlign="center" fontWeight="bold">
-        Step 2: Race, Theme, Class
+        Step 2: Race
       </Text>
       <FormControl id="race" mb={4}>
         <FormLabel fontSize="1.8rem">Race</FormLabel>
         <Button
-          onClick={() =>
-            handleButtonClick(
-              "race",
-              data.races.map((race) => race.Name)
-            )
-          }
+          onClick={() => handleButtonClick(data.races.map((race) => race.Name))}
         >
           Select Race
         </Button>
@@ -232,148 +124,14 @@ const Step2 = ({ updateFormData, formData }) => {
         ) : null}
       </FormControl>
 
-      <FormControl id="theme" mb={4}>
-        <FormLabel fontSize="1.8rem">Theme</FormLabel>
-        <Button
-          onClick={() =>
-            handleButtonClick(
-              "theme",
-              data.themes.map((theme) => theme.Name)
-            )
-          }
-        >
-          Select Theme
-        </Button>
-        {formData.theme ? (
-          <>
-            <Text mt={2}>
-              <strong>Name:</strong> {formData.theme?.Name}
-            </Text>
-            {formData.theme && formData.theme.Ability.includes(",") ? (
-              <>
-                <Text fontWeight="bold">Select an Ability</Text>
-                <RadioGroup
-                  onChange={handleAbilityChange}
-                  value={selectedAbility}
-                >
-                  <Stack spacing={3} direction="column">
-                    {formData.theme.Ability.split(", ").map(
-                      (abilityOption, idx) => (
-                        <Radio
-                          key={idx}
-                          value={abilityOption.trim()}
-                          border="1px solid white"
-                          borderRadius="50px"
-                          borderWidth="0.5rem"
-                        >
-                          {abilityOption.trim()}
-                        </Radio>
-                      )
-                    )}
-                  </Stack>
-                </RadioGroup>
-              </>
-            ) : (
-              <Text mt={2}>
-                <strong>Ability:</strong> {formData.theme?.Ability}
-              </Text>
-            )}
-
-            <Text mt={2}>
-              <strong>Class Skill:</strong> {formData.theme?.ClassSkill}
-            </Text>
-            <Text mt={2}>
-              <strong>Description:</strong> {formData.theme?.Description}
-            </Text>
-          </>
-        ) : null}
-      </FormControl>
-
-      <FormControl id="class" mb={4}>
-        <FormLabel fontSize="1.8rem">Class</FormLabel>
-        <Button
-          onClick={() =>
-            handleButtonClick(
-              "class",
-              data.classes.map((cls) => cls.Name)
-            )
-          }
-        >
-          Select Class
-        </Button>
-        {formData.class ? (
-          <>
-            <Text mt={2}>
-              <strong>Name:</strong> {formData.class?.Name}
-            </Text>
-            <Text mt={2}>
-              <strong>Stamina Points:</strong> {formData.class?.StaminaPoints}
-            </Text>
-            <Text mt={2}>
-              <strong>HP:</strong> {formData.class?.HP}
-            </Text>
-            <Text mt={2}>
-              <strong>Description:</strong> {formData.class?.Description}
-            </Text>
-            <Text mt={2}>
-              <strong>Key Ability Description:</strong>{" "}
-              {formData.class?.KeyAbilityDescription}
-            </Text>
-            {formData.class && formData.class.KeyAbility.includes("or") ? (
-              <>
-                <Text fontWeight="bold">Select a Key Ability</Text>
-                <RadioGroup
-                  onChange={handleKeyAbilityChange}
-                  value={selectedKeyAbility}
-                >
-                  <Stack spacing={3} direction="column">
-                    {formData.class.KeyAbility.split("or").map(
-                      (abilityOption, idx) => (
-                        <Radio
-                          key={idx}
-                          value={abilityOption.trim()}
-                          border="1px solid white"
-                          borderRadius="50px"
-                          borderWidth="0.5rem"
-                        >
-                          {abilityOption.trim()}
-                        </Radio>
-                      )
-                    )}
-                  </Stack>
-                </RadioGroup>
-              </>
-            ) : (
-              <Text mt={2}>
-                <strong>Key Ability:</strong> {formData.class?.KeyAbility}
-              </Text>
-            )}
-          </>
-        ) : null}
-      </FormControl>
-
       {/* Modal for details */}
       <DetailsModal
         isOpen={isOpen}
         onClose={onClose}
-        option={selectedOption}
+        option="race"
         options={modalOptions}
-        // onSelect={handleModalSelect}
-        onSelect={
-          selectedOption === "race"
-            ? handleRaceSelect
-            : selectedOption === "theme"
-            ? handleThemeSelect
-            : handleClassSelect
-        }
-        details={
-          selectedOption === "class"
-            ? classDetails
-            : selectedOption === "race"
-            ? raceDetails
-            : themeDetails
-        }
-        setSelectedAbility={setSelectedAbility}
+        onSelect={handleRaceSelect}
+        details={raceDetails}
       />
     </Box>
   );
