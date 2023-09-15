@@ -18,11 +18,14 @@ import EquipmentModal from "./EquipmentModal";
 const Step8 = ({ updateFormData, formData }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedItem, setSelectedItem] = useState(null);
-  const [modalOptions, setModalOptions] = useState([]);
-  const [remainingCredits, setRemainingCredits] = useState(formData.remainingCredits || 1000);
-  const [currentInventory, setCurrentInventory] = useState(formData.inventory || []);
+  const [modalOption, setModalOption] = useState([]);
+  const [remainingCredits, setRemainingCredits] = useState(
+    formData.remainingCredits || 1000
+  );
+  const [currentInventory, setCurrentInventory] = useState(
+    formData.inventory || []
+  );
   const [fetchedData, setFetchedData] = useState([]);
-
 
   const categories = {
     Armor: ["Basic", "Upgrades", "Shields", "Powered"],
@@ -52,122 +55,125 @@ const Step8 = ({ updateFormData, formData }) => {
   const fetchDataFromTable = async (tableName) => {
     const { data, error } = await supabase.from(tableName).select("*");
     if (error) {
-        console.error(`Error fetching data from ${tableName}:`, error);
+      console.error(`Error fetching data from ${tableName}:`, error);
     } else {
-        setFetchedData(data || []);
+      setFetchedData(data || []);
     }
-};
+    
+  };
 
-// Button click when item type is clicked
+  // Button click when item type is clicked
   const handleButtonClick = (options) => {
-    setModalOptions(options)
+    
+    setModalOption(options);
     let tableName = "";
     switch (options) {
-        case "Basic":
-            tableName = "armorBasic";
-          break;
-        case "Upgrades":
-            tableName = "armorUpgrades";
-          break;
-        case "Shields":
-            tableName = "armorShields";
-          break;
-        case "Powered":
-          tableName = "armorPowered";
-          break;
-        case "Drugs":
-         tableName = "armorUpgrades";;
-          break;
-        case "Hybrid":
-          tableName = "itemsHybrid";;
-          break;
-        case "Magic":
-          tableName = "itemsMagic";;
-          break;
-        case "Medicine":
-          tableName = "itemsMedicine";;
-          break;
-        case "Personal":
-          tableName = "itemsPersonal";;
-          break;
-        case "Poisons":
-          tableName = "itemsPoisons";;
-          break;
-        case "Technological":
-          tableName = "itemsTechnological";;
-          break;
-        case "Trade Goods":
-          tableName = "itemsTradeGood";;
-          break;
-        case "Melee":
-          tableName = "weaponsMelee";;
-          break;
-        case "Ranged":
-          tableName = "weaponsRanged";;
-          break;
-        case "Special":
-          tableName = "weaponsSpecial";;
-          break;
-        case "Solarian":
-          tableName = "weaponsSolarian";;
-          break;
-        case "Accessories":
-          tableName = "weaponsAccessories";;
-          break;
-        case "Ammunition":
-          tableName = "weaponsAmmunition";;
-          break;
-        case "Fusions":
-          tableName = "weaponsFusions";;
-          break;
-        case "Grenades":
-          tableName = "weaponsGrenades";;
-          break;
-        default:
-          console.error("Unknown category:", options);
-          break;
-      }
-      if (tableName) {
-        fetchDataFromTable(tableName);
+      case "Basic":
+        tableName = "armorBasic";
+        break;
+      case "Upgrades":
+        tableName = "armorUpgrades";
+        break;
+      case "Shields":
+        tableName = "armorShields";
+        break;
+      case "Powered":
+        tableName = "armorPowered";
+        break;
+      case "Drugs":
+        tableName = "armorUpgrades";
+        break;
+      case "Hybrid":
+        tableName = "itemsHybrid";
+        break;
+      case "Magic":
+        tableName = "itemsMagic";
+        break;
+      case "Medicine":
+        tableName = "itemsMedicine";
+        break;
+      case "Personal":
+        tableName = "itemsPersonal";
+        break;
+      case "Poisons":
+        tableName = "itemsPoisons";
+        break;
+      case "Technological":
+        tableName = "itemsTechnological";
+        break;
+      case "Trade Goods":
+        tableName = "itemsTradeGood";
+        break;
+      case "Melee":
+        tableName = "weaponsMelee";
+        break;
+      case "Ranged":
+        tableName = "weaponsRanged";
+        break;
+      case "Special":
+        tableName = "weaponsSpecial";
+        break;
+      case "Solarian":
+        tableName = "weaponsSolarian";
+        break;
+      case "Accessories":
+        tableName = "weaponsAccessories";
+        break;
+      case "Ammunition":
+        tableName = "weaponsAmmunition";
+        break;
+      case "Fusions":
+        tableName = "weaponsFusions";
+        break;
+      case "Grenades":
+        tableName = "weaponsGrenades";
+        break;
+      default:
+        console.error("Unknown category:", options);
+        break;
     }
+    if (tableName) {
+      fetchDataFromTable(tableName);
+    }
+
     onOpen();
   };
 
-//   const handleEquipmentSelect = (value => {
-//     updateFormData("equipment", value)
-//     onClose()
-//   })
+  //   const handleEquipmentSelect = (value => {
+  //     updateFormData("equipment", value)
+  //     onClose()
+  //   })
 
-//   const toast = useToast();
+  //   const toast = useToast();
 
-//   const handlePurchase = (item) => {
-//       if(item.price > remainingCredits) {
-//           toast({
-//               title: "Purchase Error",
-//               description: "Cannot afford the selected item.",
-//               status: "error",
-//               duration: 3000,
-//               isClosable: true,
-//           });
-//           return;
-//       }
-//       // Otherwise, proceed with the purchase
-//       setCurrentInventory(prevInventory => [...prevInventory, item]);
-//       setRemainingCredits(prevCredits => prevCredits - item.price);
-//       // Update formData
-//   }
+  //   const handlePurchase = (item) => {
+  //       if(item.price > remainingCredits) {
+  //           toast({
+  //               title: "Purchase Error",
+  //               description: "Cannot afford the selected item.",
+  //               status: "error",
+  //               duration: 3000,
+  //               isClosable: true,
+  //           });
+  //           return;
+  //       }
+  //       // Otherwise, proceed with the purchase
+  //       setCurrentInventory(prevInventory => [...prevInventory, item]);
+  //       setRemainingCredits(prevCredits => prevCredits - item.price);
+  //       // Update formData
+  //   }
 
-//   const handleRemoveFromInventory = (itemToRemove) => {
-//     setCurrentInventory(prevInventory => prevInventory.filter(item => item !== itemToRemove));
-//   };
+  //   const handleRemoveFromInventory = (itemToRemove) => {
+  //     setCurrentInventory(prevInventory => prevInventory.filter(item => item !== itemToRemove));
+  //   };
 
-//   useEffect(() => {
-//     updateFormData("remainingCredits", remainingCredits)
-//   },[remainingCredits])
- 
-//   useEffect(() => {
-//     updateFormData("currentInventory", currentInventory)
-//   },[ currentInventory])
+  //   useEffect(() => {
+  //     updateFormData("remainingCredits", remainingCredits)
+  //   },[remainingCredits])
+
+  //   useEffect(() => {
+  //     updateFormData("currentInventory", currentInventory)
+  //   },[ currentInventory])
 
   return (
     <Box
@@ -198,20 +204,20 @@ const Step8 = ({ updateFormData, formData }) => {
         borderRadius="10px"
         boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
       >
-       <Text>
+        {/* <Text>
           <b>Inventory:</b>
         </Text>
         {currentInventory.map((item, index) => (
           <Box key={index} display="flex" alignItems="center" mb={2}>
-            <Text flex="1">{item.name /* Assuming each item has a name property */}</Text>
-            {/* <Button size="sm" onClick={() => handleRemoveFromInventory(item)}>
+            <Text flex="1">{item.name}</Text>
+            <Button size="sm" onClick={() => handleRemoveFromInventory(item)}>
               Remove
-            </Button> */}
+            </Button>
           </Box>
         ))}
         <Text>
           <b>Credits: </b> {remainingCredits}
-        </Text>
+        </Text> */}
       </Box>
 
       {Object.keys(categories).map((category) => (
@@ -233,14 +239,15 @@ const Step8 = ({ updateFormData, formData }) => {
       ))}
 
       {/* Modal */}
-<EquipmentModal
-    isOpen={isOpen}
-    onClose={onClose}
-    // option={selectedCategory}
-    options={fetchedData}
-    details={fetchedData}
-    onSelect={setSelectedItem}
-/>
+      <EquipmentModal
+        isOpen={isOpen}
+        onClose={onClose}
+        fetchedData={fetchedData}
+        option={modalOption}
+        // options={fetchedData}
+        // details={fetchedData}
+        // onSelect={setSelectedItem}
+      />
     </Box>
   );
 };
