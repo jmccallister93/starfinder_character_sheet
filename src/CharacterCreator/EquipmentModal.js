@@ -33,6 +33,7 @@ const EquipmentModal = ({
   handlePurchase,
   remainingCredits,
 }) => {
+  // Format header
   const formatHeader = (header) => {
     return header
       .split("_")
@@ -40,28 +41,28 @@ const EquipmentModal = ({
       .join(" ");
   };
 
+  //Get Equipment details and render them to the page
   // const renderEquipmentDetails = (category, details) => {
   //   switch (category) {
   //     case "Basic":
   //       return (
   //         <>
-  //           <Td>
-  //             <b>{details?.Name}</b>
-  //             <Button p={2} onClick={() => handlePurchase(details)}>
-  //               Purchase
-  //             </Button>
-  //           </Td>
-  //           <Td>{details?.Level}</Td>
-  //           <Td>{details?.Price}</Td>
-  //           <Td>{details?.EAC_Bonus}</Td>
-  //           <Td>{details?.KAC_Bonus}</Td>
-  //           <Td>{details?.Maximum_Dex_Bonus}</Td>
-  //           <Td>{details?.Armor_Check_Penalty}</Td>
-  //           <Td>{details?.Speed_Adjustment}</Td>
-  //           <Td>{details?.Upgrade_Slots}</Td>
-  //           <Td>{details?.Bulk}</Td>
-  //           <Td>{details?.Type}</Td>
-  //           <Td>{details?.Group}</Td>
+  //           {Object.entries(details)
+  //             .filter(([key]) => key !== "id")
+  //             .map(([key, value], index) => (
+  //               <Td key={key}>
+  //                 {key === "Name" ? (
+  //                   <>
+  //                     <b>{value}</b>
+  //                     <Button p={2} onClick={() => handlePurchase(details)}>
+  //                       Purchase
+  //                     </Button>
+  //                   </>
+  //                 ) : (
+  //                   value
+  //                 )}
+  //               </Td>
+  //             ))}
   //         </>
   //       );
   //     // Add cases for other equipment types
@@ -69,105 +70,89 @@ const EquipmentModal = ({
   //       return null;
   //   }
   // };
-  const renderEquipmentDetails = (category, details) => {
-    switch (category) {
-      case "Basic":
-        return (
-          <>
-            {Object.entries(details)
-              .filter(([key]) => key !== "id")
-              .map(([key, value], index) => (
-                <Td key={key}>
-                  {key === "Name" ? (
-                    <>
-                      <b>{value}</b>
-                      <Button p={2} onClick={() => handlePurchase(details)}>
-                        Purchase
-                      </Button>
-                    </>
-                  ) : (
-                    value
-                  )}
-                </Td>
-              ))}
-          </>
-        );
-      // Add cases for other equipment types
-      default:
-        return null;
-    }
+  const renderEquipmentDetails = (details) => {
+    return (
+      <>
+        {Object.entries(details)
+          .filter(([key]) => key !== "id")
+          .map(([key, value]) => (
+            <Td key={key}>
+              {key === "Name" ? (
+                <>
+                  <b>{value}</b>
+                  <Button p={2} onClick={() => handlePurchase(details)}>
+                    Purchase
+                  </Button>
+                </>
+              ) : (
+                value
+              )}
+            </Td>
+          ))}
+      </>
+    );
   };
-  // const renderEquipmentTableHeaders = (category) => {
+  // const renderEquipmentTableHeaders = (category, sampleData) => {
+  //   if (!sampleData) return null;
+
   //   switch (category) {
   //     case "Basic":
   //       return (
   //         <>
-  //           <Th>
-  //             Name{" "}
-  //             <ArrowUpDownIcon
-  //               onClick={() => handleSort("Name")}
-  //               color={
-  //                 sortField === "Name"
-  //                   ? sortDirection === "asc"
-  //                     ? "green.500"
-  //                     : "red.500"
-  //                   : "black.500"
-  //               }
-  //               ml={2}
-  //               cursor="pointer"
-  //             />
-  //           </Th>
-  //           <Th>Level</Th>
-  //           <Th>Price</Th>
-  //           <Th>Energy AC Bonus</Th>
-  //           <Th>Kinetic AC Bonus</Th>
-  //           <Th>Maximum Dex Bonus</Th>
-  //           <Th>Armor Check Penalty</Th>
-  //           <Th>Speed Adjustment</Th>
-  //           <Th>Upgrade Slots</Th>
-  //           <Th>Bulk</Th>
-  //           <Th>Type</Th>
-  //           <Th>Group</Th>
+  //           {Object.keys(sampleData)
+  //             .filter((key) => key !== "id")
+  //             .map((key) => (
+  //               <Th key={key}>
+  //                 {formatHeader(key)}
+  //                 <ArrowUpDownIcon
+  //                   onClick={() => handleSort(key)}
+  //                   color={
+  //                     sortField === key
+  //                       ? sortDirection === "asc"
+  //                         ? "green.500"
+  //                         : "red.500"
+  //                       : "black.500"
+  //                   }
+  //                   ml={2}
+  //                   cursor="pointer"
+  //                 />
+  //               </Th>
+  //             ))}
   //         </>
   //       );
-
   //     default:
   //       return null;
   //   }
   // };
-  const renderEquipmentTableHeaders = (category, sampleData) => {
-    if (!sampleData) return null;
-
-    switch (category) {
-      case "Basic":
-        return (
-          <>
-            {Object.keys(sampleData)
-              .filter((key) => key !== "id")
-              .map((key) => (
-                <Th key={key}>
-                  {formatHeader(key)}
-                  <ArrowUpDownIcon
-                    onClick={() => handleSort(key)}
-                    color={
-                      sortField === key
-                        ? sortDirection === "asc"
-                          ? "green.500"
-                          : "red.500"
-                        : "black.500"
-                    }
-                    ml={2}
-                    cursor="pointer"
-                  />
-                </Th>
-              ))}
-          </>
-        );
-      default:
-        return null;
-    }
-  };
   // Filter fucntion
+  const renderEquipmentTableHeaders = (sampleData) => {
+    if (!sampleData) return null;
+  
+    return (
+      <>
+        {Object.keys(sampleData)
+          .filter((key) => key !== "id")
+          .map((key) => (
+            <Th key={key}>
+              {formatHeader(key)}
+              <ArrowUpDownIcon
+                onClick={() => handleSort(key)}
+                color={
+                  sortField === key
+                    ? sortDirection === "asc"
+                      ? "green.500"
+                      : "red.500"
+                    : "black.500"
+                }
+                ml={2}
+                cursor="pointer"
+              />
+            </Th>
+          ))}
+      </>
+    );
+  };
+  
   const [filterValue, setfilterValue] = useState("");
   const handleFilter = (event) => {
     const value = event.target.value;
@@ -187,7 +172,6 @@ const EquipmentModal = ({
       setSortDirection("asc");
     }
   };
-
   const sortedData = [...fetchedData].sort((a, b) => {
     if (!sortField) return 0;
 
@@ -200,6 +184,8 @@ const EquipmentModal = ({
 
     return comparison;
   });
+
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay bg="rgba(0, 0, 0, 0.6)" />
@@ -237,9 +223,9 @@ const EquipmentModal = ({
             overflowY="auto"
           >
             <Table variant="simple">
-              <Thead>
-                <Tr>{renderEquipmentTableHeaders(option, fetchedData[0])}</Tr>
-              </Thead>
+            <Thead>
+  <Tr>{renderEquipmentTableHeaders(fetchedData[0])}</Tr>
+</Thead>
               <Tbody>
                 {sortedData
                   ?.filter((equipment) => {
@@ -251,7 +237,8 @@ const EquipmentModal = ({
                     );
                   })
                   .map((opt, index) => (
-                    <Tr key={index}>{renderEquipmentDetails(option, opt)}</Tr>
+                    <Tr key={index}>{renderEquipmentDetails(opt)}</Tr>
+
                   ))}
               </Tbody>
             </Table>
