@@ -206,8 +206,13 @@ const Step6 = ({ updateFormData, formData }) => {
   }, [scores]);
 
   return (
-    <Box width="70vw">
-      <Text fontSize="2rem" textAlign="center" fontWeight="bold" >
+    <Box color="white"
+    background="rgb(50, 50, 50)"
+    width="70vw"
+    padding="20px"
+    borderRadius="10px"
+    boxShadow="0px 0px 15px rgba(0,0,0,0.2)">
+      <Text fontSize="2.5rem" mb="20px" borderBottom="2px solid white" paddingBottom="10px" textAlign="center" fontWeight="bold" >
         Step 6: Ability Scores
       </Text>
       <RadioGroup onChange={setMethod} value={method}>
@@ -219,7 +224,7 @@ const Step6 = ({ updateFormData, formData }) => {
       <Button onClick={resetToBaseScores} mt={4}>Reset to Base Scores</Button>
 
       {method === "pointBuy" && (
-        <Box textAlign="center">
+        <Box textAlign="center" background="rgb(60, 60, 60)" padding="20px" borderRadius="10px" boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)">
           <Text fontSize="1.5rem">Remaining Points: {remainingPoints}</Text>
           <Flex
             wrap="wrap"
@@ -239,7 +244,8 @@ const Step6 = ({ updateFormData, formData }) => {
                 display="flex"
                 flexDirection="column"
                 justifyContent="center"
-                // border={isKeyAbility(stat) ? "1px solid white" : "none"}
+                background="rgb(60, 60, 60)" padding="20px"  boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
+                border={isKeyAbility(stat) ? "1px solid blue" : "1px solid grey"}
               >
                 {isKeyAbility(stat) && <Text>* Key Ability</Text>}
                 <Text fontSize="1.5rem" mb={2}>
@@ -291,7 +297,7 @@ const Step6 = ({ updateFormData, formData }) => {
       )}
 
       {method === "manualEntry" && (
-        <Box mb={4} textAlign="center">
+        <Box mb={4} textAlign="center" >
           <Button onClick={handleRollForScore}>Roll</Button>
           {allocatableScores.length > 0 && (
             <Text mt={4} fontSize="1.5rem">
@@ -301,7 +307,7 @@ const Step6 = ({ updateFormData, formData }) => {
         </Box>
       )}
       {method === "manualEntry" && (
-        <Box mt={4} textAlign="center">
+        <Box mt={4} textAlign="center" >
           <Text fontSize="1.5rem">Adjust your scores from roll:</Text>
           <Text fontSize="1rem">Roll 4 x d6 take the highest 3.</Text>
           <Flex
@@ -317,11 +323,13 @@ const Step6 = ({ updateFormData, formData }) => {
                 p={4}
                 textAlign="center"
                 borderRadius="md"
-                border="1px solid gray"
+                
                 mb={index >= 3 ? "0" : "2rem"}
                 display="flex"
                 flexDirection="column"
                 justifyContent="center"
+                background="rgb(60, 60, 60)" padding="20px"  boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
+                border={isKeyAbility(stat) ? "1px solid blue" : "1px solid grey"}
               >
                 <Box>
                   {isKeyAbility(stat) && <Text>* Key Ability</Text>}

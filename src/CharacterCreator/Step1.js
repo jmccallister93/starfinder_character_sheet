@@ -11,18 +11,31 @@ import Header from "../components/Header";
 
 const Step1 = ({ updateFormData, formData }) => {
   return (
-    <Box width="70vw" >
-      <Text fontSize="2rem" textAlign="center" fontWeight="bold">
+    <Box
+      color="white"
+      background="rgb(50, 50, 50)"
+      width="70vw"
+      padding="20px"
+      borderRadius="10px"
+      boxShadow="0px 0px 15px rgba(0,0,0,0.2)"
+    >
+      <Text
+       fontSize="2.5rem" mb="20px" borderBottom="2px solid white" paddingBottom="10px" textAlign="center" fontWeight="bold"
+      >
         Step 1: Basic Details
       </Text>
+
       <Box
         color="white"
-        background="grey"
         display="flex"
         flexWrap="wrap"
         justifyContent="space-between"
+        background="rgb(60, 60, 60)"
+        padding="20px"
+        borderRadius="10px"
+        boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
       >
-        <FormControl id="characterName" mb={4} width="33.33%">
+        <FormControl id="characterName" mb={4} width="28%" padding="2rem">
           <FormLabel>Name</FormLabel>
           <Input
             placeholder="Character Name"
@@ -33,7 +46,7 @@ const Step1 = ({ updateFormData, formData }) => {
           />
         </FormControl>
 
-        <FormControl id="alignment" mb={4} width="33.33%">
+        <FormControl id="alignment" mb={4} width="28%" padding="2rem" >
           <FormLabel>Alignment</FormLabel>
           <Select
             placeholder="Select alignment"
@@ -53,7 +66,7 @@ const Step1 = ({ updateFormData, formData }) => {
           </Select>
         </FormControl>
 
-        <FormControl id="deity" mb={4} width="33.33%">
+        <FormControl id="deity" mb={4} width="28%" padding="2rem">
           <FormLabel>Deity</FormLabel>
           <Select
             placeholder="Select deity"
@@ -64,7 +77,7 @@ const Step1 = ({ updateFormData, formData }) => {
           </Select>
         </FormControl>
 
-        <FormControl id="homeWorld" mb={4} width="33.33%">
+        <FormControl id="homeWorld" mb={4} width="28%" padding="2rem">
           <FormLabel>Home World</FormLabel>
           <Select
             placeholder="Select home world"
@@ -75,7 +88,7 @@ const Step1 = ({ updateFormData, formData }) => {
           </Select>
         </FormControl>
 
-        <FormControl id="weight" mb={4} width="33.33%">
+        <FormControl id="weight" mb={4} width="28%" padding="2rem">
           <FormLabel>Weight</FormLabel>
           <Input
             type="number"
@@ -85,7 +98,7 @@ const Step1 = ({ updateFormData, formData }) => {
           />
         </FormControl>
 
-        <FormControl id="height" mb={4} width="33.33%">
+        <FormControl id="height" mb={4} width="28%" padding="2rem">
           <FormLabel>Height</FormLabel>
           <Box display="flex" flexDirection="column" gap={2}>
             <Input
@@ -103,7 +116,7 @@ const Step1 = ({ updateFormData, formData }) => {
           </Box>
         </FormControl>
 
-        <FormControl id="description" mb={4} width="33.33%">
+        <FormControl id="description" mb={4} width="90%" padding="2rem">
           <FormLabel>Description</FormLabel>
           <Textarea
             placeholder="Character description..."

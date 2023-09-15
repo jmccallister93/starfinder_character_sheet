@@ -102,13 +102,14 @@ const CharacterCreate = () => {
       <Flex
         flexDirection="column"
         alignItems="center"
-        color="white"
-        background="grey"
+        color="black"
+        background="#B0B0B0"
         p={5}
         borderRadius="md"
         margin="2rem"
         overflowX="auto"
         justifyContent="space-between"
+        
       >
         {currentStep === 1 && (
           <Step1 updateFormData={updateFormData} formData={formData} />
@@ -136,7 +137,7 @@ const CharacterCreate = () => {
         )}
 
         <Box>
-          <Flex justifyContent="space-between" mb={4}>
+          <Flex justifyContent="space-between" mb={4} mt={4}>
             {currentStep > 1 && (
               <Button onClick={handlePrevious} margin="0.25rem">
                 Previous
@@ -150,9 +151,10 @@ const CharacterCreate = () => {
           </Flex>
 
           {currentStep < totalSteps ? (
-            <Button onClick={handleNext} margin="0.25rem" mt={4}>
-              Save as Draft
-            </Button>
+            // <Button onClick={handleNext} margin="0.25rem" mt={4}>
+            //   Save as Draft
+            // </Button>
+            <></>
           ) : (
             <Button bg="black" color="white" mt={4}>
               Submit

@@ -213,8 +213,13 @@ const skillPointsPerLevel = {
       const skillPointsRemaining = skillPointsForClass - totalSkillRanksAllocated;
   
       return (
-        <Box width="70vw">
-          <Text fontSize="2rem" textAlign="center" fontWeight="bold">
+        <Box  color="white"
+        background="rgb(50, 50, 50)"
+        width="70vw"
+        padding="20px"
+        borderRadius="10px"
+        boxShadow="0px 0px 15px rgba(0,0,0,0.2)">
+          <Text fontSize="2.5rem" mb="20px" borderBottom="2px solid white" paddingBottom="10px" textAlign="center" fontWeight="bold">
             Step 7: Skills
           </Text>
     
@@ -229,7 +234,7 @@ const skillPointsPerLevel = {
                         <Text ml={2} mr={2} display="inline">
                             +{getSkillBonus(skill)}
                         </Text>
-                        <Box>
+                        <Box background="rgb(60, 60, 60)" padding="20px" borderRadius="10px" boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)">
                             <Button size="sm" onClick={() => decrementSkill(skill)} disabled={skills[skill] <= 0}>-</Button>
                             <Text ml={2} mr={2} display="inline">
                                 {skills[skill] || 0}

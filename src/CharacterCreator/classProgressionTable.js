@@ -15,17 +15,40 @@ function ClassProgressionTable({ className }) {
   const hasSolarShield = classData.some((item) => item.solarShield);
   const hasSolarWeapon = classData.some((item) => item.solarWeapon);
 
+  const ordinalSuffix = (i) => {
+    const j = i % 10,
+      k = i % 100;
+    if (j == 1 && k != 11) {
+      return i + "st";
+    }
+    if (j == 2 && k != 12) {
+      return i + "nd";
+    }
+    if (j == 3 && k != 13) {
+      return i + "rd";
+    }
+    return i + "th";
+  };
+
   return (
     <Table variant="simple" mt={4}>
       <Thead>
-        <Tr>
+        <Tr
+          color="white"
+          background="rgb(160, 160, 160)"
+          padding="20px"
+          borderRadius="10px"
+        >
           <Th>Level</Th>
           <Th>Base Attack Bonus</Th>
           <Th>Fortitude Save</Th>
           <Th>Reflex Save</Th>
           <Th>Will Save</Th>
           <Th>Special</Th>
-          {hasSpells && <Th>Spells</Th>}
+          {hasSpells &&
+            [...Array(6).keys()].map((i) => (
+              <Th key={i}>{ordinalSuffix(i + 1)} Level Spells per Day</Th>
+            ))}
           {hasAdaptiveStrike && <Th>Adaptive Strike</Th>}
           {hasMajorForms && <Th>Major Forms</Th>}
           {hasMinorForms && <Th>Minor Forms</Th>}
@@ -45,7 +68,15 @@ function ClassProgressionTable({ className }) {
             <Td>{levelData.ref}</Td>
             <Td>{levelData.will}</Td>
             <Td>{levelData.special}</Td>
-            {hasSpells && <Td>{levelData.spells?.join(", ") || "-"}</Td>}
+            {hasSpells &&
+              (levelData.spells || Array(6).fill("-")).map(
+                (spellValue, spellIdx) => (
+                  <Td key={spellIdx}>
+                    {spellValue === 0 || spellValue === "-" ? "-" : spellValue}
+                  </Td>
+                )
+              )}
+
             {hasAdaptiveStrike && <Td>{levelData.adaptive_strike || "-"}</Td>}
             {hasMajorForms && <Td>{levelData.majorForms || "-"}</Td>}
             {hasMinorForms && <Td>{levelData.minorForms || "-"}</Td>}

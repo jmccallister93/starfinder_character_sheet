@@ -145,19 +145,24 @@ const Step3 = ({ updateFormData, formData }) => {
   };
 
   return (
-    <Box color="white" background="grey" width="70vw">
-      <Text fontSize="2rem" textAlign="center" fontWeight="bold">
-        Step 3: Class
-      </Text>
-      <FormControl id="class" mb={4}>
-        <FormLabel fontSize="1.8rem">Class</FormLabel>
-        <Button
-          onClick={() => handleButtonClick(data.classes.map((cls) => cls.Name))}
-        >
-          Select Class
-        </Button>
+    <Box color="white" background="rgb(50, 50, 50)" width="70vw" padding="20px" borderRadius="10px" boxShadow="0px 0px 15px rgba(0,0,0,0.2)">
+    <Text fontSize="2.5rem" mb="20px" borderBottom="2px solid white" paddingBottom="10px" textAlign="center" fontWeight="bold">
+      Step 3: Class
+    </Text>
+    
+    <FormControl id="class" mb={4}>
+      <FormLabel fontSize="1.8rem" fontWeight="bold" mb="10px">Class</FormLabel>
+      <Button
+        mb="20px"
+        background="rgb(100, 100, 100)"
+        color="white"
+        _hover={{ background: "rgb(120, 120, 120)" }}
+        onClick={() => handleButtonClick(data.classes.map((cls) => cls.Name))}
+      >
+        Select Class
+      </Button>
         {formData.class ? (
-          <Box>
+           <Box background="rgb(60, 60, 60)" padding="20px" borderRadius="10px" boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)">
             <Text mt={2}>
               <strong>Name:</strong> {formData.class?.Name}
             </Text>
@@ -227,14 +232,16 @@ const Step3 = ({ updateFormData, formData }) => {
                 </Box>
               ))}
             </Box>
-
+            <Text fontWeight="bold" fontSize="1.5rem">
+                Class Features:
+              </Text>
                 {/* Class progression table */}
                 <ClassProgressionTable className={formData.class?.Name}/>
 
             {/* Class Features Section */}
             <Box mt={4}>
               <Text fontWeight="bold" fontSize="1.5rem">
-                Class Features:
+                Class Feature Details:
               </Text>
               <Accordion allowMultiple>
                 {classAbilities.map((ability, idx) => (

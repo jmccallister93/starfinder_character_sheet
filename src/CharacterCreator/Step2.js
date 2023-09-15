@@ -87,8 +87,13 @@ const Step2 = ({ updateFormData, formData }) => {
   }, []);
 
   return (
-    <Box color="white" background="grey" width="70vw">
-      <Text fontSize="2rem" textAlign="center" fontWeight="bold">
+    <Box       color="white"
+    background="rgb(50, 50, 50)"
+    width="70vw"
+    padding="20px"
+    borderRadius="10px"
+    boxShadow="0px 0px 15px rgba(0,0,0,0.2)">
+      <Text fontSize="2.5rem" mb="20px" borderBottom="2px solid white" paddingBottom="10px" textAlign="center" fontWeight="bold">
         Step 2: Race
       </Text>
       <FormControl id="race" mb={4}>
@@ -99,7 +104,14 @@ const Step2 = ({ updateFormData, formData }) => {
           Select Race
         </Button>
         {formData.race ? (
-          <>
+          <Box     color="white"
+          display="flex"
+          flexWrap="wrap"
+          justifyContent="space-between"
+          background="rgb(60, 60, 60)"
+          padding="20px"
+          borderRadius="10px"
+          boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)">
             <Text mt={2}>
               <strong>Name:</strong> {formData.race?.Name}
             </Text>
@@ -120,7 +132,7 @@ const Step2 = ({ updateFormData, formData }) => {
                 <Box key={index}>{formattedDesc}</Box>
               )
             )}
-          </>
+          </Box>
         ) : null}
       </FormControl>
 
