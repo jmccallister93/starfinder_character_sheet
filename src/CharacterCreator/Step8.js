@@ -10,12 +10,20 @@ import {
   ModalBody,
   useDisclosure,
   useToast,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverHeader,
+  PopoverBody,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { supabase } from "../client/supabaseClient";
 import EquipmentModal from "./EquipmentModal";
 
 const Step8 = ({ updateFormData, formData }) => {
+  const [isLoading, setIsLoading] = useState(true);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalOption, setModalOption] = useState([]);
@@ -56,14 +64,17 @@ const Step8 = ({ updateFormData, formData }) => {
     const { data, error } = await supabase.from(tableName).select("*");
     if (error) {
       console.error(`Error fetching data from ${tableName}:`, error);
+      setIsLoading(false);
     } else {
       setFetchedData(data || []);
+      setIsLoading(false)
     }
   };
 
   // Button click when item type is clicked
-  const handleButtonClick = (options) => {  
+  const handleButtonClick = (options) => {
     setModalOption(options);
+    setIsLoading(true)
     let tableName = "";
     switch (options) {
       case "Basic":
@@ -112,7 +123,7 @@ const Step8 = ({ updateFormData, formData }) => {
         tableName = "weaponsSpecial";
         break;
       case "Solarian":
-        tableName = "weaponsSolarian";
+        tableName = "solarianWeaponCrystals";
         break;
       case "Accessories":
         tableName = "weaponsAccessories";
@@ -141,40 +152,50 @@ const Step8 = ({ updateFormData, formData }) => {
   //     onClose()
   //   })
 
+  const toast = useToast();
 
-    const toast = useToast();
-
-    const handlePurchase = (item) => {
-        console.log(item.Price)
-        if(item.Price > remainingCredits) {
-            toast({
-                title: "Purchase Error",
-                description: "Cannot afford the selected item.",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
-            });
-            return;
-        }
-        // Otherwise, proceed with the purchase
-        setCurrentInventory(prevInventory => [...prevInventory, item]);
-        setRemainingCredits(prevCredits => prevCredits - item.Price);
-        // Update formData
+  const handlePurchase = (item) => {
+    console.log(item.Price);
+    if (item.Price > remainingCredits) {
+      toast({
+        title: "Purchase Error",
+        description: "Cannot afford the selected item.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top"
+      })
+      return;
+    } else{
+      toast({
+        title: "Item Purchased",
+        description: ("Pruchased: " + item.Name +" for " + item.Price),
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top"
+      })
     }
+    // Otherwise, proceed with the purchase
+    setCurrentInventory((prevInventory) => [...prevInventory, item]);
+    setRemainingCredits((prevCredits) => prevCredits - item.Price);
+    // Update formData
+  };
 
-    const handleRemoveFromInventory = (itemToRemove) => {
-        setCurrentInventory(prevInventory => prevInventory.filter(item => item !== itemToRemove));
-        setRemainingCredits(prevCredits => prevCredits + itemToRemove.Price);
-      };
-      
+  const handleRemoveFromInventory = (itemToRemove) => {
+    setCurrentInventory((prevInventory) =>
+      prevInventory.filter((item) => item !== itemToRemove)
+    );
+    setRemainingCredits((prevCredits) => prevCredits + itemToRemove.Price);
+  };
 
-    useEffect(() => {
-      updateFormData("remainingCredits", remainingCredits)
-    },[remainingCredits])
+  useEffect(() => {
+    updateFormData("remainingCredits", remainingCredits);
+  }, [remainingCredits]);
 
-    useEffect(() => {
-      updateFormData("currentInventory", currentInventory)
-    },[ currentInventory])
+  useEffect(() => {
+    updateFormData("currentInventory", currentInventory);
+  }, [currentInventory]);
 
   return (
     <Box
@@ -206,18 +227,49 @@ const Step8 = ({ updateFormData, formData }) => {
         boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
       >
         <Box>
-        <Text>
-          <b>Inventory:</b>
-        </Text>
-        {currentInventory.map((item, index) => (
-          <Box key={index} display="flex" alignItems="center" m={2}>
-            <Text flex="1">{item.Name}</Text>
-            <Button  ml={2} size="sm" onClick={() => handleRemoveFromInventory(item)}>
-              Remove
-            </Button>
-          </Box>
-        ))}
+          <Text>
+            <b>Inventory:</b>
+          </Text>
+          {currentInventory.map((item, index) => (
+            <Box key={index} display="flex" alignItems="center" m={2}>
+              <Text fontSize="1.2rem" p="0.25rem" flex="1">
+                {item.Name}
+                <Popover>
+                  <PopoverTrigger>
+                    <Button size="xs" ml="2">
+                      ?
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent bg="black">
+                    <PopoverArrow />
+                    <PopoverHeader>{item.Name}</PopoverHeader>
+                    <PopoverBody>
+                      {Object.entries(item).map(([key, value]) => {
+                        // Exclude properties you don't want to display, like "id" in this case
+                        if (key !== "id") {
+                          return (
+                            <div key={key}>
+                              <strong>{key}:</strong> {value}
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              </Text>
+              <Button
+                ml={2}
+                size="sm"
+                onClick={() => handleRemoveFromInventory(item)}
+              >
+                Remove
+              </Button>
+            </Box>
+          ))}
         </Box>
+
         <Text>
           <b>Credits: </b> {remainingCredits}
         </Text>
@@ -249,9 +301,7 @@ const Step8 = ({ updateFormData, formData }) => {
         option={modalOption}
         handlePurchase={handlePurchase}
         remainingCredits={remainingCredits}
-        // options={fetchedData}
-        // details={fetchedData}
-        // onSelect={setSelectedItem}
+        isLoading={isLoading}
       />
     </Box>
   );

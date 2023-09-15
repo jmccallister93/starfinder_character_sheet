@@ -21,6 +21,7 @@ import {
   Th,
   Td,
   Input,
+  Skeleton,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ArrowUpDownIcon } from "@chakra-ui/icons";
@@ -29,6 +30,7 @@ const EquipmentModal = ({
   isOpen,
   onClose,
   fetchedData,
+  isLoading,
   option,
   handlePurchase,
   remainingCredits,
@@ -41,35 +43,6 @@ const EquipmentModal = ({
       .join(" ");
   };
 
-  //Get Equipment details and render them to the page
-  // const renderEquipmentDetails = (category, details) => {
-  //   switch (category) {
-  //     case "Basic":
-  //       return (
-  //         <>
-  //           {Object.entries(details)
-  //             .filter(([key]) => key !== "id")
-  //             .map(([key, value], index) => (
-  //               <Td key={key}>
-  //                 {key === "Name" ? (
-  //                   <>
-  //                     <b>{value}</b>
-  //                     <Button p={2} onClick={() => handlePurchase(details)}>
-  //                       Purchase
-  //                     </Button>
-  //                   </>
-  //                 ) : (
-  //                   value
-  //                 )}
-  //               </Td>
-  //             ))}
-  //         </>
-  //       );
-  //     // Add cases for other equipment types
-  //     default:
-  //       return null;
-  //   }
-  // };
   const renderEquipmentDetails = (details) => {
     return (
       <>
@@ -234,25 +207,29 @@ const EquipmentModal = ({
             height="70vh"
             overflowY="auto"
           >
-            <Table variant="simple">
-              <Thead>
-                <Tr>{renderEquipmentTableHeaders(fetchedData[0])}</Tr>
-              </Thead>
-              <Tbody>
-                {sortedData
-                  ?.filter((equipment) => {
-                    if (!filterValue) return true;
-                    return Object.values(equipment).some((value) =>
-                      String(value)
-                        .toLowerCase()
-                        .includes(filterValue.toLowerCase())
-                    );
-                  })
-                  .map((opt, index) => (
-                    <Tr key={index}>{renderEquipmentDetails(opt)}</Tr>
-                  ))}
-              </Tbody>
-            </Table>
+            {isLoading ? (
+              <Skeleton height="60vh" w="full" />
+            ) : (
+              <Table variant="simple">
+                <Thead>
+                  <Tr>{renderEquipmentTableHeaders(fetchedData[0])}</Tr>
+                </Thead>
+                <Tbody>
+                  {sortedData
+                    ?.filter((equipment) => {
+                      if (!filterValue) return true;
+                      return Object.values(equipment).some((value) =>
+                        String(value)
+                          .toLowerCase()
+                          .includes(filterValue.toLowerCase())
+                      );
+                    })
+                    .map((opt, index) => (
+                      <Tr key={index}>{renderEquipmentDetails(opt)}</Tr>
+                    ))}
+                </Tbody>
+              </Table>
+            )}
           </VStack>
         </ModalBody>
       </ModalContent>

@@ -9,6 +9,12 @@ import {
   Heading,
   List,
   ListItem,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTrigger,
   Text,
 } from "@chakra-ui/react";
 import { supabase } from "../client/supabaseClient";
@@ -224,9 +230,37 @@ const Step9 = ({ formData, updateFormData }) => {
             Inventory
           </Heading>
           <List>
-            {formData.currentInventory.map((item, index) => (
-              <ListItem key={index}>{item.Name}</ListItem>
-            ))}
+          {formData.currentInventory.map((item, index) => (
+            <ListItem key={index} display="flex" alignItems="center" m={2}>
+              <Text >
+                {item.Name}
+                <Popover>
+                  <PopoverTrigger>
+                    <Button size="xs" ml="1">
+                      ?
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent bg="black">
+                    <PopoverArrow />
+                    <PopoverHeader>{item.Name}</PopoverHeader>
+                    <PopoverBody>
+                      {Object.entries(item).map(([key, value]) => {
+                        // Exclude properties you don't want to display, like "id" in this case
+                        if (key !== "id") {
+                          return (
+                            <div key={key}>
+                              <strong>{key}:</strong> {value}
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              </Text>
+            </ListItem>
+          ))}
           </List>
         </Box>
       </Box>
