@@ -239,7 +239,7 @@ const Step3 = ({ updateFormData, formData }) => {
                 Class Features:
               </Text>
                 {/* Class progression table */}
-                <ClassProgressionTable className={formData.class?.Name}/>
+                <ClassProgressionTable className={formData.class?.Name} updateFormData={updateFormData}/>
 
             {/* Class Features Section */}
             <Box mt={4}>

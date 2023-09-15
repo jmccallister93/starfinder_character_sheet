@@ -1,7 +1,8 @@
 import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
 import classProgressionData from "./classProgressionData";
+import { useEffect } from "react";
 
-function ClassProgressionTable({ className }) {
+function ClassProgressionTable({ className, updateFormData }) {
   const classData = classProgressionData[className];
 
   // Check which unique properties exist in the data
@@ -29,6 +30,14 @@ function ClassProgressionTable({ className }) {
     }
     return i + "th";
   };
+
+  useEffect(() => {
+    let classStats =[]
+    classData.map((levelData, idx) => ( 
+      classStats.push(levelData)
+    ))
+    updateFormData("classStats" , classStats)
+  }, [className])
 
   return (
     <Table variant="simple" mt={4}>
