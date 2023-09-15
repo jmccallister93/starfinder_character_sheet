@@ -29,25 +29,8 @@ const Step3 = ({ updateFormData, formData }) => {
   const [modalOptions, setModalOptions] = useState([]);
   const [proficiencies, setProficiencies] = useState([]);
   const [classAbilities, setClassAbilities] = useState([]);
+  const [classProgressionData, setClassProgressionData] = useState({});
 
-
-
-  // Format Description property
-  const formatDescription = (desc) => {
-    if (!desc) return null;
-
-    return desc.split(".").map((chunk, index) => {
-      const parts = chunk.split(":");
-      if (parts.length > 1) {
-        return (
-          <Text key={index}>
-            <strong>{parts[0].trim() + ":"}</strong> {parts[1]}
-          </Text>
-        );
-      }
-      return <Text key={index}>{chunk}</Text>;
-    });
-  };
 
   const handleKeyAbilityChange = (value) => {
     setSelectedKeyAbility(value);
@@ -75,7 +58,6 @@ const Step3 = ({ updateFormData, formData }) => {
     // Fetch proficiencies and class abilities for the selected class
     fetchProficiencies(value.id);
     fetchClassAbilities(value.id);
-
     onClose();
   };
 
@@ -112,6 +94,7 @@ const Step3 = ({ updateFormData, formData }) => {
       .eq("class_id", classId);
 
     setProficiencies(result.data || []);
+    updateFormData("proficiencies", result.data)
   };
   const fetchClassAbilities = async (classId) => {
     const result = await supabase
@@ -120,14 +103,21 @@ const Step3 = ({ updateFormData, formData }) => {
       .eq("class_id", classId);
 
     setClassAbilities(result.data || []);
+    updateFormData("abilities", result.data)
   };
+
 
   useEffect(() => {
     if (formData.class) {
       fetchProficiencies(formData.class.id);
       fetchClassAbilities(formData.class.id);
     }
+
   }, []);
+
+  // useEffect(() => {
+  //   updateFormData("proficiencies": )
+  // }, [handleClassSelect])
   
 
   const formatAbilityText = (abilityText) => {

@@ -12,8 +12,22 @@ const [ refSave, setRefSave] = useState()
 const [willSave, setWillSave] = useState()
 const [ fortSave, setFortSave] = useState()
 
+// Parsing function for extracting number from strings like "6 + CON" or "6 HP"
+const parseStatValue = (statString) => {
+    if (typeof statString !== 'string') return 0;  // Safety check
+    const match = statString.match(/\d+/);
+    return match ? parseInt(match[0]) : 0;
+}
+
+
+// Calculations
+
+
+
 // Calculate CON modifier
 const CON_modifier = Math.floor((formData.scores.CON - 10) / 2);
+const HP = parseStatValue(formData.class.HP) + parseStatValue(formData.race.HP);
+const Stamina = parseStatValue(formData.class.StaminaPoints) + CON_modifier;
 
 // Calculate key ability score modifier
 const keyAbilityScore = formData.class.KeyAbility; // Assuming it's named like "CHA", "DEX", etc.
@@ -23,8 +37,6 @@ const key_ability_modifier = Math.floor((formData.scores[keyAbilityScore] - 10) 
 const character_level = 1; // Replace this with actual value if available
 
 // Calculations
-const HP = parseInt(formData.class.HP) + parseInt(formData.race.HP);
-const Stamina = parseInt(formData.class.StaminaPoints) + CON_modifier;
 const Resolve = Math.floor(character_level / 2) + key_ability_modifier;
 const BaseAttackBonus = formData.class.BaseAttackBonus; // Update the attribute name if different
 const Fortitude = formData.class.Fortitude; // Update the attribute name if different
