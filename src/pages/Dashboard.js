@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 import SessionContext from "../client/SessionContex";
+import CharacterListView from "../CharacterView/CharacterListView";
 
 const Dashboard = (props) => {
   const { session, signOut } = React.useContext(SessionContext); // Use the new context here
@@ -73,7 +74,7 @@ const handleCreate = () =>{
           <Heading fontSize="2rem" color="white" mb={4}>
             View Characters
           </Heading>
-          {/* Your View Characters component or logic can go here */}
+          <CharacterListView />
         </Flex>
       </Flex>
     </Center>

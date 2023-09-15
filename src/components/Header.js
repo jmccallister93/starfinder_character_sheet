@@ -1,14 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Box, Flex, Text, Button, Spacer } from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
+
 import SessionContext from "../client/SessionContex";
 import { supabase } from "../client/supabaseClient";
 
 const Header = (props) => {
   const contextValue = React.useContext(SessionContext);
   const { session, signOut } = contextValue;
-  const isAuthenticated = !!session; // Check if the session 
+  const isAuthenticated = !!session; // Check if the session
   const userEmail = session?.session?.user?.email || "";
+  const [characters, setCharacters] = useState([]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchCharacters();
+    }
+  }, [isAuthenticated]);
+
+  const fetchCharacters = async () => {
+    const { data, error } = await supabase
+      .from("DBCharacters")
+      .select("uuid, characterName")
+      .eq("email", userEmail);
+
+    if (error) {
+      console.error("Error fetching characters:", error);
+      return;
+    }
+
+    setCharacters(data);
+  };
 
   return (
     <Box
@@ -19,8 +42,12 @@ const Header = (props) => {
       justifyContent="center"
       textAlign="center"
     >
-      <Flex align="center" >
-        <Text p={4} fontSize="xl"  _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }} >
+      <Flex align="center">
+        <Text
+          p={4}
+          fontSize="xl"
+          _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
+        >
           <Link
             style={{
               fontSize: "1.5rem",
@@ -32,8 +59,12 @@ const Header = (props) => {
             Home
           </Link>
         </Text>
-        <Text fontSize="1.5rem" >|</Text>
-        <Text p={4} fontSize="xl"  _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}>
+        <Text fontSize="1.5rem">|</Text>
+        <Text
+          p={4}
+          fontSize="xl"
+          _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
+        >
           <Link
             style={{
               fontSize: "1.5rem",
@@ -48,38 +79,62 @@ const Header = (props) => {
         {isAuthenticated ? (
           <>
             <Text fontSize="1.5rem">|</Text>
-            <Text p={4} fontSize="xl"  _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}>
+           
+           
+            <Text
+              p={4}
+              fontSize="xl"
+              _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
+            >
               <Link
                 style={{
                   fontSize: "1.5rem",
                   textDecoration: "none",
                   color: "white",
                 }}
-                to={isAuthenticated ? "/characterView" : "/login"}
-              >
-                Character View
-              </Link>
-            </Text>
-            <Text fontSize="1.5rem">|</Text>
-            <Text p={4} fontSize="xl"  _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}>
-              <Link
-                style={{
-                  fontSize: "1.5rem",
-                  textDecoration: "none",
-                  color: "white",
-                }}
-                
                 to={isAuthenticated ? "/characterCreate" : "/login"}
               >
                 Character Create
               </Link>
+            </Text>
+            <Text fontSize="1.5rem">|</Text>
+            <Text
+            
+              
+            >
+              <Menu>
+                <MenuButton
+                  border="none"
+                  background= "black"
+                  color="white"
+                  fontSize="1.5rem"
+                  p={4}
+                  // fontSize="xl"
+                  _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
+                >
+                  Character View
+                </MenuButton>
+                <MenuList background="black">
+                  {characters.map((character) => (
+                    <MenuItem key={character.uuid} background="black" _hover={{bg: "#00BFA5" }}>
+                      <Link to={`/characterView/${character.uuid}`} background="black">
+                        {character.characterName}
+                      </Link>
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
             </Text>
           </>
         ) : null}
         <Spacer />
         {!isAuthenticated ? (
           <>
-            <Text p={4} fontSize="xl"  _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}>
+            <Text
+              p={4}
+              fontSize="xl"
+              _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
+            >
               <Link
                 style={{
                   fontSize: "1.5rem",
@@ -92,7 +147,11 @@ const Header = (props) => {
               </Link>
             </Text>
             <Text fontSize="1.5rem">|</Text>
-            <Text p={4} fontSize="xl"  _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}>
+            <Text
+              p={4}
+              fontSize="xl"
+              _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
+            >
               <Link
                 style={{
                   fontSize: "1.5rem",
@@ -107,7 +166,11 @@ const Header = (props) => {
           </>
         ) : (
           <>
-            <Text p={4} color="white" fontSize="1.5rem">{`Logged in as ${userEmail}`}</Text>
+            <Text
+              p={4}
+              color="white"
+              fontSize="1.5rem"
+            >{`Logged in as ${userEmail}`}</Text>
             <Button
               fontSize="1.5rem"
               border="none"

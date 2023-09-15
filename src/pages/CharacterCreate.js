@@ -84,6 +84,7 @@ const CharacterCreate = () => {
   // HEREERERERE
   const transformCharacterForInsertion = (character) => {
     return {
+      email: userEmail,
       // Top-level properties
       characterName: character.name,
       alignment: character.alignment,
@@ -119,6 +120,22 @@ const CharacterCreate = () => {
     };
   };
   
+  const handleSubmit = async () => {
+    const transformedCharacter = transformCharacterForInsertion(formData);
+
+    const { data, error } = await supabase
+        .from('DBCharacters')
+        .insert([transformedCharacter]);
+
+    if (error) {
+        console.error("Error inserting character:", error);
+        // Handle the error appropriately
+    } else {
+        // Handle successful insertion
+        console.log("Character inserted successfully");
+    }
+};
+
 
   return (
     <Center
@@ -244,6 +261,7 @@ const CharacterCreate = () => {
               color="white"
               mt={4}
               isDisabled={validateForm === false}
+              onClick={handleSubmit}
             >
               Submit
             </Button>
