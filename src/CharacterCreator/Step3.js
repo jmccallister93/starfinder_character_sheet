@@ -128,7 +128,7 @@ const Step3 = ({ updateFormData, formData }) => {
     const sections = cleanText.split(".");
 
     return (
-      <Box background="rgb(105,105,105)">
+      <Box  background="rgb(70,70,70)" p={4} borderRadius={10}>
         {sections.map((section, idx) => {
           // If the section is not empty, render it
           if (section.trim()) {

@@ -105,8 +105,7 @@ const Step2 = ({ updateFormData, formData }) => {
         </Button>
         {formData.race ? (
           <Box     color="white"
-          display="flex"
-          flexWrap="wrap"
+
           justifyContent="space-between"
           background="rgb(60, 60, 60)"
           padding="20px"
@@ -127,11 +126,17 @@ const Step2 = ({ updateFormData, formData }) => {
             <Text mt={2}>
               <strong>Type:</strong> {formData.race?.Type}
             </Text>
+            <Text fontWeight="bold" fontSize="1.5rem" mt={4}>
+                Description:
+              </Text>
+              <Box background="rgb(70,70,70)" p={4} borderRadius={10}>
             {formatDescription(formData.race?.Description).map(
               (formattedDesc, index) => (
-                <Box key={index}>{formattedDesc}</Box>
+                <Box key={index} mt={2} >{formattedDesc}</Box>
+
               )
             )}
+            </Box>
           </Box>
         ) : null}
       </FormControl>
