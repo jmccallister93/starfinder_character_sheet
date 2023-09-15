@@ -122,6 +122,10 @@ const Step4 = ({ updateFormData, formData, themeData }) => {
     });
   }, []);
 
+  const clearSelection = () => {
+    updateFormData("theme", null);
+}
+
   return (
     <Box
       color="white"
@@ -144,12 +148,14 @@ const Step4 = ({ updateFormData, formData, themeData }) => {
       <FormControl id="theme" mb={4}>
         <FormLabel fontSize="1.8rem">Theme</FormLabel>
         <Button
+        mb="20px" 
           onClick={() =>
             handleButtonClick(data.themes.map((theme) => theme.Name))
           }
         >
           Select Theme
         </Button>
+        <Button  mb="20px" ml={2} onClick={clearSelection}>Clear Selection</Button>
         {formData.theme ? (
           <Box
             background="rgb(60, 60, 60)"

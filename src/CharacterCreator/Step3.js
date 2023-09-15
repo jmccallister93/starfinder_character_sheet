@@ -30,6 +30,8 @@ const Step3 = ({ updateFormData, formData }) => {
   const [proficiencies, setProficiencies] = useState([]);
   const [classAbilities, setClassAbilities] = useState([]);
 
+
+
   // Format Description property
   const formatDescription = (desc) => {
     if (!desc) return null;
@@ -120,6 +122,14 @@ const Step3 = ({ updateFormData, formData }) => {
     setClassAbilities(result.data || []);
   };
 
+  useEffect(() => {
+    if (formData.class) {
+      fetchProficiencies(formData.class.id);
+      fetchClassAbilities(formData.class.id);
+    }
+  }, []);
+  
+
   const formatAbilityText = (abilityText) => {
     // Remove starting and ending quotes
     const cleanText = abilityText.slice(1, -1);
@@ -144,6 +154,10 @@ const Step3 = ({ updateFormData, formData }) => {
     );
   };
 
+  const clearSelection = () => {
+    updateFormData("class", null);
+}
+
   return (
     <Box color="white" background="rgb(50, 50, 50)" width="70vw" padding="20px" borderRadius="10px" boxShadow="0px 0px 15px rgba(0,0,0,0.2)">
     <Text fontSize="2.5rem" mb="20px" borderBottom="2px solid white" paddingBottom="10px" textAlign="center" fontWeight="bold">
@@ -154,13 +168,12 @@ const Step3 = ({ updateFormData, formData }) => {
       <FormLabel fontSize="1.8rem" fontWeight="bold" mb="10px">Class</FormLabel>
       <Button
         mb="20px"
-        background="rgb(100, 100, 100)"
-        color="white"
         _hover={{ background: "rgb(120, 120, 120)" }}
         onClick={() => handleButtonClick(data.classes.map((cls) => cls.Name))}
       >
         Select Class
       </Button>
+      <Button  mb="20px" ml={2} onClick={clearSelection}>Clear Selection</Button>
         {formData.class ? (
            <Box background="rgb(60, 60, 60)" padding="20px" borderRadius="10px" boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)">
             <Text mt={2}>

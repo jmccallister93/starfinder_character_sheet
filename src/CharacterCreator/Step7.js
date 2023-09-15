@@ -7,7 +7,7 @@ const MAX_FEATS = 1;
 
 const Step7 = ({ updateFormData, formData }) => {
     const [featsList, setFeatsList] = useState([]);
-    const [selectedFeats, setSelectedFeats] = useState([]);
+    const [selectedFeats, setSelectedFeats] = useState(formData?.feats || []);
 
     useEffect(() => {
         const fetchFeats = async () => {
@@ -36,6 +36,10 @@ const Step7 = ({ updateFormData, formData }) => {
         });
     };
 
+    const clearSelection = () => {
+        setSelectedFeats([])
+    }
+
     useEffect(() => {
         updateFormData("feats", selectedFeats);
     }, [selectedFeats]);
@@ -57,7 +61,9 @@ const Step7 = ({ updateFormData, formData }) => {
                     {selectedFeats.map(feat => (
                         <Text key={feat} fontSize="1.1rem">{feat}</Text>
                     ))}
+                    <Button onClick={clearSelection}>Clear Selection</Button>
                 </Box>
+                
             </Flex>
 
             <Flex 

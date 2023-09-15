@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   FormControl,
   FormLabel,
   Input,
@@ -13,8 +14,7 @@ import { useEffect, useState } from "react";
 const Step1 = ({ updateFormData, formData }) => {
   const [fetchedData, setFetchedData] = useState();
   const [deity, setDeity] = useState([]);
-  const [pactWorlds, setPactWorlds] = useState([])
-
+  const [pactWorlds, setPactWorlds] = useState([]);
 
   const fetchDataFromTable = async (tableName, setDataCallback) => {
     const { data, error } = await supabase.from(tableName).select("*");
@@ -23,14 +23,23 @@ const Step1 = ({ updateFormData, formData }) => {
     } else {
       setDataCallback(data || []);
     }
-};
-
+  };
 
   useEffect(() => {
     fetchDataFromTable("deities", setDeity);
     fetchDataFromTable("pactWorlds", setPactWorlds);
-}, []);
+  }, []);
 
+  const clearSelection = () => {
+    updateFormData("name", null);
+    updateFormData("alignment", null);
+    updateFormData("deity", null);
+    updateFormData("description", null);
+    updateFormData("height_ft", null);
+    updateFormData("height_in", null);
+    updateFormData("weight", null);
+    updateFormData("homeWorld", null);
+}
 
 
   return (
@@ -52,7 +61,7 @@ const Step1 = ({ updateFormData, formData }) => {
       >
         Step 1: Basic Details
       </Text>
-
+      <Button  mb="20px" ml={2} onClick={clearSelection}>Clear All</Button>
       <Box
         color="white"
         display="flex"
@@ -69,8 +78,16 @@ const Step1 = ({ updateFormData, formData }) => {
             placeholder="Character Name"
             value={formData.name || ""}
             onChange={(e) => updateFormData("name", e.target.value)}
-            sx={{ "::placeholder": { color: "white" } }}
             cursor="pointer"
+            color="white"
+            sx={{
+              option: {
+                backgroundColor: "#333", // You can set this to any color you prefer
+                "&:hover": {
+                  backgroundColor: "#555", // Color for hover state
+                },
+              },
+            }}
           />
         </FormControl>
 
@@ -82,12 +99,12 @@ const Step1 = ({ updateFormData, formData }) => {
             onChange={(e) => updateFormData("alignment", e.target.value)}
             color="white"
             sx={{
-                "option": {
-                    backgroundColor: "#333", // You can set this to any color you prefer
-                    "&:hover": {
-                        backgroundColor: "#555", // Color for hover state
-                    }
-                }
+              option: {
+                backgroundColor: "#333", // You can set this to any color you prefer
+                "&:hover": {
+                  backgroundColor: "#555", // Color for hover state
+                },
+              },
             }}
           >
             <option value="lawfulGood">Lawful Good</option>
@@ -110,12 +127,12 @@ const Step1 = ({ updateFormData, formData }) => {
             onChange={(e) => updateFormData("deity", e.target.value)}
             color="white"
             sx={{
-                "option": {
-                    backgroundColor: "#333", // You can set this to any color you prefer
-                    "&:hover": {
-                        backgroundColor: "#555", // Color for hover state
-                    }
-                }
+              option: {
+                backgroundColor: "#333", // You can set this to any color you prefer
+                "&:hover": {
+                  backgroundColor: "#555", // Color for hover state
+                },
+              },
             }}
           >
             {deity &&
@@ -135,15 +152,15 @@ const Step1 = ({ updateFormData, formData }) => {
             onChange={(e) => updateFormData("homeWorld", e.target.value)}
             color="white"
             sx={{
-                "option": {
-                    backgroundColor: "#333", // You can set this to any color you prefer
-                    "&:hover": {
-                        backgroundColor: "#555", // Color for hover state
-                    }
-                }
+              option: {
+                backgroundColor: "#333", // You can set this to any color you prefer
+                "&:hover": {
+                  backgroundColor: "#555", // Color for hover state
+                },
+              },
             }}
           >
-               {pactWorlds &&
+            {pactWorlds &&
               pactWorlds.map((world, index) => (
                 <option key={index} value={world.Name}>
                   {world.Name}
@@ -159,6 +176,15 @@ const Step1 = ({ updateFormData, formData }) => {
             placeholder="Weight (lbs)"
             value={formData.weight || ""}
             onChange={(e) => updateFormData("weight", e.target.value)}
+            color="white"
+            sx={{
+              option: {
+                backgroundColor: "#333", // You can set this to any color you prefer
+                "&:hover": {
+                  backgroundColor: "#555", // Color for hover state
+                },
+              },
+            }}
           />
         </FormControl>
 
@@ -170,12 +196,30 @@ const Step1 = ({ updateFormData, formData }) => {
               placeholder="ft"
               value={formData.height_ft || ""}
               onChange={(e) => updateFormData("height_ft", e.target.value)}
+              color="white"
+              sx={{
+                option: {
+                  backgroundColor: "#333", // You can set this to any color you prefer
+                  "&:hover": {
+                    backgroundColor: "#555", // Color for hover state
+                  },
+                },
+              }}
             />
             <Input
               type="number"
               placeholder="in"
               value={formData.height_in || ""}
               onChange={(e) => updateFormData("height_in", e.target.value)}
+              color="white"
+              sx={{
+                option: {
+                  backgroundColor: "#333", // You can set this to any color you prefer
+                  "&:hover": {
+                    backgroundColor: "#555", // Color for hover state
+                  },
+                },
+              }}
             />
           </Box>
         </FormControl>
@@ -186,6 +230,15 @@ const Step1 = ({ updateFormData, formData }) => {
             placeholder="Character description..."
             value={formData.description || ""}
             onChange={(e) => updateFormData("description", e.target.value)}
+            color="white"
+            sx={{
+              option: {
+                backgroundColor: "#333", // You can set this to any color you prefer
+                "&:hover": {
+                  backgroundColor: "#555", // Color for hover state
+                },
+              },
+            }}
           />
         </FormControl>
       </Box>

@@ -86,6 +86,11 @@ const Step2 = ({ updateFormData, formData }) => {
     });
   }, []);
 
+  const clearSelection = () => {
+    updateFormData("race", null);
+}
+<Button  mb="20px" ml={2} onClick={clearSelection}>Clear Selection</Button>
+
   return (
     <Box       color="white"
     background="rgb(50, 50, 50)"
@@ -99,10 +104,12 @@ const Step2 = ({ updateFormData, formData }) => {
       <FormControl id="race" mb={4}>
         <FormLabel fontSize="1.8rem">Race</FormLabel>
         <Button
+        mb="20px"
           onClick={() => handleButtonClick(data.races.map((race) => race.Name))}
         >
           Select Race
         </Button>
+        <Button  mb="20px" ml={2} onClick={clearSelection}>Clear Selection</Button>
         {formData.race ? (
           <Box     color="white"
 

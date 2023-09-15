@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box, Text, Button, Input, Flex } from "@chakra-ui/react";
 
 const skillsList = [
@@ -163,7 +163,12 @@ const skillPointsPerLevel = {
 
 
   const Step6 = ({ updateFormData, formData }) => {
-    const [skills, setSkills] = React.useState({});
+    const [skills, setSkills] = useState(formData?.skills || []);
+
+    
+  const clearSelection = () => {
+    setSkills([])
+}
   
     // This function determines if the given skill is a class skill for the selected class
     const isClassSkill = (skillName) => {
@@ -224,7 +229,7 @@ const skillPointsPerLevel = {
           </Text>
     
           <Text fontSize="1.5rem">Skill Points Remaining: {skillPointsRemaining}</Text>
-    
+          <Button onClick={clearSelection}>Clear Selection</Button>
           <Flex wrap="wrap" justifyContent="space-between" mt={4}>
                 {skillsList.map((skill, index) => (
                     <Flex key={index} mb={3} w="30%" alignItems="center" justifyContent="space-between">
