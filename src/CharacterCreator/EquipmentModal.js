@@ -127,7 +127,7 @@ const EquipmentModal = ({
   // Filter fucntion
   const renderEquipmentTableHeaders = (sampleData) => {
     if (!sampleData) return null;
-  
+
     return (
       <>
         {Object.keys(sampleData)
@@ -152,7 +152,7 @@ const EquipmentModal = ({
       </>
     );
   };
-  
+
   const [filterValue, setfilterValue] = useState("");
   const handleFilter = (event) => {
     const value = event.target.value;
@@ -184,7 +184,6 @@ const EquipmentModal = ({
 
     return comparison;
   });
-
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -223,9 +222,9 @@ const EquipmentModal = ({
             overflowY="auto"
           >
             <Table variant="simple">
-            <Thead>
-  <Tr>{renderEquipmentTableHeaders(fetchedData[0])}</Tr>
-</Thead>
+              <Thead>
+                <Tr>{renderEquipmentTableHeaders(fetchedData[0])}</Tr>
+              </Thead>
               <Tbody>
                 {sortedData
                   ?.filter((equipment) => {
@@ -238,7 +237,6 @@ const EquipmentModal = ({
                   })
                   .map((opt, index) => (
                     <Tr key={index}>{renderEquipmentDetails(opt)}</Tr>
-
                   ))}
               </Tbody>
             </Table>

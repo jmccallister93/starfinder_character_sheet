@@ -163,9 +163,10 @@ const Step8 = ({ updateFormData, formData }) => {
     }
 
     const handleRemoveFromInventory = (itemToRemove) => {
-        setRemainingCredits(remainingCredits + itemToRemove.Price)
-      setCurrentInventory(prevInventory => prevInventory.filter(item => item !== itemToRemove));
-    };
+        setCurrentInventory(prevInventory => prevInventory.filter(item => item !== itemToRemove));
+        setRemainingCredits(prevCredits => prevCredits + itemToRemove.Price);
+      };
+      
 
     useEffect(() => {
       updateFormData("remainingCredits", remainingCredits)
