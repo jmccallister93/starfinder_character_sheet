@@ -170,9 +170,14 @@ const Step6 = ({ updateFormData, formData }) => {
   };
 
   // This function determines if the given skill is a class skill for the selected class
-  const isClassSkill = (skillName) => {
-    return classSkills[formData.class?.Name]?.includes(skillName);
-  };
+  // This function determines if the given skill is a class skill 
+// for the selected class or from the selected theme
+const isClassSkill = (skillName) => {
+  const isFromClass = classSkills[formData.class?.Name]?.includes(skillName);
+  const isFromTheme = formData.theme?.ClassSkill === skillName;
+  return isFromClass || isFromTheme;
+};
+
 
   // This function handles the changes made to skill ranks by the user
   const handleSkillChange = (skillName, value) => {

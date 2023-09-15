@@ -80,6 +80,45 @@ const CharacterCreate = () => {
   useEffect(() => {
     console.log(formData);
   }, [formData]);
+  
+  // HEREERERERE
+  const transformCharacterForInsertion = (character) => {
+    return {
+      // Top-level properties
+      characterName: character.name,
+      alignment: character.alignment,
+      deity: character.deity,
+      homeWorld: character.homeWorld,
+      // Flattening nested properties
+      raceName: character.race.Name,
+      raceHp: character.race.HP.toString(),
+      raceAbility: character.race.Ability,
+      raceDescription: character.race.Description,
+      raceSize: character.race.Size,
+      raceType: character.race.Type,
+      raceAbilityAdjustments: JSON.stringify(character.raceAbilityAdjustments),
+      className: character.class.Name,
+      classDescription: character.class.Description,
+      classHp: character.class.HP.toString(),
+      classKeyAbility: character.class.KeyAbility,
+      classKeyAbilityDescription: character.class.KeyAbilityDescription,
+      classStaminaPoints: character.class.StaminaPoints,
+      classSkills: JSON.stringify(character.classSkills),
+      classStats: JSON.stringify(character.classStats),
+      currentInventory: JSON.stringify(character.currentInventory),
+      feats: JSON.stringify(character.feats),
+      proficiencies: JSON.stringify(character.proficiencies),
+      remainingCredits: character.remainingCredits.toString(),
+      scores: JSON.stringify(character.scores),
+      skills: JSON.stringify(character.skills),
+      themeName: character.theme.Name,
+      themeAbility: character.theme.Ability,
+      themeClassSkill: character.theme.ClassSkill,
+      themeAbilityAdjustments: JSON.stringify(character.themeAbilityAdjustments),
+      // Add other properties as needed
+    };
+  };
+  
 
   return (
     <Center
