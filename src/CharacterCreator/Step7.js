@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, Button, Flex, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverHeader, PopoverBody } from "@chakra-ui/react";
+import { Box, Text, Button, Flex, Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverHeader, PopoverBody, Skeleton } from "@chakra-ui/react";
 import { supabase } from "../client/supabaseClient";
 import featPrerequisites from "./featsPrerequisites";
 
@@ -8,6 +8,7 @@ const MAX_FEATS = 1;
 const Step7 = ({ updateFormData, formData }) => {
     const [featsList, setFeatsList] = useState([]);
     const [selectedFeats, setSelectedFeats] = useState(formData?.feats || []);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchFeats = async () => {
@@ -20,11 +21,11 @@ const Step7 = ({ updateFormData, formData }) => {
                 console.error("Error fetching feats:", error);
             }
         };
-
+        setIsLoading(false)
         fetchFeats();
     }, []);
 
-    const toggleFeatSelection = (featName) => {
+    const toggleFeatSelection = (featName) => { 
         setSelectedFeats(prev => {
             if (prev.includes(featName)) {
                 return prev.filter(feat => feat !== featName);
@@ -54,7 +55,7 @@ const Step7 = ({ updateFormData, formData }) => {
             <Text fontSize="2.5rem" mb="20px" borderBottom="2px solid white" paddingBottom="10px" textAlign="center" fontWeight="bold">
                 Step 7: Feats
             </Text>
-
+            
             <Flex direction="column" mb={4} >
                 <Text fontSize="1.2rem">Selected Feats ({selectedFeats.length}/{MAX_FEATS}):</Text>
                 <Box pl={4} >
@@ -65,14 +66,18 @@ const Step7 = ({ updateFormData, formData }) => {
                 </Box>
                 
             </Flex>
-
+            
+            {isLoading ? (
+              <Skeleton height="60vh" w="full" />
+            ) : ( 
             <Flex 
                 wrap="wrap" 
                 mt={4}
-                direction="column"
-                height="20rem"
-                overflowX="auto"
+                direction="row"
+                // height="80vw"
+                overflowY="auto"
             >
+ 
                 {featsList.map((feat, index) => (
                     <Flex key={index} mb={3} w="25%" alignItems="center" justifyContent="center">
                         <Box textAlign="center" flex="1" background="rgb(60, 60, 60)" padding="20px" borderRadius="10px" boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)">
@@ -106,6 +111,7 @@ const Step7 = ({ updateFormData, formData }) => {
                     </Flex>
                 ))}
             </Flex>
+            )}
         </Box>
     );
 };

@@ -22,7 +22,7 @@ import { useEffect, useState } from "react";
 import { Alert, AlertIcon } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
-const Step9 = ({ formData, updateFormData, setCurrentStep }) => {
+const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => {
   const [hp, setHp] = useState();
   const [stamina, setStamina] = useState();
   const [resolve, setResolve] = useState();
@@ -136,13 +136,20 @@ const Step9 = ({ formData, updateFormData, setCurrentStep }) => {
         </div>
       );
     }
-
+    // setValidationMessages(warnings);
+    
     return warnings.length ? warnings : null;
   };
 
-  const validationError = validateFormData();
   const warnings = validateFormData();
 
+  useEffect(() => {
+    if(warnings?.length > 0){
+        setValidateForm(false)
+    } else (
+        setValidateForm(true)
+    )
+  }, [warnings])
   // Getting HP Value form Race
   const extractNumericValue = (value) => {
     const result = value.match(/\d+/);
@@ -220,6 +227,11 @@ const Step9 = ({ formData, updateFormData, setCurrentStep }) => {
     setRefSave(Reflex);
     setWillSave(Will);
   }, [formData]);
+
+//   useEffect(() => {
+//     validateFormData(); 
+//     // You can call this function whenever formData changes or at other appropriate times
+//   }, [formData]);
 
   return (
     <Box

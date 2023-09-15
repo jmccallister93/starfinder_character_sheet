@@ -8,6 +8,7 @@ import {
   Center,
   Heading,
   Text,
+  Tooltip,
 } from "@chakra-ui/react";
 import { supabase } from "../client/supabaseClient";
 import spaceBackground from "../assets/space4.jpg";
@@ -29,6 +30,7 @@ const CharacterCreate = () => {
   const { session, updateSession } = contextValue;
   const [isLoading, setIsLoading] = useState(true);
   const isAuthenticated = !!session; // Check if the session
+  const [validateForm, setValidateForm] = useState(false);
 
   useEffect(() => {
     async function checkSession() {
@@ -86,17 +88,22 @@ const CharacterCreate = () => {
       background="linear-gradient(to right, #3B3D5B, #B0B0B0)"
     >
       <Box>
-        <Heading
-          color="white"
-          borderRadius="md"
-          p={5}
-          shadow="none"
-          fontSize="4rem"
-          borer="none"
-        >
+        <Heading color="white" borderRadius="md" shadow="none" border="none">
           Create Character
         </Heading>
       </Box>
+      <Flex justifyContent="center" mt={4}>
+        {Array.from({ length: totalSteps }, (_, index) => (
+          <Button
+            key={index}
+            onClick={() => setCurrentStep(index + 1)}
+            m={1}
+            colorScheme={currentStep === index + 1 ? "teal" : "gray"}
+          >
+            Step {index + 1}
+          </Button>
+        ))}
+      </Flex>
       <Flex
         flexDirection="column"
         alignItems="center"
@@ -109,35 +116,72 @@ const CharacterCreate = () => {
         justifyContent="space-between"
       >
         {currentStep === 1 && (
-          <Step1 updateFormData={updateFormData} formData={formData}  setCurrentStep={setCurrentStep}/>
+          <Step1
+            updateFormData={updateFormData}
+            formData={formData}
+            setCurrentStep={setCurrentStep}
+          />
         )}
         {currentStep === 2 && (
-          <Step2 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
+          <Step2
+            updateFormData={updateFormData}
+            formData={formData}
+            setCurrentStep={setCurrentStep}
+          />
         )}
         {currentStep === 3 && (
-          <Step3 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
+          <Step3
+            updateFormData={updateFormData}
+            formData={formData}
+            setCurrentStep={setCurrentStep}
+          />
         )}
         {currentStep === 4 && (
-          <Step4 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
+          <Step4
+            updateFormData={updateFormData}
+            formData={formData}
+            setCurrentStep={setCurrentStep}
+          />
         )}
         {currentStep === 5 && (
-          <Step5 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
+          <Step5
+            updateFormData={updateFormData}
+            formData={formData}
+            setCurrentStep={setCurrentStep}
+          />
         )}
         {currentStep === 6 && (
-          <Step6 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
+          <Step6
+            updateFormData={updateFormData}
+            formData={formData}
+            setCurrentStep={setCurrentStep}
+          />
         )}
         {currentStep === 7 && (
-          <Step7 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
+          <Step7
+            updateFormData={updateFormData}
+            formData={formData}
+            setCurrentStep={setCurrentStep}
+          />
         )}
         {currentStep === 8 && (
-          <Step8 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
+          <Step8
+            updateFormData={updateFormData}
+            formData={formData}
+            setCurrentStep={setCurrentStep}
+          />
         )}
         {currentStep === 9 && (
-          <Step9 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
+          <Step9
+            updateFormData={updateFormData}
+            formData={formData}
+            setCurrentStep={setCurrentStep}
+            setValidateForm={setValidateForm}
+          />
         )}
 
         <Box alignItems="center" textAlign="center">
-          <Flex justifyContent="space-between" mb={4} mt={4} >
+          <Flex justifyContent="space-between" mb={4} mt={4}>
             {currentStep > 1 && (
               <Button onClick={handlePrevious} margin="0.25rem">
                 Previous
@@ -156,7 +200,12 @@ const CharacterCreate = () => {
             // </Button>
             <></>
           ) : (
-            <Button bg="green" color="white" mt={4}>
+            <Button
+              bg={validateForm === false ? "red" : "green"}
+              color="white"
+              mt={4}
+              isDisabled={validateForm === false}
+            >
               Submit
             </Button>
           )}
