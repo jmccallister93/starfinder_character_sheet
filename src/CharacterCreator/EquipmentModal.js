@@ -22,7 +22,7 @@ import {
   Td,
   Input,
 } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const EquipmentModal = ({
   isOpen,
@@ -47,8 +47,10 @@ const EquipmentModal = ({
         return (
           <>
             <Td>
-              {details?.Name}
-              <Button onClick={() => handlePurchase(details)}>Purchase</Button>
+              <b>{details?.Name}</b>
+              <Button p={2} onClick={() => handlePurchase(details)}>
+                Purchase
+              </Button>
             </Td>
             <Td>{details?.Level}</Td>
             <Td>{details?.Price}</Td>
@@ -93,6 +95,12 @@ const EquipmentModal = ({
         return null;
     }
   };
+
+  const [filterValue, setfilterValue] = useState("");
+  const handleFilter = (event) => {
+    const value = event.target.value;
+    setfilterValue(value);
+  };
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay bg="rgba(0, 0, 0, 0.6)" />
@@ -105,11 +113,11 @@ const EquipmentModal = ({
             alignItems="center"
             bg="white"
           >
-            <Text fontSize="2rem">
-              Select Equipment to Purchase <br />
-              Remaining Credits: {remainingCredits}
-            </Text>
-            
+            <Box display="flex" flexDirection="column">
+              <Text fontSize="2rem">Select Equipment to Purchase</Text>
+              <Text>Remaining Credits: {remainingCredits}</Text>
+              <Input onChange={handleFilter} placeholder="Filter"></Input>
+            </Box>
             <ModalCloseButton
               width="5vw"
               fontSize="2rem"
@@ -134,9 +142,18 @@ const EquipmentModal = ({
                 <Tr>{renderEquipmentTableHeaders(option)}</Tr>
               </Thead>
               <Tbody>
-                {fetchedData?.map((opt, index) => (
-                  <Tr key={index}>{renderEquipmentDetails(option, opt)}</Tr>
-                ))}
+                {fetchedData
+                  ?.filter((equipment) => {
+                    if (!filterValue) return true;
+                    return Object.values(equipment).some((value) =>
+                      String(value)
+                        .toLowerCase()
+                        .includes(filterValue.toLowerCase())
+                    );
+                  })
+                  .map((opt, index) => (
+                    <Tr key={index}>{renderEquipmentDetails(option, opt)}</Tr>
+                  ))}
               </Tbody>
             </Table>
           </VStack>
