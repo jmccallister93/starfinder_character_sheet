@@ -22,6 +22,7 @@ import {
   Td,
   Input,
   Skeleton,
+  Tooltip,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { ArrowUpDownIcon } from "@chakra-ui/icons";
@@ -107,19 +108,26 @@ const EquipmentModal = ({
           .filter((key) => key !== "id")
           .map((key) => (
             <Th key={key}>
-              {formatHeader(key)}
-              <ArrowUpDownIcon
-                onClick={() => handleSort(key)}
-                color={
-                  sortField === key
-                    ? sortDirection === "asc"
-                      ? "green.500"
-                      : "red.500"
-                    : "black.500"
-                }
-                ml={2}
-                cursor="pointer"
-              />
+              <Box display="flex">
+                {formatHeader(key)}
+                <Tooltip label="Sort by" placement="top" hasArrow>
+                  <ArrowUpDownIcon
+                    title="Sort By"
+                    onClick={() => handleSort(key)}
+                    color={
+                      sortField === key
+                        ? sortDirection === "asc"
+                          ? "green.500"
+                          : sortDirection === "desc"
+                          ? "red.500"
+                          : "black.500"
+                        : "black.500"
+                    }
+                    ml={2}
+                    cursor="pointer"
+                  />
+                </Tooltip>
+              </Box>
             </Th>
           ))}
       </>
@@ -134,19 +142,28 @@ const EquipmentModal = ({
 
   //Sort function
   const [sortField, setSortField] = useState(null);
-  const [sortDirection, setSortDirection] = useState("asc");
+  const [sortDirection, setSortDirection] = useState("none");
   const handleSort = (field) => {
     if (sortField === field) {
-      setSortDirection((prevDirection) =>
-        prevDirection === "asc" ? "desc" : "asc"
-      );
+      setSortDirection((prevDirection) => {
+        switch (prevDirection) {
+          case "none":
+            return "asc";
+          case "asc":
+            return "desc";
+          case "desc":
+            return "none";
+          default:
+            return "none";
+        }
+      });
     } else {
       setSortField(field);
       setSortDirection("asc");
     }
   };
   const sortedData = [...fetchedData].sort((a, b) => {
-    if (!sortField) return 0;
+    if (!sortField || sortDirection === "none") return 0;
 
     const aValue = a[sortField];
     const bValue = b[sortField];
