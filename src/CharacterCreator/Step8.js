@@ -59,12 +59,10 @@ const Step8 = ({ updateFormData, formData }) => {
     } else {
       setFetchedData(data || []);
     }
-    
   };
 
   // Button click when item type is clicked
-  const handleButtonClick = (options) => {
-    
+  const handleButtonClick = (options) => {  
     setModalOption(options);
     let tableName = "";
     switch (options) {
@@ -135,7 +133,6 @@ const Step8 = ({ updateFormData, formData }) => {
     if (tableName) {
       fetchDataFromTable(tableName);
     }
-
     onOpen();
   };
 
@@ -144,36 +141,39 @@ const Step8 = ({ updateFormData, formData }) => {
   //     onClose()
   //   })
 
-  //   const toast = useToast();
 
-  //   const handlePurchase = (item) => {
-  //       if(item.price > remainingCredits) {
-  //           toast({
-  //               title: "Purchase Error",
-  //               description: "Cannot afford the selected item.",
-  //               status: "error",
-  //               duration: 3000,
-  //               isClosable: true,
-  //           });
-  //           return;
-  //       }
-  //       // Otherwise, proceed with the purchase
-  //       setCurrentInventory(prevInventory => [...prevInventory, item]);
-  //       setRemainingCredits(prevCredits => prevCredits - item.price);
-  //       // Update formData
-  //   }
+    const toast = useToast();
 
-  //   const handleRemoveFromInventory = (itemToRemove) => {
-  //     setCurrentInventory(prevInventory => prevInventory.filter(item => item !== itemToRemove));
-  //   };
+    const handlePurchase = (item) => {
+        console.log(item.Price)
+        if(item.Price > remainingCredits) {
+            toast({
+                title: "Purchase Error",
+                description: "Cannot afford the selected item.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
+        // Otherwise, proceed with the purchase
+        setCurrentInventory(prevInventory => [...prevInventory, item]);
+        setRemainingCredits(prevCredits => prevCredits - item.Price);
+        // Update formData
+    }
 
-  //   useEffect(() => {
-  //     updateFormData("remainingCredits", remainingCredits)
-  //   },[remainingCredits])
+    const handleRemoveFromInventory = (itemToRemove) => {
+        setRemainingCredits(remainingCredits + itemToRemove.Price)
+      setCurrentInventory(prevInventory => prevInventory.filter(item => item !== itemToRemove));
+    };
 
-  //   useEffect(() => {
-  //     updateFormData("currentInventory", currentInventory)
-  //   },[ currentInventory])
+    useEffect(() => {
+      updateFormData("remainingCredits", remainingCredits)
+    },[remainingCredits])
+
+    useEffect(() => {
+      updateFormData("currentInventory", currentInventory)
+    },[ currentInventory])
 
   return (
     <Box
@@ -204,20 +204,22 @@ const Step8 = ({ updateFormData, formData }) => {
         borderRadius="10px"
         boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
       >
-        {/* <Text>
+        <Box>
+        <Text>
           <b>Inventory:</b>
         </Text>
         {currentInventory.map((item, index) => (
-          <Box key={index} display="flex" alignItems="center" mb={2}>
-            <Text flex="1">{item.name}</Text>
-            <Button size="sm" onClick={() => handleRemoveFromInventory(item)}>
+          <Box key={index} display="flex" alignItems="center" m={2}>
+            <Text flex="1">{item.Name}</Text>
+            <Button  ml={2} size="sm" onClick={() => handleRemoveFromInventory(item)}>
               Remove
             </Button>
           </Box>
         ))}
+        </Box>
         <Text>
           <b>Credits: </b> {remainingCredits}
-        </Text> */}
+        </Text>
       </Box>
 
       {Object.keys(categories).map((category) => (
@@ -244,6 +246,8 @@ const Step8 = ({ updateFormData, formData }) => {
         onClose={onClose}
         fetchedData={fetchedData}
         option={modalOption}
+        handlePurchase={handlePurchase}
+        remainingCredits={remainingCredits}
         // options={fetchedData}
         // details={fetchedData}
         // onSelect={setSelectedItem}

@@ -24,35 +24,43 @@ import {
 } from "@chakra-ui/react";
 import { useEffect } from "react";
 
-const EquipmentModal = ({ isOpen, onClose, fetchedData, option }) => {
+const EquipmentModal = ({
+  isOpen,
+  onClose,
+  fetchedData,
+  option,
+  handlePurchase,
+  remainingCredits,
+}) => {
   // const handleSelectOption = (optionDetail) => {
   //   onSelect(optionDetail);
   //   onClose();
   // };
-  useEffect(() => {
-    const test = fetchedData?.map((opt) => opt.Name);
-    console.log(fetchedData);
-  });
+  // useEffect(() => {
+  //   const test = fetchedData?.map((opt) => opt.Name);
+  //   console.log(details?.Price);
+  // });
 
   const renderEquipmentDetails = (category, details) => {
     switch (category) {
       case "Basic":
         return (
           <>
-            
-              <Td>{details?.Name}</Td>
-              <Td>{details?.Level}</Td>
-              <Td>{details?.Price}</Td>
-              <Td>{details?.EAC_Bonus}</Td>
-              <Td>{details?.KAC_Bonus}</Td>
-              <Td>{details?.Maximum_Dex_Bonus}</Td>
-              <Td>{details?.Armor_Check_Penalty}</Td>
-              <Td>{details?.Speed_Adjustment}</Td>
-              <Td>{details?.Upgrade_Slots}</Td>
-              <Td>{details?.Bulk}</Td>
-              <Td>{details?.Type}</Td>
-              <Td>{details?.Group}</Td>
-            
+            <Td>
+              {details?.Name}
+              <Button onClick={() => handlePurchase(details)}>Purchase</Button>
+            </Td>
+            <Td>{details?.Level}</Td>
+            <Td>{details?.Price}</Td>
+            <Td>{details?.EAC_Bonus}</Td>
+            <Td>{details?.KAC_Bonus}</Td>
+            <Td>{details?.Maximum_Dex_Bonus}</Td>
+            <Td>{details?.Armor_Check_Penalty}</Td>
+            <Td>{details?.Speed_Adjustment}</Td>
+            <Td>{details?.Upgrade_Slots}</Td>
+            <Td>{details?.Bulk}</Td>
+            <Td>{details?.Type}</Td>
+            <Td>{details?.Group}</Td>
           </>
         );
       // Add cases for other equipment types
@@ -88,7 +96,7 @@ const EquipmentModal = ({ isOpen, onClose, fetchedData, option }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay bg="rgba(0, 0, 0, 0.6)" />
-      <ModalContent borderRadius="md" width="70vw" maxWidth="70vw">
+      <ModalContent borderRadius="md" width="90vw" maxWidth="90vw">
         <ModalBody>
           <ModalHeader
             color="black"
@@ -97,7 +105,11 @@ const EquipmentModal = ({ isOpen, onClose, fetchedData, option }) => {
             alignItems="center"
             bg="white"
           >
-            <Text fontSize="2rem">Select Equipment to Purchase</Text>
+            <Text fontSize="2rem">
+              Select Equipment to Purchase <br />
+              Remaining Credits: {remainingCredits}
+            </Text>
+            
             <ModalCloseButton
               width="5vw"
               fontSize="2rem"
@@ -119,9 +131,7 @@ const EquipmentModal = ({ isOpen, onClose, fetchedData, option }) => {
           >
             <Table variant="simple">
               <Thead>
-                <Tr>
-                {renderEquipmentTableHeaders(option)}
-                </Tr>
+                <Tr>{renderEquipmentTableHeaders(option)}</Tr>
               </Thead>
               <Tbody>
                 {fetchedData?.map((opt, index) => (
