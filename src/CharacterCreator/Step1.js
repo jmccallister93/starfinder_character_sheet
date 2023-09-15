@@ -7,9 +7,32 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import Header from "../components/Header";
+import { supabase } from "../client/supabaseClient";
+import { useEffect, useState } from "react";
 
 const Step1 = ({ updateFormData, formData }) => {
+  const [fetchedData, setFetchedData] = useState();
+  const [deity, setDeity] = useState([]);
+  const [pactWorlds, setPactWorlds] = useState([])
+
+
+  const fetchDataFromTable = async (tableName, setDataCallback) => {
+    const { data, error } = await supabase.from(tableName).select("*");
+    if (error) {
+      console.error(`Error fetching data from ${tableName}:`, error);
+    } else {
+      setDataCallback(data || []);
+    }
+};
+
+
+  useEffect(() => {
+    fetchDataFromTable("deities", setDeity);
+    fetchDataFromTable("pactWorlds", setPactWorlds);
+}, []);
+
+
+
   return (
     <Box
       color="white"
@@ -20,7 +43,12 @@ const Step1 = ({ updateFormData, formData }) => {
       boxShadow="0px 0px 15px rgba(0,0,0,0.2)"
     >
       <Text
-       fontSize="2.5rem" mb="20px" borderBottom="2px solid white" paddingBottom="10px" textAlign="center" fontWeight="bold"
+        fontSize="2.5rem"
+        mb="20px"
+        borderBottom="2px solid white"
+        paddingBottom="10px"
+        textAlign="center"
+        fontWeight="bold"
       >
         Step 1: Basic Details
       </Text>
@@ -46,13 +74,21 @@ const Step1 = ({ updateFormData, formData }) => {
           />
         </FormControl>
 
-        <FormControl id="alignment" mb={4} width="28%" padding="2rem" >
+        <FormControl id="alignment" mb={4} width="28%" padding="2rem">
           <FormLabel>Alignment</FormLabel>
           <Select
             placeholder="Select alignment"
             value={formData.alignment || ""}
             onChange={(e) => updateFormData("alignment", e.target.value)}
-            color="black"
+            color="white"
+            sx={{
+                "option": {
+                    backgroundColor: "#333", // You can set this to any color you prefer
+                    "&:hover": {
+                        backgroundColor: "#555", // Color for hover state
+                    }
+                }
+            }}
           >
             <option value="lawfulGood">Lawful Good</option>
             <option value="neutralGood">Neutral Good</option>
@@ -72,8 +108,22 @@ const Step1 = ({ updateFormData, formData }) => {
             placeholder="Select deity"
             value={formData.deity || ""}
             onChange={(e) => updateFormData("deity", e.target.value)}
+            color="white"
+            sx={{
+                "option": {
+                    backgroundColor: "#333", // You can set this to any color you prefer
+                    "&:hover": {
+                        backgroundColor: "#555", // Color for hover state
+                    }
+                }
+            }}
           >
-            {/* Deity options will be added later */}
+            {deity &&
+              deity.map((de, index) => (
+                <option key={index} value={de.Name}>
+                  {de.Name}
+                </option>
+              ))}
           </Select>
         </FormControl>
 
@@ -83,8 +133,22 @@ const Step1 = ({ updateFormData, formData }) => {
             placeholder="Select home world"
             value={formData.homeWorld || ""}
             onChange={(e) => updateFormData("homeWorld", e.target.value)}
+            color="white"
+            sx={{
+                "option": {
+                    backgroundColor: "#333", // You can set this to any color you prefer
+                    "&:hover": {
+                        backgroundColor: "#555", // Color for hover state
+                    }
+                }
+            }}
           >
-            {/* HomeWorld options will be added later */}
+               {pactWorlds &&
+              pactWorlds.map((world, index) => (
+                <option key={index} value={world.Name}>
+                  {world.Name}
+                </option>
+              ))}
           </Select>
         </FormControl>
 
