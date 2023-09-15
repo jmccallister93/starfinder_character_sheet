@@ -206,14 +206,14 @@ const Step9 = ({ formData, updateFormData }) => {
           </List>
         </Box>
 
-        <Box width="25%">
-          <Heading size="md" marginBottom="10px">
+        <Box width="40%">
+          <Heading size="md" marginBottom="10px"  textAlign="center">
             Skills
           </Heading>
-          <List>
+          <List display="flex" flexDirection="row" flexWrap="wrap" justifyContent="flex-start">
             {Object.entries(formData.skills).map(([key, value]) => (
-              <ListItem key={key}>
-                <b>{key}:</b> {value}
+              <ListItem key={key} width="50%">
+                <b>{key}:</b> +{value}
               </ListItem>
             ))}
           </List>

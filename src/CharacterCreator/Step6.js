@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Text, Button, Input, Flex } from "@chakra-ui/react";
 
 const skillsList = [
@@ -196,9 +196,7 @@ const skillPointsPerLevel = {
     };
     
   
-    React.useEffect(() => {
-      updateFormData("skills", skills);
-    }, [skills]);
+
   
     const incrementSkill = (skillName) => {
         const currentRank = skills[skillName] || 0;
@@ -216,6 +214,21 @@ const skillPointsPerLevel = {
       const totalSkillRanksAllocated = Object.values(skills).reduce((acc, curr) => acc + (curr || 0), 0);
       const skillPointsForClass = skillPointsPerLevel[formData.class?.Name] || 0;
       const skillPointsRemaining = skillPointsForClass - totalSkillRanksAllocated;
+
+      const getCombinedSkills = () => {
+        let combinedSkills = {};
+        
+        for (let skill of skillsList) {
+          combinedSkills[skill] = (skills[skill] || 0) + (isClassSkill(skill) ? 3 : 0);
+        }
+      
+        return combinedSkills;
+      };
+
+      useEffect(() => {
+        updateFormData("skills", getCombinedSkills());
+      }, [skills]);
+      
   
       return (
         <Box  color="white"
