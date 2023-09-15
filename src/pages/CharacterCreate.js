@@ -136,8 +136,8 @@ const CharacterCreate = () => {
           <Step9 updateFormData={updateFormData} formData={formData} />
         )}
 
-        <Box>
-          <Flex justifyContent="space-between" mb={4} mt={4}>
+        <Box alignItems="center" textAlign="center">
+          <Flex justifyContent="space-between" mb={4} mt={4} >
             {currentStep > 1 && (
               <Button onClick={handlePrevious} margin="0.25rem">
                 Previous
@@ -156,7 +156,7 @@ const CharacterCreate = () => {
             // </Button>
             <></>
           ) : (
-            <Button bg="black" color="white" mt={4}>
+            <Button bg="green" color="white" mt={4}>
               Submit
             </Button>
           )}
