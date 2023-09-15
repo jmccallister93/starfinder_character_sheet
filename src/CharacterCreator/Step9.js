@@ -19,8 +19,10 @@ import {
 } from "@chakra-ui/react";
 import { supabase } from "../client/supabaseClient";
 import { useEffect, useState } from "react";
+import { Alert, AlertIcon } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
-const Step9 = ({ formData, updateFormData }) => {
+const Step9 = ({ formData, updateFormData, setCurrentStep }) => {
   const [hp, setHp] = useState();
   const [stamina, setStamina] = useState();
   const [resolve, setResolve] = useState();
@@ -28,6 +30,118 @@ const Step9 = ({ formData, updateFormData }) => {
   const [refSave, setRefSave] = useState();
   const [willSave, setWillSave] = useState();
   const [fortSave, setFortSave] = useState();
+
+  // Step 9 validation
+  const validateFormData = () => {
+    let warnings = [];
+    if (!formData.name) {
+      warnings.push(
+        <div>
+          Please enter Character Name in{" "}
+          <b
+            fontWeight="bold"
+            onClick={() => setCurrentStep(1)}
+            style={{ cursor: "pointer", textDecoration: "underline" }}
+          >
+            Step 1
+          </b>
+        </div>
+      );
+    }
+    if (!formData.race) {
+      warnings.push(
+        <div>
+          Please complete Race selection in{" "}
+          <b
+            fontWeight="bold"
+            onClick={() => setCurrentStep(2)}
+            style={{ cursor: "pointer", textDecoration: "underline" }}
+          >
+            Step 2
+          </b>
+        </div>
+      );
+    }
+    if (!formData.class) {
+      warnings.push(
+        <div>
+          Please complete Class selection in{" "}
+          <b
+            fontWeight="bold"
+            onClick={() => setCurrentStep(3)}
+            style={{ cursor: "pointer", textDecoration: "underline" }}
+          >
+            Step 3
+          </b>
+        </div>
+      );
+    }
+    if (
+      formData.class?.KeyAbility &&
+      formData.class.KeyAbility.includes("or")
+    ) {
+      warnings.push(
+        <div>
+          Please choose a single Key Ability in{" "}
+          <b
+            fontWeight="bold"
+            onClick={() => setCurrentStep(3)}
+            style={{ cursor: "pointer", textDecoration: "underline" }}
+          >
+            Step 3
+          </b>
+        </div>
+      );
+    }
+
+    if (formData.remainingPoints !== 0) {
+      warnings.push(
+        <div>
+          Please allocate all Ability Points in{" "}
+          <b
+            fontWeight="bold"
+            onClick={() => setCurrentStep(5)}
+            style={{ cursor: "pointer", textDecoration: "underline" }}
+          >
+            Step 5
+          </b>
+        </div>
+      );
+    }
+    if (formData.skillPointsRemaining !== 0) {
+      warnings.push(
+        <div>
+          Please allocate all Skill Points in{" "}
+          <b
+            fontWeight="bold"
+            onClick={() => setCurrentStep(6)}
+            style={{ cursor: "pointer", textDecoration: "underline" }}
+          >
+            Step 6
+          </b>
+        </div>
+      );
+    }
+    if (!formData.feats || formData.feats.length === 0) {
+      warnings.push(
+        <div>
+          Please select a Feat in{" "}
+          <b
+            fontWeight="bold"
+            onClick={() => setCurrentStep(7)}
+            style={{ cursor: "pointer", textDecoration: "underline" }}
+          >
+            Step 7
+          </b>
+        </div>
+      );
+    }
+
+    return warnings.length ? warnings : null;
+  };
+
+  const validationError = validateFormData();
+  const warnings = validateFormData();
 
   // Getting HP Value form Race
   const extractNumericValue = (value) => {
@@ -43,32 +157,33 @@ const Step9 = ({ formData, updateFormData }) => {
   };
 
   // Calculate CON modifier
-  const STR_modifier = Math.floor((formData.scores.STR - 10) / 2);
-  const DEX_modifier = Math.floor((formData.scores.DEX - 10) / 2);
-  const CON_modifier = Math.floor((formData.scores.CON - 10) / 2);
-  const INT_modifier = Math.floor((formData.scores.INT - 10) / 2);
-  const WIS_modifier = Math.floor((formData.scores.WIS - 10) / 2);
-  const CHA_modifier = Math.floor((formData.scores.CHA - 10) / 2);
+  const STR_modifier = Math.floor((formData?.scores.STR - 10) / 2);
+  const DEX_modifier = Math.floor((formData?.scores.DEX - 10) / 2);
+  const CON_modifier = Math.floor((formData?.scores.CON - 10) / 2);
+  const INT_modifier = Math.floor((formData?.scores.INT - 10) / 2);
+  const WIS_modifier = Math.floor((formData?.scores.WIS - 10) / 2);
+  const CHA_modifier = Math.floor((formData?.scores.CHA - 10) / 2);
 
-  const HP = formData.class.HP + extractNumericValue(formData.race.HP);
+  const HP = formData?.class.HP + extractNumericValue(formData?.race.HP);
 
-  const Stamina = parseStatValue(formData.class.StaminaPoints) + CON_modifier;
+  const Stamina = parseStatValue(formData?.class.StaminaPoints) + CON_modifier;
 
   // Calculate key ability score modifier
-  const keyAbilityScore = formData.class.KeyAbility; // Assuming it's named like "CHA", "DEX", etc.
+  const keyAbilityScore = formData?.class?.KeyAbility; // Assuming it's named like "CHA", "DEX", etc.
   const key_ability_modifier = Math.floor(
-    (formData.scores[keyAbilityScore] - 10) / 2
+    (formData?.scores[keyAbilityScore] - 10) / 2
   );
 
   // Assuming character level is 1 for this example. Adjust accordingly.
   const character_level = 1; // Replace this with actual value if available
 
   // Calculations
-  const Resolve = Math.max(1, Math.floor(character_level / 2)) + key_ability_modifier;
-  const BaseAttackBonus = formData.classStats[0]?.bab; // Update the attribute name if different
-  const Fortitude = formData.classStats[0]?.fort; // Update the attribute name if different
-  const Reflex = formData.classStats[0]?.ref; // Update the attribute name if different
-  const Will = formData.classStats[0]?.will; // Update the attribute name if different
+  const Resolve =
+    Math.max(1, Math.floor(character_level / 2)) + key_ability_modifier;
+  const BaseAttackBonus = formData?.classStats[0]?.bab; // Update the attribute name if different
+  const Fortitude = formData?.classStats[0]?.fort; // Update the attribute name if different
+  const Reflex = formData?.classStats[0]?.ref; // Update the attribute name if different
+  const Will = formData?.classStats[0]?.will; // Update the attribute name if different
 
   const formatAbilityText = (abilityText) => {
     // Remove starting and ending quotes
@@ -115,6 +230,13 @@ const Step9 = ({ formData, updateFormData }) => {
       borderRadius="10px"
       boxShadow="0px 0px 15px rgba(0,0,0,0.2)"
     >
+      {warnings &&
+        warnings.map((warning, index) => (
+          <Alert status="warning" mb={4} background="red" key={index}>
+            <AlertIcon color="yellow" />
+            {warning}
+          </Alert>
+        ))}
       <Text
         fontSize="2.5rem"
         mb="20px"
@@ -138,25 +260,61 @@ const Step9 = ({ formData, updateFormData }) => {
           </Heading>
           <List>
             <ListItem>
-              <b>Name:</b> {formData.name}
+              <b>Name:</b>{" "}
+              {formData?.name || (
+                <span style={{ background: "red", padding: "1px" }}>None</span>
+              )}
             </ListItem>
             <ListItem>
-              <b>Race:</b> {formData.race.Name}
+              <b>Race:</b> {formData?.race.Name}
             </ListItem>
             <ListItem>
-              <b>Class:</b> {formData.class.Name}
+              <b>Class:</b> {formData?.class.Name}
             </ListItem>
             <ListItem>
-              <b>Theme:</b> {formData.theme.Name}
+              <b>Theme:</b> {formData?.theme.Name}
             </ListItem>
             <ListItem>
-              <b>Alignment:</b> {formData.alignment}
+              <b>Alignment:</b>{" "}
+              {formData?.alignment || (
+                <span
+                  style={{
+                    background: "rgb(255,255,0, 0.5)",
+                    color: "black",
+                    padding: "1px",
+                  }}
+                >
+                  None
+                </span>
+              )}
             </ListItem>
             <ListItem>
-              <b>Home World:</b> {formData.homeWorld}
+              <b>Home World:</b>{" "}
+              {formData?.homeWorld || (
+                <span
+                  style={{
+                    background: "rgb(255,255,0, 0.5)",
+                    color: "black",
+                    padding: "1px",
+                  }}
+                >
+                  None
+                </span>
+              )}
             </ListItem>
             <ListItem>
-              <b>Deity:</b> {formData.deity}
+              <b>Deity:</b>{" "}
+              {formData?.deity || (
+                <span
+                  style={{
+                    background: "rgb(255,255,0, 0.5)",
+                    color: "black",
+                    padding: "1px",
+                  }}
+                >
+                  None
+                </span>
+              )}
             </ListItem>
             {/* <ListItem>
               <b>Description:</b> {formData.description}
@@ -213,10 +371,15 @@ const Step9 = ({ formData, updateFormData }) => {
         </Box>
 
         <Box width="40%">
-          <Heading size="md" marginBottom="10px"  textAlign="center">
+          <Heading size="md" marginBottom="10px" textAlign="center">
             Skills
           </Heading>
-          <List display="flex" flexDirection="row" flexWrap="wrap" justifyContent="flex-start">
+          <List
+            display="flex"
+            flexDirection="row"
+            flexWrap="wrap"
+            justifyContent="flex-start"
+          >
             {Object.entries(formData.skills).map(([key, value]) => (
               <ListItem key={key} width="50%">
                 <b>{key}:</b> +{value}
@@ -230,37 +393,49 @@ const Step9 = ({ formData, updateFormData }) => {
             Inventory
           </Heading>
           <List>
-          {formData.currentInventory.map((item, index) => (
-            <ListItem key={index} display="flex" alignItems="center" m={2}>
-              <Text >
-                {item.Name}
-                <Popover>
-                  <PopoverTrigger>
-                    <Button size="xs" ml="1">
-                      ?
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent bg="black">
-                    <PopoverArrow />
-                    <PopoverHeader>{item.Name}</PopoverHeader>
-                    <PopoverBody>
-                      {Object.entries(item).map(([key, value]) => {
-                        // Exclude properties you don't want to display, like "id" in this case
-                        if (key !== "id") {
-                          return (
-                            <div key={key}>
-                              <strong>{key}:</strong> {value}
-                            </div>
-                          );
-                        }
-                        return null;
-                      })}
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-              </Text>
-            </ListItem>
-          ))}
+            {formData?.currentInventory.length > 0 ? (
+              formData.currentInventory.map((item, index) => (
+                <ListItem key={index} display="flex" alignItems="center" m={2}>
+                  <Text>
+                    {item.Name}
+                    <Popover>
+                      <PopoverTrigger>
+                        <Button size="xs" ml="1">
+                          ?
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent bg="black">
+                        <PopoverArrow />
+                        <PopoverHeader>{item.Name}</PopoverHeader>
+                        <PopoverBody>
+                          {Object.entries(item).map(([key, value]) => {
+                            // Exclude properties you don't want to display, like "id" in this case
+                            if (key !== "id") {
+                              return (
+                                <div key={key}>
+                                  <strong>{key}:</strong> {value}
+                                </div>
+                              );
+                            }
+                            return null;
+                          })}
+                        </PopoverBody>
+                      </PopoverContent>
+                    </Popover>
+                  </Text>
+                </ListItem>
+              ))
+            ) : (
+              <span
+                style={{
+                  background: "rgb(255,255,0, 0.5)",
+                  color: "black",
+                  padding: "1px",
+                }}
+              >
+                None
+              </span>
+            )}
           </List>
         </Box>
       </Box>

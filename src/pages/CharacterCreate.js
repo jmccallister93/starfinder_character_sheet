@@ -109,31 +109,31 @@ const CharacterCreate = () => {
         justifyContent="space-between"
       >
         {currentStep === 1 && (
-          <Step1 updateFormData={updateFormData} formData={formData} />
+          <Step1 updateFormData={updateFormData} formData={formData}  setCurrentStep={setCurrentStep}/>
         )}
         {currentStep === 2 && (
-          <Step2 updateFormData={updateFormData} formData={formData} />
+          <Step2 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
         )}
         {currentStep === 3 && (
-          <Step3 updateFormData={updateFormData} formData={formData} />
+          <Step3 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
         )}
         {currentStep === 4 && (
-          <Step4 updateFormData={updateFormData} formData={formData} />
+          <Step4 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
         )}
         {currentStep === 5 && (
-          <Step5 updateFormData={updateFormData} formData={formData} />
+          <Step5 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
         )}
         {currentStep === 6 && (
-          <Step6 updateFormData={updateFormData} formData={formData} />
+          <Step6 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
         )}
         {currentStep === 7 && (
-          <Step7 updateFormData={updateFormData} formData={formData} />
+          <Step7 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
         )}
         {currentStep === 8 && (
-          <Step8 updateFormData={updateFormData} formData={formData} />
+          <Step8 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
         )}
         {currentStep === 9 && (
-          <Step9 updateFormData={updateFormData} formData={formData} />
+          <Step9 updateFormData={updateFormData} formData={formData} setCurrentStep={setCurrentStep}/>
         )}
 
         <Box alignItems="center" textAlign="center">
