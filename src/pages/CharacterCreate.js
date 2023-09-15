@@ -21,6 +21,7 @@ import Step5 from "../CharacterCreator/Step5";
 import Step6 from "../CharacterCreator/Step6";
 import Step7 from "../CharacterCreator/Step7";
 import Step8 from "../CharacterCreator/Step8";
+import Step9 from "../CharacterCreator/Step9";
 
 const CharacterCreate = () => {
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ const CharacterCreate = () => {
 
   // Stepper for setup
   const [currentStep, setCurrentStep] = useState(1);
-  const [totalSteps, setTotalSteps] = useState(12);
+  const [totalSteps, setTotalSteps] = useState(9);
 
   const handleNext = () => {
     // Validation logic here...
@@ -130,6 +131,9 @@ const CharacterCreate = () => {
         )}
         {currentStep === 8 && (
           <Step8 updateFormData={updateFormData} formData={formData} />
+        )}
+        {currentStep === 9 && (
+          <Step9 updateFormData={updateFormData} formData={formData} />
         )}
 
         <Box>

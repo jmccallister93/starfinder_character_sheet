@@ -185,8 +185,21 @@ const EquipmentModal = ({
     return comparison;
   });
 
+  const resetStates = () => {
+    setfilterValue("");
+    setSortField(null);
+    setSortDirection("asc");
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal
+      isOpen={isOpen}
+      onClose={() => {
+        onClose();
+        resetStates();
+      }}
+      isCentered
+    >
       <ModalOverlay bg="rgba(0, 0, 0, 0.6)" />
       <ModalContent borderRadius="md" width="90vw" maxWidth="90vw">
         <ModalBody>

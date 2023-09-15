@@ -23,7 +23,7 @@ const Step8 = ({ updateFormData, formData }) => {
     formData.remainingCredits || 1000
   );
   const [currentInventory, setCurrentInventory] = useState(
-    formData.inventory || []
+    formData.currentInventory || []
   );
   const [fetchedData, setFetchedData] = useState([]);
 
