@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Box, Flex, Text, Button, Spacer } from "@chakra-ui/react";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 
@@ -12,12 +12,17 @@ const Header = (props) => {
   const isAuthenticated = !!session; // Check if the session
   const userEmail = session?.session?.user?.email || "";
   const [characters, setCharacters] = useState([]);
+  const location = useLocation();
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchCharacters();
     }
-  }, [isAuthenticated]);
+
+    if (location.pathname === "/dashboard") {
+      fetchCharacters();
+    }
+  }, [isAuthenticated, location]);
 
   const fetchCharacters = async () => {
     const { data, error } = await supabase
@@ -79,8 +84,7 @@ const Header = (props) => {
         {isAuthenticated ? (
           <>
             <Text fontSize="1.5rem">|</Text>
-           
-           
+
             <Text
               p={4}
               fontSize="xl"
@@ -98,29 +102,37 @@ const Header = (props) => {
               </Link>
             </Text>
             <Text fontSize="1.5rem">|</Text>
-            <Text
-            
-              
-            >
+            <Text>
               <Menu>
                 <MenuButton
                   border="none"
-                  background= "black"
+                  background="black"
                   color="white"
                   fontSize="1.5rem"
                   p={4}
                   // fontSize="xl"
-                  _hover={{ bg: "#00BFA5", cursor: "pointer", transition: "0.3s" }}
+                  _hover={{
+                    bg: "#00BFA5",
+                    cursor: "pointer",
+                    transition: "0.3s",
+                  }}
                 >
                   Character View
                 </MenuButton>
                 <MenuList background="black">
                   {characters.map((character) => (
-                    <MenuItem key={character.uuid} background="black" _hover={{bg: "#00BFA5" }}>
-                      <Link to={`/characterView/${character.uuid}`} background="black">
+                    <Link
+                      to={`/characterView/${character.uuid}`}
+                      background="black"
+                    >
+                      <MenuItem
+                        key={character.uuid}
+                        background="black"
+                        _hover={{ bg: "#00BFA5" }}
+                      >
                         {character.characterName}
-                      </Link>
-                    </MenuItem>
+                      </MenuItem>
+                    </Link>
                   ))}
                 </MenuList>
               </Menu>

@@ -71,8 +71,8 @@ const handleCreate = () =>{
           >
             Create Charcter
           </Button>
-          <Heading fontSize="2rem" color="white" mb={4}>
-            View Characters
+          <Heading fontSize="2rem" color="white" mb={2} mt={4}>
+            View Character
           </Heading>
           <CharacterListView />
         </Flex>

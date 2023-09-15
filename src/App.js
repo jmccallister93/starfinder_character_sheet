@@ -26,7 +26,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/characterCreate" element={<CharacterCreate />} />
-            <Route path="/characterView/:uuid" element={<CharacterView />} />
+            <Route path="/CharacterView/:uuid" element={<CharacterView />} />
             <Route path="/" element={<Home />} />
           </Routes>
         </Router>

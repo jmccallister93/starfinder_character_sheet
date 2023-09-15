@@ -77,7 +77,7 @@ const Login = (props) => {
       <Flex flexDirection="column" alignItems="center">
         <FormControl id="email" mb={4}>
           <Flex>
-            <Text color="white" fontSize="2rem" p={4} w="12rem">
+            <Text color="white" fontSize="2rem" p={4} w="8rem">
               Email:
             </Text>
             <Input
