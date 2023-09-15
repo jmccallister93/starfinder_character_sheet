@@ -16,7 +16,14 @@ import {
   Box,
 } from "@chakra-ui/react";
 
-const DetailsModal = ({ isOpen, onClose, option, options, onSelect, details }) => {
+const DetailsModal = ({
+  isOpen,
+  onClose,
+  option,
+  options,
+  onSelect,
+  details,
+}) => {
   // Selected Option for each
   const handleSelectOption = (optionDetail) => {
     onSelect(optionDetail);

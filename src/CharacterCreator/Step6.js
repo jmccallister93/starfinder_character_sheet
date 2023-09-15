@@ -167,7 +167,7 @@ const skillPointsPerLevel = {
   
     // This function determines if the given skill is a class skill for the selected class
     const isClassSkill = (skillName) => {
-        return classSkills[formData.class.Name]?.includes(skillName);
+        return classSkills[formData.class?.Name]?.includes(skillName);
     };
   
     // This function handles the changes made to skill ranks by the user
@@ -209,7 +209,7 @@ const skillPointsPerLevel = {
     
     
       const totalSkillRanksAllocated = Object.values(skills).reduce((acc, curr) => acc + (curr || 0), 0);
-      const skillPointsForClass = skillPointsPerLevel[formData.class.Name] || 0;
+      const skillPointsForClass = skillPointsPerLevel[formData.class?.Name] || 0;
       const skillPointsRemaining = skillPointsForClass - totalSkillRanksAllocated;
   
       return (

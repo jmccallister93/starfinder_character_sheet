@@ -17,7 +17,8 @@ import EquipmentModal from "./EquipmentModal";
 
 const Step8 = ({ updateFormData, formData }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [modalOptions, setModalOptions] = useState([]);
   const [remainingCredits, setRemainingCredits] = useState(formData.remainingCredits || 1000);
   const [currentInventory, setCurrentInventory] = useState(formData.inventory || []);
   const [fetchedData, setFetchedData] = useState([]);
@@ -57,11 +58,11 @@ const Step8 = ({ updateFormData, formData }) => {
     }
 };
 
-
-  const handleButtonClick = (category) => {
-    setSelectedCategory(category);
+// Button click when item type is clicked
+  const handleButtonClick = (options) => {
+    setModalOptions(options)
     let tableName = "";
-    switch (category) {
+    switch (options) {
         case "Basic":
             tableName = "armorBasic";
           break;
@@ -123,7 +124,7 @@ const Step8 = ({ updateFormData, formData }) => {
           tableName = "weaponsGrenades";;
           break;
         default:
-          console.error("Unknown category:", category);
+          console.error("Unknown category:", options);
           break;
       }
       if (tableName) {
@@ -132,36 +133,41 @@ const Step8 = ({ updateFormData, formData }) => {
     onOpen();
   };
 
-  const toast = useToast();
+//   const handleEquipmentSelect = (value => {
+//     updateFormData("equipment", value)
+//     onClose()
+//   })
 
-  const handlePurchase = (item) => {
-      if(item.price > remainingCredits) {
-          toast({
-              title: "Purchase Error",
-              description: "Cannot afford the selected item.",
-              status: "error",
-              duration: 3000,
-              isClosable: true,
-          });
-          return;
-      }
-      // Otherwise, proceed with the purchase
-      setCurrentInventory(prevInventory => [...prevInventory, item]);
-      setRemainingCredits(prevCredits => prevCredits - item.price);
-      // Update formData
-  }
+//   const toast = useToast();
 
-  const handleRemoveFromInventory = (itemToRemove) => {
-    setCurrentInventory(prevInventory => prevInventory.filter(item => item !== itemToRemove));
-  };
+//   const handlePurchase = (item) => {
+//       if(item.price > remainingCredits) {
+//           toast({
+//               title: "Purchase Error",
+//               description: "Cannot afford the selected item.",
+//               status: "error",
+//               duration: 3000,
+//               isClosable: true,
+//           });
+//           return;
+//       }
+//       // Otherwise, proceed with the purchase
+//       setCurrentInventory(prevInventory => [...prevInventory, item]);
+//       setRemainingCredits(prevCredits => prevCredits - item.price);
+//       // Update formData
+//   }
 
-  useEffect(() => {
-    updateFormData("remainingCredits", remainingCredits)
-  },[remainingCredits])
+//   const handleRemoveFromInventory = (itemToRemove) => {
+//     setCurrentInventory(prevInventory => prevInventory.filter(item => item !== itemToRemove));
+//   };
+
+//   useEffect(() => {
+//     updateFormData("remainingCredits", remainingCredits)
+//   },[remainingCredits])
  
-  useEffect(() => {
-    updateFormData("currentInventory", currentInventory)
-  },[ currentInventory])
+//   useEffect(() => {
+//     updateFormData("currentInventory", currentInventory)
+//   },[ currentInventory])
 
   return (
     <Box
@@ -198,9 +204,9 @@ const Step8 = ({ updateFormData, formData }) => {
         {currentInventory.map((item, index) => (
           <Box key={index} display="flex" alignItems="center" mb={2}>
             <Text flex="1">{item.name /* Assuming each item has a name property */}</Text>
-            <Button size="sm" onClick={() => handleRemoveFromInventory(item)}>
+            {/* <Button size="sm" onClick={() => handleRemoveFromInventory(item)}>
               Remove
-            </Button>
+            </Button> */}
           </Box>
         ))}
         <Text>
@@ -216,7 +222,7 @@ const Step8 = ({ updateFormData, formData }) => {
           {categories[category].map((item) => (
             <Button
               key={item}
-            //   onClick={() => handleButtonClick(data.races.map((race) => race.Name)}
+              onClick={() => handleButtonClick(item)}
               mr={2}
               mb={2}
             >
@@ -227,14 +233,14 @@ const Step8 = ({ updateFormData, formData }) => {
       ))}
 
       {/* Modal */}
-      <EquipmentModal
+<EquipmentModal
     isOpen={isOpen}
     onClose={onClose}
-    option={selectedCategory}
-    options={fetchedData} 
-        // onSelect={handleEquipmentSelect}
-        // details={equimentDetails}
-      />
+    // option={selectedCategory}
+    options={fetchedData}
+    details={fetchedData}
+    onSelect={setSelectedItem}
+/>
     </Box>
   );
 };
