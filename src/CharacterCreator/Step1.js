@@ -107,15 +107,15 @@ const Step1 = ({ updateFormData, formData }) => {
               },
             }}
           >
-            <option value="lawfulGood">Lawful Good</option>
-            <option value="neutralGood">Neutral Good</option>
-            <option value="chaoticGood">Chaotic Good</option>
-            <option value="lawfulNeutral">Lawful Neutral</option>
-            <option value="trueNeutral">True Neutral</option>
-            <option value="neutralNeutral">Chaotic Neutral</option>
-            <option value="lawfulEvil">Lawful Evil</option>
-            <option value="neutralEvil">Neutral Evil</option>
-            <option value="chaoticEvil">Chaotic Evil</option>
+            <option value="Lawful Good">Lawful Good</option>
+            <option value="Neutral Good">Neutral Good</option>
+            <option value="Chaotic Good">Chaotic Good</option>
+            <option value="Lawful Neutral">Lawful Neutral</option>
+            <option value="True Neutral">True Neutral</option>
+            <option value="Chaotic Neutral">Chaotic Neutral</option>
+            <option value="Lawful Evil">Lawful Evil</option>
+            <option value="Neutral Evil">Neutral Evil</option>
+            <option value="Chaotic Evil">Chaotic Evil</option>
           </Select>
         </FormControl>
 
@@ -141,6 +141,7 @@ const Step1 = ({ updateFormData, formData }) => {
                   {de.Name}
                 </option>
               ))}
+              <option>None</option>
           </Select>
         </FormControl>
 
