@@ -1,12 +1,167 @@
-import { Box, Button, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Text,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { supabase } from "../client/supabaseClient";
+import EquipmentModal from "./EquipmentModal";
 
 const Step8 = ({ updateFormData, formData }) => {
-  const [remainingCredits, setRemainingCredits] = useState(1000);
-  const [currentInventory, setCurrentInventory] = useState("test");
-  // useEffect(() => {
-  //     setRemainingCredits(formData.remainingCredits?.value)
-  // }, [])
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [remainingCredits, setRemainingCredits] = useState(formData.remainingCredits || 1000);
+  const [currentInventory, setCurrentInventory] = useState(formData.inventory || []);
+  const [fetchedData, setFetchedData] = useState([]);
+
+
+  const categories = {
+    Armor: ["Basic", "Upgrades", "Shields", "Powered"],
+    Items: [
+      "Drugs",
+      "Hybrid",
+      "Magic",
+      "Medicine",
+      "Personal",
+      "Poisons",
+      "Technological",
+      "Trade Goods",
+    ],
+    Weapons: [
+      "Melee",
+      "Ranged",
+      "Special",
+      "Solarian",
+      "Accessories",
+      "Ammunition",
+      "Fusions",
+      "Grenades",
+    ],
+  };
+
+  //   Fetch data fucntion
+  const fetchDataFromTable = async (tableName) => {
+    const { data, error } = await supabase.from(tableName).select("*");
+    if (error) {
+        console.error(`Error fetching data from ${tableName}:`, error);
+    } else {
+        setFetchedData(data || []);
+    }
+};
+
+
+  const handleButtonClick = (category) => {
+    setSelectedCategory(category);
+    let tableName = "";
+    switch (category) {
+        case "Basic":
+            tableName = "armorBasic";
+          break;
+        case "Upgrades":
+            tableName = "armorUpgrades";
+          break;
+        case "Shields":
+            tableName = "armorShields";
+          break;
+        case "Powered":
+          tableName = "armorPowered";
+          break;
+        case "Drugs":
+         tableName = "armorUpgrades";;
+          break;
+        case "Hybrid":
+          tableName = "itemsHybrid";;
+          break;
+        case "Magic":
+          tableName = "itemsMagic";;
+          break;
+        case "Medicine":
+          tableName = "itemsMedicine";;
+          break;
+        case "Personal":
+          tableName = "itemsPersonal";;
+          break;
+        case "Poisons":
+          tableName = "itemsPoisons";;
+          break;
+        case "Technological":
+          tableName = "itemsTechnological";;
+          break;
+        case "Trade Goods":
+          tableName = "itemsTradeGood";;
+          break;
+        case "Melee":
+          tableName = "weaponsMelee";;
+          break;
+        case "Ranged":
+          tableName = "weaponsRanged";;
+          break;
+        case "Special":
+          tableName = "weaponsSpecial";;
+          break;
+        case "Solarian":
+          tableName = "weaponsSolarian";;
+          break;
+        case "Accessories":
+          tableName = "weaponsAccessories";;
+          break;
+        case "Ammunition":
+          tableName = "weaponsAmmunition";;
+          break;
+        case "Fusions":
+          tableName = "weaponsFusions";;
+          break;
+        case "Grenades":
+          tableName = "weaponsGrenades";;
+          break;
+        default:
+          console.error("Unknown category:", category);
+          break;
+      }
+      if (tableName) {
+        fetchDataFromTable(tableName);
+    }
+    onOpen();
+  };
+
+  const toast = useToast();
+
+  const handlePurchase = (item) => {
+      if(item.price > remainingCredits) {
+          toast({
+              title: "Purchase Error",
+              description: "Cannot afford the selected item.",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+          });
+          return;
+      }
+      // Otherwise, proceed with the purchase
+      setCurrentInventory(prevInventory => [...prevInventory, item]);
+      setRemainingCredits(prevCredits => prevCredits - item.price);
+      // Update formData
+  }
+
+  const handleRemoveFromInventory = (itemToRemove) => {
+    setCurrentInventory(prevInventory => prevInventory.filter(item => item !== itemToRemove));
+  };
+
+  useEffect(() => {
+    updateFormData("remainingCredits", remainingCredits)
+  },[remainingCredits])
+ 
+  useEffect(() => {
+    updateFormData("currentInventory", currentInventory)
+  },[ currentInventory])
 
   return (
     <Box
@@ -37,19 +192,49 @@ const Step8 = ({ updateFormData, formData }) => {
         borderRadius="10px"
         boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
       >
-        <Text>
-          <b>Inventory: </b>
-          {currentInventory}
+       <Text>
+          <b>Inventory:</b>
         </Text>
+        {currentInventory.map((item, index) => (
+          <Box key={index} display="flex" alignItems="center" mb={2}>
+            <Text flex="1">{item.name /* Assuming each item has a name property */}</Text>
+            <Button size="sm" onClick={() => handleRemoveFromInventory(item)}>
+              Remove
+            </Button>
+          </Box>
+        ))}
         <Text>
           <b>Credits: </b> {remainingCredits}
         </Text>
       </Box>
 
-      <Box>
-        <Text></Text>
-      </Box>
-      <Button>Search Equipment</Button>
+      {Object.keys(categories).map((category) => (
+        <Box mt={4} key={category}>
+          <Text fontWeight="bold" mb={2}>
+            {category}:
+          </Text>
+          {categories[category].map((item) => (
+            <Button
+              key={item}
+            //   onClick={() => handleButtonClick(data.races.map((race) => race.Name)}
+              mr={2}
+              mb={2}
+            >
+              {item}
+            </Button>
+          ))}
+        </Box>
+      ))}
+
+      {/* Modal */}
+      <EquipmentModal
+    isOpen={isOpen}
+    onClose={onClose}
+    option={selectedCategory}
+    options={fetchedData} 
+        // onSelect={handleEquipmentSelect}
+        // details={equimentDetails}
+      />
     </Box>
   );
 };
