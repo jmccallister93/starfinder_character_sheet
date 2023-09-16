@@ -32,6 +32,7 @@ const Step1 = ({ updateFormData, formData }) => {
 
   const clearSelection = () => {
     updateFormData("name", null);
+    updateFormData("sex", null);
     updateFormData("alignment", null);
     updateFormData("deity", null);
     updateFormData("description", null);
@@ -89,6 +90,27 @@ const Step1 = ({ updateFormData, formData }) => {
               },
             }}
           />
+        </FormControl>
+
+        <FormControl id="sex" mb={4} width="28%" padding="2rem">
+          <FormLabel>Sex</FormLabel>
+          <Select
+            placeholder="Select sex"
+            value={formData.alignment || ""}
+            onChange={(e) => updateFormData("sex", e.target.value)}
+            color="white"
+            sx={{
+              option: {
+                backgroundColor: "#333", // You can set this to any color you prefer
+                "&:hover": {
+                  backgroundColor: "#555", // Color for hover state
+                },
+              },
+            }}
+          >
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </Select>
         </FormControl>
 
         <FormControl id="alignment" mb={4} width="28%" padding="2rem">
