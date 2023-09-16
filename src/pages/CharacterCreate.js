@@ -128,6 +128,7 @@ const CharacterCreate = () => {
       willSave: character.willSave,
       resolve: character.resolve,
       combinedSkills: JSON.stringify(character.combinedSkills),
+      features: JSON.stringify(character.abilities),
     };
   };
 

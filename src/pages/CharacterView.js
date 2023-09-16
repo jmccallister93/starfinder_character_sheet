@@ -29,6 +29,7 @@ import Skills from "../CharacterView/Skills";
 import Proficiencies from "../CharacterView/Proficiencies";
 import Initiative from "../CharacterView/Initiative";
 import Feats from "../CharacterView/Feats";
+import Features from "../CharacterView/Features";
 
 const CharacterView = () => {
   const contextValue = useContext(SessionContext);
@@ -48,8 +49,6 @@ const CharacterView = () => {
     useState({});
   const [currentInventoryArray, setCurrentInventoryArray] = useState({});
   const [classStatsArray, setClassStatsArray] = useState({});
-
-
 
   // Get data authenictate user
   useEffect(() => {
@@ -78,7 +77,6 @@ const CharacterView = () => {
     fetchCharacter();
   }, [isAuthenticated, uuid]);
 
-
   //parse json data
   useEffect(() => {
     if (character?.classSkills) {
@@ -100,7 +98,6 @@ const CharacterView = () => {
     if (character?.classStats) {
       setClassStatsArray(JSON.parse(character.classStats));
     }
-
   }, [character]);
 
   return (
@@ -120,9 +117,9 @@ const CharacterView = () => {
 
           {/* Main Stats */}
           <Flex display="flex" justifyContent="space-evenly">
-           <AbilityScores character={character}/>
+            <AbilityScores character={character} />
             {/* Speed */}
-           <Speed character={character} />
+            <Speed character={character} />
             {/* health, stamina, resolve */}
             <Box
               display="flex"
@@ -140,9 +137,9 @@ const CharacterView = () => {
               </Box>
             </Box>
             {/* HP */}
-           <Hp character={character} />
+            <Hp character={character} />
             {/* Stamina */}
-           <Stamina character={character} />
+            <Stamina character={character} />
             {/* Resolve */}
             <Resolve character={character} />
           </Flex>
@@ -151,14 +148,13 @@ const CharacterView = () => {
 
           <SavingThrows character={character} />
 
-
           {/* Skills */}
           <Skills character={character} />
 
           {/* Initiative */}
-         <Initiative character={character} />
-         {/* Feats */}
-         <Feats character={character} />
+          <Initiative character={character} />
+          {/* Feats */}
+          <Feats character={character} />
           {/* EAC */}
           <Box mt={4}>
             <Heading size="md">EAC</Heading>
@@ -172,10 +168,10 @@ const CharacterView = () => {
             <Heading size="md">Conditons</Heading>
           </Box>
           {/* Proficiencies */}
-         <Proficiencies character={character} />
+          <Proficiencies character={character} />
           {/* Table for Actions/Spells/Invnentory/Features */}
-{/* Actions */}
-<Box mt={4}>
+          {/* Actions */}
+          <Box mt={4}>
             <Heading size="md">Actions</Heading>
           </Box>
           {/* Spells */}
@@ -183,10 +179,8 @@ const CharacterView = () => {
             <Heading size="md">Spells</Heading>
           </Box>
           {/* Features */}
-          <Box mt={4}>
-            <Heading size="md">Features</Heading>
-          </Box>
-          
+          <Features character={character} />
+
           {/* Inventory */}
           <Box mt={4}>
             <Heading size="md">Inventory</Heading>
