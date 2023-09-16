@@ -23,6 +23,7 @@ const DetailsModal = ({
   options,
   onSelect,
   details,
+  selectedClasses,
 }) => {
   // Selected Option for each
   const handleSelectOption = (optionDetail) => {
@@ -155,33 +156,37 @@ const DetailsModal = ({
             overflowY="auto"
           >
             <Accordion allowToggle>
-              {options.map((opt, index) => (
-                <AccordionItem key={index}>
-                  <h2>
-                    <AccordionButton>
-                      <Box flex="1" textAlign="left">
-                        {opt}
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    {details[opt] ? (
-                      <>
-                        {renderDetails(option, details[opt])}
-                        <Button
-                          mt={2}
-                          onClick={() => handleSelectOption(details[opt])}
-                        >
-                          Select {details[opt].Name}
-                        </Button>
-                      </>
-                    ) : (
-                      <Text>No details available for {opt}</Text>
-                    )}
-                  </AccordionPanel>
-                </AccordionItem>
-              ))}
+              {options
+                .filter(
+                  (opt) => !selectedClasses.some((cls) => cls.Name === opt)
+                )
+                .map((opt, index) => (
+                  <AccordionItem key={index}>
+                    <h2>
+                      <AccordionButton>
+                        <Box flex="1" textAlign="left">
+                          {opt}
+                        </Box>
+                        <AccordionIcon />
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={4}>
+                      {details[opt] ? (
+                        <>
+                          {renderDetails(option, details[opt])}
+                          <Button
+                            mt={2}
+                            onClick={() => handleSelectOption(details[opt])}
+                          >
+                            Select {details[opt].Name}
+                          </Button>
+                        </>
+                      ) : (
+                        <Text>No details available for {opt}</Text>
+                      )}
+                    </AccordionPanel>
+                  </AccordionItem>
+                ))}
             </Accordion>
           </VStack>
         </ModalBody>

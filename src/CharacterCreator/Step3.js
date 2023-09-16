@@ -33,10 +33,6 @@ const Step3 = ({ updateFormData, formData }) => {
   const [classLevel, setClassLevel] = useState(1);
   const [allClasses, setAllClasses] = useState([]);
 
-  const addClass = () => {
-    setAllClasses([...allClasses, formData.class]);
-  };
-
   const handleKeyAbilityChange = (value) => {
     setSelectedKeyAbility(value);
 
@@ -58,13 +54,25 @@ const Step3 = ({ updateFormData, formData }) => {
       value.KeyAbility = selectedKeyAbility;
     }
 
-    updateFormData("class", value);
-
+    value.level = 1
+  
+    // Add the class to the allClasses array
+    setAllClasses((prevClasses) => {
+      const updatedClasses = [...prevClasses, value];
+      updateFormData("classes", updatedClasses);
+      return updatedClasses;
+    });
+    
+  
+    // Update the formData
+    // updateFormData("classes", allClasses); // Assuming formData.classes is an array now
+  
     // Fetch proficiencies and class abilities for the selected class
     fetchProficiencies(value.id);
     fetchClassAbilities(value.id);
     onClose();
   };
+  
 
   // Fetch data function
   const fetchData = async () => {
@@ -181,62 +189,78 @@ const Step3 = ({ updateFormData, formData }) => {
         >
           Select Class
         </Button>
-       
+
         {/* Button to add another class */}
-        <Button onClick={addClass} mb="20px" ml={2}>
+        <Button
+          onClick={() => handleButtonClick(data.classes.map((cls) => cls.Name))}
+          mb="20px"
+          ml={2}
+        >
           Add Another Class
         </Button>
         <Button mb="20px" ml={2} onClick={clearSelection}>
           Clear Selection
         </Button>
- {/* Adding the classLevel dropdown here after class is selected */}
-        {formData.class ? (
-          <FormControl id="classLevel" >
-            <FormLabel fontSize="1.8rem" fontWeight="bold">
-              Class Level
-            </FormLabel>
-            <Select
-            background="rgb(120, 120, 120)"
-              width="fit-content"
-              value={classLevel}
-              onChange={(e) => {
-                setClassLevel(Number(e.target.value));
-                updateFormData("classLevel", {
-                  className: formData.class.Name,
-                  level: Number(e.target.value),
-                });
-              }}
-            >
-              {Array.from({ length: 20 }, (_, i) => (
-                <option style={{background: "rgb(120, 120, 120)"}}key={i} value={i + 1}>
-                  {i + 1}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-        ) : null}
 
-        {formData.class ? (
+        {formData.classes && formData.classes.map((selectedClass, idx) =>  (
           <Box
+          key={idx}
             background="rgb(60, 60, 60)"
             padding="20px"
             borderRadius="10px"
             boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
           >
             <Text mt={2}>
-              <strong>Name:</strong> {formData.class?.Name}
+              <strong>Name:</strong> {selectedClass?.Name}
+            </Text>
+            {/* Adding the classLevel dropdown here after class is selected */}
+            {selectedClass ? (
+              <FormControl id="classLevel" display="flex" alignItems="center">
+                <FormLabel fontSize="1.2rem" fontWeight="bold">
+                  Class Level:
+                </FormLabel>
+                <Select
+                  background="rgb(120, 120, 120)"
+                  width="fit-content"
+                  value={selectedClass.level}
+                  onChange={(e) => {
+                    const newLevel = Number(e.target.value);
+                    setAllClasses((prevClasses) => {
+                        const updatedClasses = prevClasses.map((cls) => {
+                            if (cls.Name === selectedClass.Name) {
+                                cls.level = newLevel;
+                            }
+                            return cls;
+                        });
+                        updateFormData("classes", updatedClasses);
+                        return updatedClasses;
+                    });
+                }}
+                
+                >
+                  {Array.from({ length: 20 }, (_, i) => (
+                    <option
+                      style={{ background: "rgb(120, 120, 120)" }}
+                      key={i}
+                      value={i + 1}
+                    >
+                      {i + 1}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+            ) : null}
+            <Text mt={2}>
+              <strong>Stamina Points:</strong> {selectedClass?.StaminaPoints}
             </Text>
             <Text mt={2}>
-              <strong>Stamina Points:</strong> {formData.class?.StaminaPoints}
+              <strong>HP:</strong> {selectedClass?.HP}
             </Text>
             <Text mt={2}>
-              <strong>HP:</strong> {formData.class?.HP}
-            </Text>
-            <Text mt={2}>
-              <strong>Description:</strong> {formData.class?.Description}
+              <strong>Description:</strong> {selectedClass?.Description}
             </Text>
 
-            {formData.class && formData.class.KeyAbility.includes("or") ? (
+            {selectedClass && selectedClass.KeyAbility.includes("or") ? (
               <>
                 <Text fontWeight="bold">Select a Key Ability</Text>
                 <RadioGroup
@@ -244,7 +268,7 @@ const Step3 = ({ updateFormData, formData }) => {
                   value={selectedKeyAbility}
                 >
                   <Stack spacing={3} direction="column">
-                    {formData.class.KeyAbility.split("or").map(
+                    {selectedClass.KeyAbility.split("or").map(
                       (abilityOption, idx) => (
                         <Radio
                           key={idx}
@@ -262,23 +286,23 @@ const Step3 = ({ updateFormData, formData }) => {
               </>
             ) : (
               <Text mt={2}>
-                <strong>Key Ability:</strong> {formData.class?.KeyAbility}
+                <strong>Key Ability:</strong> {selectedClass?.KeyAbility}
               </Text>
             )}
             <Text mt={2}>
               <strong>Key Ability Description:</strong>{" "}
-              {formData.class?.KeyAbilityDescription}
+              {selectedClass?.KeyAbilityDescription}
             </Text>
             {/* Class Skills Section */}
             <Text mt={2}>
               <strong>Class Skills:</strong>{" "}
-              {classSkills[formData.class?.Name]?.join(", ")}
+              {classSkills[selectedClass?.Name]?.join(", ")}
             </Text>
 
             {/* Skill Points Per Level Section */}
             <Text mt={2}>
               <strong>Skill Points Per Level:</strong>{" "}
-              {skillPointsPerLevel[formData.class?.Name]}
+              {skillPointsPerLevel[selectedClass?.Name]}
             </Text>
             {/* Proficiencies */}
             <Box mt={4}>
@@ -296,10 +320,10 @@ const Step3 = ({ updateFormData, formData }) => {
               Class Features:
             </Text>
             {/* Class progression table */}
-            <ClassProgressionTable
+            {/* <ClassProgressionTable
               className={formData.class?.Name}
               updateFormData={updateFormData}
-            />
+            /> */}
 
             {/* Class Features Section */}
             <Box mt={4}>
@@ -326,7 +350,7 @@ const Step3 = ({ updateFormData, formData }) => {
               </Accordion>
             </Box>
           </Box>
-        ) : null}
+        ) )}
       </FormControl>
 
       {/* Modal for class details */}
@@ -337,6 +361,7 @@ const Step3 = ({ updateFormData, formData }) => {
         options={modalOptions}
         onSelect={handleClassSelect}
         details={classDetails}
+        selectedClasses={allClasses}
       />
     </Box>
   );
