@@ -5,6 +5,18 @@ import { useEffect } from "react";
 function ClassProgressionTable({ className, updateFormData }) {
   const classData = classProgressionData[className];
 
+  return (
+    <>
+      <h2>{className} Progression</h2>
+      <SingleClassProgressionTable className={className} />
+    </>
+  );
+}
+
+// This component renders a single class progression table.
+function SingleClassProgressionTable({ className }) {
+  const classData = classProgressionData[className];
+
   // Check which unique properties exist in the data
   const hasSpells = classData.some((item) => item.spells);
   const hasAdaptiveStrike = classData.some((item) => item.adaptive_strike);
@@ -19,25 +31,18 @@ function ClassProgressionTable({ className, updateFormData }) {
   const ordinalSuffix = (i) => {
     const j = i % 10,
       k = i % 100;
-    if (j == 1 && k != 11) {
+    if (j === 1 && k !== 11) {
       return i + "st";
     }
-    if (j == 2 && k != 12) {
+    if (j === 2 && k !== 12) {
       return i + "nd";
     }
-    if (j == 3 && k != 13) {
+    if (j === 3 && k !== 13) {
       return i + "rd";
     }
     return i + "th";
   };
 
-  useEffect(() => {
-    let classStats =[]
-    classData.map((levelData, idx) => ( 
-      classStats.push(levelData)
-    ))
-    updateFormData("classStats" , classStats)
-  }, [className])
 
   return (
     <Table variant="simple" mt={4}>

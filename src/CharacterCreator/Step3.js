@@ -44,8 +44,7 @@ const Step3 = ({ updateFormData, formData }) => {
       updateFormData("classes", updatedClasses);
       return updatedClasses;
     });
-};
-
+  };
 
   const handleButtonClick = (options) => {
     setModalOptions(options);
@@ -66,8 +65,7 @@ const Step3 = ({ updateFormData, formData }) => {
     fetchProficiencies(value.id);
     fetchClassAbilities(value.id);
     onClose();
-};
-
+  };
 
   // Fetch data function
   const fetchData = async () => {
@@ -255,8 +253,9 @@ const Step3 = ({ updateFormData, formData }) => {
                 <>
                   <Text fontWeight="bold">Select a Key Ability</Text>
                   <RadioGroup
-                    onChange={(value) => handleKeyAbilityChange(selectedClass.Name, value)}
-
+                    onChange={(value) =>
+                      handleKeyAbilityChange(selectedClass.Name, value)
+                    }
                     value={selectedClass.KeyAbility}
                   >
                     <Stack spacing={3} direction="column">
@@ -314,10 +313,13 @@ const Step3 = ({ updateFormData, formData }) => {
                 Class Features:
               </Text>
               {/* Class progression table */}
-              {/* <ClassProgressionTable
-              className={formData.class?.Name}
-              updateFormData={updateFormData}
-            /> */}
+              {allClasses.map((cls, idx) => (
+    <div key={idx}>
+        <ClassProgressionTable className={cls.Name} updateFormData={updateFormData} />
+    </div>
+))}
+
+
 
               {/* Class Features Section */}
               <Box mt={4}>
