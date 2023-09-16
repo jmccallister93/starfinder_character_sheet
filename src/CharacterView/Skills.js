@@ -9,7 +9,6 @@ const Skills = ({ character }) => {
       setSkills(JSON.parse(character.combinedSkills));
     }
   }, [character]);
-  console.log(skills);
   return (
     <>
       <Box

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 
 const AbilityScores = ({ character }) => {
   const [scoresObject, setScoresObject] = useState({});
-//   Parse scores
+  //   Parse scores
   useEffect(() => {
     if (character?.scores) {
       setScoresObject(JSON.parse(character.scores));
@@ -23,7 +23,10 @@ const AbilityScores = ({ character }) => {
             <Box border="1px solid black" textAlign="center">
               <StatLabel>{key}</StatLabel>
               <Box border="1px solid black" textAlign="center" m={4}>
-                <StatNumber>+{modifier}</StatNumber>
+                <StatNumber>
+                  {modifier >= 0 ? "+" : ""}
+                  {modifier}
+                </StatNumber>
               </Box>
               <Box border="1px solid black" textAlign="center" m={4}>
                 <StatNumber>{score}</StatNumber>

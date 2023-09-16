@@ -26,6 +26,7 @@ import Stamina from "../CharacterView/Stamina";
 import Resolve from "../CharacterView/Resolve";
 import SavingThrows from "../CharacterView/SavingThrows";
 import Skills from "../CharacterView/Skills";
+import Proficiencies from "../CharacterView/Proficiencies";
 
 const CharacterView = () => {
   const contextValue = useContext(SessionContext);
@@ -145,7 +146,7 @@ const CharacterView = () => {
           </Flex>
 
           {/* Saving Throws */}
-          
+
           <SavingThrows character={character} />
 
 
@@ -169,9 +170,7 @@ const CharacterView = () => {
             <Heading size="md">Conditons</Heading>
           </Box>
           {/* Proficiencies */}
-          <Box mt={4}>
-            <Heading size="md">Proficiencies</Heading>
-          </Box>
+         <Proficiencies character={character} />
           {/* Table for Actions/Spells/Invnentory/Features */}
 {/* Actions */}
 <Box mt={4}>
