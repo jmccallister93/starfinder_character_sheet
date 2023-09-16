@@ -127,7 +127,7 @@ const CharacterCreate = () => {
       refSave: character.refSave,
       willSave: character.willSave,
       resolve: character.resolve,
-      combinedSkills: character.combinedSkills
+      combinedSkills: JSON.stringify(character.combinedSkills),
     };
   };
 

@@ -19,6 +19,9 @@ import {
   StatNumber,
   Text,
 } from "@chakra-ui/react";
+import AbilityScores from "../CharacterView/AbilityScores";
+import Speed from "../CharacterView/Speed";
+import Hp from "../CharacterView/Hp";
 
 const CharacterView = () => {
   const contextValue = useContext(SessionContext);
@@ -29,7 +32,7 @@ const CharacterView = () => {
   const [character, setCharacter] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [healthAdjustment, setHealthAdjustment] = useState(null);
-  const [scoresObject, setScoresObject] = useState({});
+
   const [skillsObject, setSkillsObject] = useState({});
   const [classSkillsArray, setClassSkillsArray] = useState({});
   const [raceAbilityAdjustmentsObject, setRaceAbilityAdjustmentsObject] =
@@ -40,7 +43,12 @@ const CharacterView = () => {
   const [classStatsArray, setClassStatsArray] = useState({});
   const [totalHp, setTotalHp] = useState("");
   const [currentHp, setCurrentHp] = useState();
+  const [totalStamina, setTotalStamina] = useState()
+  const [currentStamina, setCurrentStamina] = useState()
+  const [totalResolve, setTotalResolve] = useState()
+  const [currentResolve, setCurrentResolve] = useState()
 
+  // Get data authenictate user
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/");
@@ -67,18 +75,12 @@ const CharacterView = () => {
     fetchCharacter();
   }, [isAuthenticated, uuid]);
 
-  // Score modifier
-  function calculateModifier(score) {
-    return Math.floor((score - 10) / 2);
-  }
 
   //parse json data
   useEffect(() => {
-    if (character?.scores) {
-      setScoresObject(JSON.parse(character.scores));
-    }
-    if (character?.skills) {
-      setSkillsObject(JSON.parse(character.skills));
+
+    if (character?.combineSkills) {
+      setSkillsObject(JSON.parse(character.combineSkills));
     }
     if (character?.classSkills) {
       setClassSkillsArray(JSON.parse(character.classSkills));
@@ -104,6 +106,12 @@ const CharacterView = () => {
       const classHpValue = parseInt(character.classHp, 10);
       setTotalHp(raceHpValue + classHpValue);
     }
+    if(character?.stamina){
+      setTotalStamina(character.stamina)
+    }
+    if(character?.resolve){
+      setTotalResolve(character.resolve)
+    }
   }, [character]);
 
   return (
@@ -117,44 +125,15 @@ const CharacterView = () => {
         // TopLeft Header details
         <Box bg="white" p={4} boxShadow="lg" rounded="md">
           <Heading>{character.characterName}</Heading>
-          <Text>{`${character.sex} | ${character.raceName} |  ${character.themeName} |  ${character.className} ${character.characterLevel} `}</Text>
-          <Text>Level {character.characterLevel}</Text>
+          <Text>{`${character.sex} | ${character.raceName} |  ${character.themeName} |  ${character.className} ${character.classLevel} `}</Text>
+          <Text>Level {character.classLevel}</Text>
           <Divider mt={2} mb={2} />
 
           {/* Main Stats */}
           <Flex display="flex" justifyContent="space-evenly">
-            {Object.keys(scoresObject).map((key) => {
-              const score = scoresObject[key];
-              const modifier = calculateModifier(score);
-              return (
-                <Stat key={key}>
-                  <Box border="1px solid black" textAlign="center">
-                    <StatLabel>{key}</StatLabel>
-                    <Box border="1px solid black" textAlign="center" m={4}>
-                      <StatNumber>+{modifier}</StatNumber>
-                    </Box>
-                    <Box border="1px solid black" textAlign="center" m={4}>
-                      <StatNumber>{score}</StatNumber>
-                    </Box>
-                  </Box>
-                </Stat>
-              );
-            })}
+           <AbilityScores character={character}/>
             {/* Speed */}
-            <Box
-              display="flex"
-              flexDirection="column"
-              border="1px solid black"
-              textAlign="center"
-              height="9rem"
-              justifyContent="space-evenly"
-            >
-              <Text>Walking</Text>
-              <Text fontSize="1.5rem">
-                <b>30</b>ft.
-              </Text>
-              <Text>Speed</Text>
-            </Box>
+           <Speed character={character} />
             {/* health, stamina, resolve */}
             <Box
               display="flex"
@@ -172,26 +151,7 @@ const CharacterView = () => {
               </Box>
             </Box>
             {/* HP */}
-            <Box
-              display="flex"
-              flexDirection="column"
-              border="1px solid black"
-              textAlign="center"
-              justifyContent="space-evenly"
-            >
-              <Box display="flex" justifyContent="space-evenly">
-                <Text m={1}>Current</Text>
-                <Text m={1}>Total</Text>
-                <Text m={1}>Temp</Text>
-              </Box>
-              <Box display="flex" justifyContent="space-evenly">
-                <Text m={1}>{totalHp}</Text>/<Text m={1}>{totalHp}</Text>
-                <Text m={1}>--</Text>
-              </Box>
-              <Box display="flex" justifyContent="center">
-                <Text>Hit Points</Text>
-              </Box>
-            </Box>
+           <Hp character={character} />
             {/* Stamina */}
             <Box
               display="flex"
@@ -206,7 +166,7 @@ const CharacterView = () => {
                 <Text m={1}>Temp</Text>
               </Box>
               <Box display="flex" justifyContent="space-evenly">
-                <Text m={1}>{totalHp}</Text>/<Text m={1}>{totalHp}</Text>
+                <Text m={1}>{totalStamina}</Text>/<Text m={1}>{totalStamina}</Text>
                 <Text m={1}>--</Text>
               </Box>
               <Box display="flex" justifyContent="center">
@@ -227,7 +187,7 @@ const CharacterView = () => {
                 <Text m={1}>Temp</Text>
               </Box>
               <Box display="flex" justifyContent="space-evenly">
-                <Text m={1}>{totalHp}</Text>/<Text m={1}>{totalHp}</Text>
+                <Text m={1}>{totalResolve}</Text>/<Text m={1}>{totalResolve}</Text>
                 <Text m={1}>--</Text>
               </Box>
               <Box display="flex" justifyContent="center">
