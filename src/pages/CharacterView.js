@@ -27,6 +27,8 @@ import Resolve from "../CharacterView/Resolve";
 import SavingThrows from "../CharacterView/SavingThrows";
 import Skills from "../CharacterView/Skills";
 import Proficiencies from "../CharacterView/Proficiencies";
+import Initiative from "../CharacterView/Initiative";
+import Feats from "../CharacterView/Feats";
 
 const CharacterView = () => {
   const contextValue = useContext(SessionContext);
@@ -154,9 +156,9 @@ const CharacterView = () => {
           <Skills character={character} />
 
           {/* Initiative */}
-          <Box mt={4}>
-            <Heading size="md">Initiative</Heading>
-          </Box>
+         <Initiative character={character} />
+         {/* Feats */}
+         <Feats character={character} />
           {/* EAC */}
           <Box mt={4}>
             <Heading size="md">EAC</Heading>
