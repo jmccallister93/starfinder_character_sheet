@@ -22,6 +22,9 @@ import {
 import AbilityScores from "../CharacterView/AbilityScores";
 import Speed from "../CharacterView/Speed";
 import Hp from "../CharacterView/Hp";
+import Stamina from "../CharacterView/Stamina";
+import Resolve from "../CharacterView/Resolve";
+import SavingThrows from "../CharacterView/SavingThrows";
 
 const CharacterView = () => {
   const contextValue = useContext(SessionContext);
@@ -41,12 +44,8 @@ const CharacterView = () => {
     useState({});
   const [currentInventoryArray, setCurrentInventoryArray] = useState({});
   const [classStatsArray, setClassStatsArray] = useState({});
-  const [totalHp, setTotalHp] = useState("");
-  const [currentHp, setCurrentHp] = useState();
-  const [totalStamina, setTotalStamina] = useState()
-  const [currentStamina, setCurrentStamina] = useState()
-  const [totalResolve, setTotalResolve] = useState()
-  const [currentResolve, setCurrentResolve] = useState()
+
+
 
   // Get data authenictate user
   useEffect(() => {
@@ -101,17 +100,7 @@ const CharacterView = () => {
     if (character?.classStats) {
       setClassStatsArray(JSON.parse(character.classStats));
     }
-    if (character?.raceHp && character?.classHp) {
-      const raceHpValue = parseInt(character.raceHp, 10);
-      const classHpValue = parseInt(character.classHp, 10);
-      setTotalHp(raceHpValue + classHpValue);
-    }
-    if(character?.stamina){
-      setTotalStamina(character.stamina)
-    }
-    if(character?.resolve){
-      setTotalResolve(character.resolve)
-    }
+
   }, [character]);
 
   return (
@@ -153,74 +142,13 @@ const CharacterView = () => {
             {/* HP */}
            <Hp character={character} />
             {/* Stamina */}
-            <Box
-              display="flex"
-              flexDirection="column"
-              border="1px solid black"
-              textAlign="center"
-              justifyContent="space-evenly"
-            >
-              <Box display="flex" justifyContent="space-evenly">
-                <Text m={1}>Current</Text>
-                <Text m={1}>Total</Text>
-                <Text m={1}>Temp</Text>
-              </Box>
-              <Box display="flex" justifyContent="space-evenly">
-                <Text m={1}>{totalStamina}</Text>/<Text m={1}>{totalStamina}</Text>
-                <Text m={1}>--</Text>
-              </Box>
-              <Box display="flex" justifyContent="center">
-                <Text>Stamina Points</Text>
-              </Box>
-            </Box>
+           <Stamina character={character} />
             {/* Resolve */}
-            <Box
-              display="flex"
-              flexDirection="column"
-              border="1px solid black"
-              textAlign="center"
-              justifyContent="space-evenly"
-            >
-              <Box display="flex" justifyContent="space-evenly">
-                <Text m={1}>Current</Text>
-                <Text m={1}>Total</Text>
-                <Text m={1}>Temp</Text>
-              </Box>
-              <Box display="flex" justifyContent="space-evenly">
-                <Text m={1}>{totalResolve}</Text>/<Text m={1}>{totalResolve}</Text>
-                <Text m={1}>--</Text>
-              </Box>
-              <Box display="flex" justifyContent="center">
-                <Text>Resolve Points</Text>
-              </Box>
-            </Box>
+            <Resolve character={character} />
           </Flex>
 
           {/* Saving Throws */}
-          <Flex flexDirection="column">
-            <Heading size="md">Savings Throws</Heading>
-            <Box display="flex" alignItems="center" mb={2}>
-              <Text mr={2}>Fortitude Save</Text>
-              <Box border="1px solid black" p={2} display="inline-block">
-                +3
-              </Box>
-            </Box>
-
-            <Box display="flex" alignItems="center" mb={2}>
-              <Text mr={2}>Reflex Save</Text>
-              <Box border="1px solid black" p={2} display="inline-block">
-                +3
-              </Box>
-            </Box>
-
-            <Box display="flex" alignItems="center" mb={2}>
-              <Text mr={2}>Will Save</Text>
-              <Box border="1px solid black" p={2} display="inline-block">
-                +3
-              </Box>
-            </Box>
-            
-          </Flex>
+          <SavingThrows character={character} />
 
 
           {/* Skills */}
