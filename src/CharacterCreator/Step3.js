@@ -14,6 +14,7 @@ import {
   AccordionButton,
   AccordionIcon,
   AccordionPanel,
+  Select,
 } from "@chakra-ui/react";
 import DetailsModal from "./DetailsModal"; // Ensure you have this imported
 import { supabase } from "../client/supabaseClient";
@@ -22,7 +23,6 @@ import classSkills from "./classSkills";
 import classFeatures from "./classFeatures";
 import ClassProgressionTable from "./ClassProgressionTable";
 
-
 const Step3 = ({ updateFormData, formData }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedKeyAbility, setSelectedKeyAbility] = useState(null);
@@ -30,7 +30,12 @@ const Step3 = ({ updateFormData, formData }) => {
   const [proficiencies, setProficiencies] = useState([]);
   const [classAbilities, setClassAbilities] = useState([]);
   const [classProgressionData, setClassProgressionData] = useState({});
+  const [classLevel, setClassLevel] = useState(1);
+  const [allClasses, setAllClasses] = useState([]);
 
+  const addClass = () => {
+    setAllClasses([...allClasses, formData.class]);
+  };
 
   const handleKeyAbilityChange = (value) => {
     setSelectedKeyAbility(value);
@@ -94,7 +99,7 @@ const Step3 = ({ updateFormData, formData }) => {
       .eq("class_id", classId);
 
     setProficiencies(result.data || []);
-    updateFormData("proficiencies", result.data)
+    updateFormData("proficiencies", result.data);
   };
   const fetchClassAbilities = async (classId) => {
     const result = await supabase
@@ -103,22 +108,19 @@ const Step3 = ({ updateFormData, formData }) => {
       .eq("class_id", classId);
 
     setClassAbilities(result.data || []);
-    updateFormData("abilities", result.data)
+    updateFormData("abilities", result.data);
   };
-
 
   useEffect(() => {
     if (formData.class) {
       fetchProficiencies(formData.class.id);
       fetchClassAbilities(formData.class.id);
     }
-
   }, []);
 
   // useEffect(() => {
   //   updateFormData("proficiencies": )
   // }, [handleClassSelect])
-  
 
   const formatAbilityText = (abilityText) => {
     // Remove starting and ending quotes
@@ -128,7 +130,7 @@ const Step3 = ({ updateFormData, formData }) => {
     const sections = cleanText.split(".");
 
     return (
-      <Box  background="rgb(70,70,70)" p={4} borderRadius={10}>
+      <Box background="rgb(70,70,70)" p={4} borderRadius={10}>
         {sections.map((section, idx) => {
           // If the section is not empty, render it
           if (section.trim()) {
@@ -146,26 +148,81 @@ const Step3 = ({ updateFormData, formData }) => {
 
   const clearSelection = () => {
     updateFormData("class", null);
-}
+  };
 
   return (
-    <Box color="white" background="rgb(50, 50, 50)" width="70vw" padding="20px" borderRadius="10px" boxShadow="0px 0px 15px rgba(0,0,0,0.2)">
-    <Text fontSize="2.5rem" mb="20px" borderBottom="2px solid white" paddingBottom="10px" textAlign="center" fontWeight="bold">
-      Step 3: Class
-    </Text>
-    
-    <FormControl id="class" mb={4}>
-      <FormLabel fontSize="1.8rem" fontWeight="bold" mb="10px">Class</FormLabel>
-      <Button
+    <Box
+      color="white"
+      background="rgb(50, 50, 50)"
+      width="70vw"
+      padding="20px"
+      borderRadius="10px"
+      boxShadow="0px 0px 15px rgba(0,0,0,0.2)"
+    >
+      <Text
+        fontSize="2.5rem"
         mb="20px"
-        _hover={{ background: "rgb(120, 120, 120)" }}
-        onClick={() => handleButtonClick(data.classes.map((cls) => cls.Name))}
+        borderBottom="2px solid white"
+        paddingBottom="10px"
+        textAlign="center"
+        fontWeight="bold"
       >
-        Select Class
-      </Button>
-      <Button  mb="20px" ml={2} onClick={clearSelection}>Clear Selection</Button>
+        Step 3: Class
+      </Text>
+
+      <FormControl id="class" mb={4}>
+        <FormLabel fontSize="1.8rem" fontWeight="bold" mb="10px">
+          Class
+        </FormLabel>
+        <Button
+          mb="20px"
+          _hover={{ background: "rgb(120, 120, 120)" }}
+          onClick={() => handleButtonClick(data.classes.map((cls) => cls.Name))}
+        >
+          Select Class
+        </Button>
+       
+        {/* Button to add another class */}
+        <Button onClick={addClass} mb="20px" ml={2}>
+          Add Another Class
+        </Button>
+        <Button mb="20px" ml={2} onClick={clearSelection}>
+          Clear Selection
+        </Button>
+ {/* Adding the classLevel dropdown here after class is selected */}
         {formData.class ? (
-           <Box background="rgb(60, 60, 60)" padding="20px" borderRadius="10px" boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)">
+          <FormControl id="classLevel" >
+            <FormLabel fontSize="1.8rem" fontWeight="bold">
+              Class Level
+            </FormLabel>
+            <Select
+            background="rgb(120, 120, 120)"
+              width="fit-content"
+              value={classLevel}
+              onChange={(e) => {
+                setClassLevel(Number(e.target.value));
+                updateFormData("classLevel", {
+                  className: formData.class.Name,
+                  level: Number(e.target.value),
+                });
+              }}
+            >
+              {Array.from({ length: 20 }, (_, i) => (
+                <option style={{background: "rgb(120, 120, 120)"}}key={i} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+        ) : null}
+
+        {formData.class ? (
+          <Box
+            background="rgb(60, 60, 60)"
+            padding="20px"
+            borderRadius="10px"
+            boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
+          >
             <Text mt={2}>
               <strong>Name:</strong> {formData.class?.Name}
             </Text>
@@ -236,10 +293,13 @@ const Step3 = ({ updateFormData, formData }) => {
               ))}
             </Box>
             <Text fontWeight="bold" fontSize="1.5rem">
-                Class Features:
-              </Text>
-                {/* Class progression table */}
-                <ClassProgressionTable className={formData.class?.Name} updateFormData={updateFormData}/>
+              Class Features:
+            </Text>
+            {/* Class progression table */}
+            <ClassProgressionTable
+              className={formData.class?.Name}
+              updateFormData={updateFormData}
+            />
 
             {/* Class Features Section */}
             <Box mt={4}>
