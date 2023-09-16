@@ -4,9 +4,11 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import {
   Box,
+  Button,
   Divider,
   Flex,
   Heading,
+  Input,
   List,
   ListItem,
   Skeleton,
@@ -26,6 +28,17 @@ const CharacterView = () => {
   const { uuid } = useParams(); // Assuming you've set up routes with UUID
   const [character, setCharacter] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [healthAdjustment, setHealthAdjustment] = useState(null);
+  const [scoresObject, setScoresObject] = useState({});
+  const [skillsObject, setSkillsObject] = useState({});
+  const [classSkillsArray, setClassSkillsArray] = useState({});
+  const [raceAbilityAdjustmentsObject, setRaceAbilityAdjustmentsObject] =
+    useState({});
+  const [themeAbilityAdjustmentsObject, setThemeAbilityAdjustmentsObject] =
+    useState({});
+  const [currentInventoryArray, setCurrentInventoryArray] = useState({});
+  const [classStatsArray, setClassStatsArray] = useState({});
+  const [totalHp, setTotalHp] = useState("")
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -57,9 +70,40 @@ const CharacterView = () => {
   function calculateModifier(score) {
     return Math.floor((score - 10) / 2);
   }
-  const scoresObject = JSON.parse(character.scores);
 
-  console.log(character)
+  //parse json data
+  useEffect(() => {
+    if (character?.scores) {
+      setScoresObject(JSON.parse(character.scores));
+    }
+    if (character?.skills) {
+      setSkillsObject(JSON.parse(character.skills));
+    }
+    if (character?.classSkills) {
+      setClassSkillsArray(JSON.parse(character.classSkills));
+    }
+    if (character?.raceAbilityAdjustments) {
+      setRaceAbilityAdjustmentsObject(
+        JSON.parse(character.raceAbilityAdjustments)
+      );
+    }
+    if (character?.themeAbilityAdjustments) {
+      setThemeAbilityAdjustmentsObject(
+        JSON.parse(character.themeAbilityAdjustments)
+      );
+    }
+    if (character?.currentInventory) {
+      setCurrentInventoryArray(JSON.parse(character.currentInventory));
+    }
+    if (character?.classStats) {
+      setClassStatsArray(JSON.parse(character.classStats));
+    }
+    if (character?.raceHp && character?.classHp) {
+      const raceHpValue = parseInt(character.raceHp, 10);
+      const classHpValue = parseInt(character.classHp, 10);
+      setTotalHp(raceHpValue + classHpValue);
+  }
+  }, [character]);
 
   return (
     <>
@@ -69,19 +113,21 @@ const CharacterView = () => {
           <SkeletonText mt="4" noOfLines={4} spacing="4" skeletonHeight="2" />
         </Box>
       ) : (
+        // TopLeft Header details
         <Box bg="white" p={4} boxShadow="lg" rounded="md">
           <Heading>{character.characterName}</Heading>
           <Text>{`${character.sex} | ${character.raceName} |  ${character.themeName} |  ${character.className} ${character.characterLevel} `}</Text>
+          <Text>Level {character.characterLevel}</Text>
           <Divider mt={2} mb={2} />
 
           {/* Main Stats */}
-          <Flex>
+          <Box display="flex" justifyContent="space-evenly">
             {Object.keys(scoresObject).map((key) => {
               const score = scoresObject[key];
               const modifier = calculateModifier(score);
               return (
-                <Stat key={key} p={2}>
-                  <Box border="1px solid black" textAlign="center" width="50%">
+                <Stat key={key}>
+                  <Box border="1px solid black" textAlign="center">
                     <StatLabel>{key}</StatLabel>
                     <Box border="1px solid black" textAlign="center" m={4}>
                       <StatNumber>+{modifier}</StatNumber>
@@ -93,7 +139,64 @@ const CharacterView = () => {
                 </Stat>
               );
             })}
-          </Flex>
+            {/* Speed */}
+            <Box
+              display="flex"
+              flexDirection="column"
+              border="1px solid black"
+              textAlign="center"
+              height="9rem"
+              justifyContent="space-evenly"
+            >
+              <Text>Walking</Text>
+              <Text fontSize="1.5rem">
+                <b>30</b>ft.
+              </Text>
+              <Text>Speed</Text>
+            </Box>
+            <Box
+              display="flex"
+              flexDirection="column"
+              border="1px solid black"
+              textAlign="center"
+              justifyContent="space-evenly"
+            >
+              <Box display="flex" flexDirection="column">
+                <Button>Heal</Button>
+                <Input border="1px solid black"></Input>
+                <Button>Damage</Button>
+              </Box>
+            </Box>
+            <Box display="flex" flexDirection="column"
+              border="1px solid black"
+              textAlign="center"
+              justifyContent="space-evenly">
+              <Box
+                display="flex"
+                
+                justifyContent="space-evenly"
+              >
+                <Text m={1}>Current</Text>
+                <Text m={1}>Total</Text>
+                <Text m={1}>Temp</Text>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="space-evenly"
+              >
+                <Text m={1}>{totalHp}</Text>
+                /
+                <Text m={1}>{totalHp}</Text>
+                <Text m={1}>--</Text>
+              </Box>
+              <Box
+                display="flex"
+                justifyContent="center"
+              >
+                <Text>Hit Points</Text>
+              </Box>
+            </Box>
+          </Box>
 
           {/* Skills */}
           <List spacing={2}>
