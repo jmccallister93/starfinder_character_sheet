@@ -33,16 +33,19 @@ const Step3 = ({ updateFormData, formData }) => {
   const [classLevel, setClassLevel] = useState(1);
   const [allClasses, setAllClasses] = useState([]);
 
-  const handleKeyAbilityChange = (value) => {
-    setSelectedKeyAbility(value);
+  const handleKeyAbilityChange = (selectedClassName, selectedValue) => {
+    setAllClasses((prevClasses) => {
+      const updatedClasses = prevClasses.map((cls) => {
+        if (cls.Name === selectedClassName) {
+          cls.KeyAbility = selectedValue; // Use the value directly
+        }
+        return cls;
+      });
+      updateFormData("classes", updatedClasses);
+      return updatedClasses;
+    });
+};
 
-    const updatedClassData = {
-      ...formData.class,
-      KeyAbility: value,
-    };
-
-    updateFormData("class", updatedClassData);
-  };
 
   const handleButtonClick = (options) => {
     setModalOptions(options);
@@ -50,29 +53,21 @@ const Step3 = ({ updateFormData, formData }) => {
   };
 
   const handleClassSelect = (value) => {
-    if (value.KeyAbility.includes("or") && selectedKeyAbility) {
-      value.KeyAbility = selectedKeyAbility;
-    }
+    value.level = 1;
 
-    value.level = 1
-  
     // Add the class to the allClasses array
     setAllClasses((prevClasses) => {
       const updatedClasses = [...prevClasses, value];
       updateFormData("classes", updatedClasses);
       return updatedClasses;
     });
-    
-  
-    // Update the formData
-    // updateFormData("classes", allClasses); // Assuming formData.classes is an array now
-  
+
     // Fetch proficiencies and class abilities for the selected class
     fetchProficiencies(value.id);
     fetchClassAbilities(value.id);
     onClose();
-  };
-  
+};
+
 
   // Fetch data function
   const fetchData = async () => {
@@ -126,10 +121,6 @@ const Step3 = ({ updateFormData, formData }) => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   updateFormData("proficiencies": )
-  // }, [handleClassSelect])
-
   const formatAbilityText = (abilityText) => {
     // Remove starting and ending quotes
     const cleanText = abilityText.slice(1, -1);
@@ -155,7 +146,18 @@ const Step3 = ({ updateFormData, formData }) => {
   };
 
   const clearSelection = () => {
-    updateFormData("class", null);
+    // Resetting formData
+    updateFormData("classes", []);
+    updateFormData("classLevel", null);
+    updateFormData("proficiencies", []);
+    updateFormData("abilities", []);
+
+    // Resetting local state
+    setAllClasses([]);
+    setProficiencies([]);
+    setClassAbilities([]);
+    setClassLevel(1);
+    setSelectedKeyAbility(null);
   };
 
   return (
@@ -179,178 +181,171 @@ const Step3 = ({ updateFormData, formData }) => {
       </Text>
 
       <FormControl id="class" mb={4}>
-        <FormLabel fontSize="1.8rem" fontWeight="bold" mb="10px">
-          Class
-        </FormLabel>
-        <Button
-          mb="20px"
-          _hover={{ background: "rgb(120, 120, 120)" }}
-          onClick={() => handleButtonClick(data.classes.map((cls) => cls.Name))}
-        >
-          Select Class
-        </Button>
-
         {/* Button to add another class */}
         <Button
           onClick={() => handleButtonClick(data.classes.map((cls) => cls.Name))}
           mb="20px"
           ml={2}
         >
-          Add Another Class
+          Add Class
         </Button>
         <Button mb="20px" ml={2} onClick={clearSelection}>
-          Clear Selection
+          Clear All Selections
         </Button>
 
-        {formData.classes && formData.classes.map((selectedClass, idx) =>  (
-          <Box
-          key={idx}
-            background="rgb(60, 60, 60)"
-            padding="20px"
-            borderRadius="10px"
-            boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
-          >
-            <Text mt={2}>
-              <strong>Name:</strong> {selectedClass?.Name}
-            </Text>
-            {/* Adding the classLevel dropdown here after class is selected */}
-            {selectedClass ? (
-              <FormControl id="classLevel" display="flex" alignItems="center">
-                <FormLabel fontSize="1.2rem" fontWeight="bold">
-                  Class Level:
-                </FormLabel>
-                <Select
-                  background="rgb(120, 120, 120)"
-                  width="fit-content"
-                  value={selectedClass.level}
-                  onChange={(e) => {
-                    const newLevel = Number(e.target.value);
-                    setAllClasses((prevClasses) => {
+        {formData.classes &&
+          formData.classes.map((selectedClass, idx) => (
+            <Box
+              key={idx}
+              background="rgb(60, 60, 60)"
+              padding="20px"
+              borderRadius="10px"
+              boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
+            >
+              <Text mt={2}>
+                <strong>Name:</strong> {selectedClass?.Name}
+              </Text>
+              {/* Adding the classLevel dropdown here after class is selected */}
+              {selectedClass ? (
+                <FormControl id="classLevel" display="flex" alignItems="center">
+                  <FormLabel fontSize="1.2rem" fontWeight="bold">
+                    Class Level:
+                  </FormLabel>
+                  <Select
+                    background="rgb(120, 120, 120)"
+                    width="fit-content"
+                    value={selectedClass.level}
+                    onChange={(e) => {
+                      const newLevel = Number(e.target.value);
+                      setAllClasses((prevClasses) => {
                         const updatedClasses = prevClasses.map((cls) => {
-                            if (cls.Name === selectedClass.Name) {
-                                cls.level = newLevel;
-                            }
-                            return cls;
+                          if (cls.Name === selectedClass.Name) {
+                            cls.level = newLevel;
+                          }
+                          return cls;
                         });
                         updateFormData("classes", updatedClasses);
                         return updatedClasses;
-                    });
-                }}
-                
-                >
-                  {Array.from({ length: 20 }, (_, i) => (
-                    <option
-                      style={{ background: "rgb(120, 120, 120)" }}
-                      key={i}
-                      value={i + 1}
-                    >
-                      {i + 1}
-                    </option>
-                  ))}
-                </Select>
-              </FormControl>
-            ) : null}
-            <Text mt={2}>
-              <strong>Stamina Points:</strong> {selectedClass?.StaminaPoints}
-            </Text>
-            <Text mt={2}>
-              <strong>HP:</strong> {selectedClass?.HP}
-            </Text>
-            <Text mt={2}>
-              <strong>Description:</strong> {selectedClass?.Description}
-            </Text>
-
-            {selectedClass && selectedClass.KeyAbility.includes("or") ? (
-              <>
-                <Text fontWeight="bold">Select a Key Ability</Text>
-                <RadioGroup
-                  onChange={handleKeyAbilityChange}
-                  value={selectedKeyAbility}
-                >
-                  <Stack spacing={3} direction="column">
-                    {selectedClass.KeyAbility.split("or").map(
-                      (abilityOption, idx) => (
-                        <Radio
-                          key={idx}
-                          value={abilityOption.trim()}
-                          border="1px solid white"
-                          borderRadius="50px"
-                          borderWidth="0.5rem"
-                        >
-                          {abilityOption.trim()}
-                        </Radio>
-                      )
-                    )}
-                  </Stack>
-                </RadioGroup>
-              </>
-            ) : (
+                      });
+                    }}
+                  >
+                    {Array.from({ length: 20 }, (_, i) => (
+                      <option
+                        style={{ background: "rgb(120, 120, 120)" }}
+                        key={i}
+                        value={i + 1}
+                      >
+                        {i + 1}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+              ) : null}
               <Text mt={2}>
-                <strong>Key Ability:</strong> {selectedClass?.KeyAbility}
+                <strong>Stamina Points:</strong> {selectedClass?.StaminaPoints}
               </Text>
-            )}
-            <Text mt={2}>
-              <strong>Key Ability Description:</strong>{" "}
-              {selectedClass?.KeyAbilityDescription}
-            </Text>
-            {/* Class Skills Section */}
-            <Text mt={2}>
-              <strong>Class Skills:</strong>{" "}
-              {classSkills[selectedClass?.Name]?.join(", ")}
-            </Text>
+              <Text mt={2}>
+                <strong>HP:</strong> {selectedClass?.HP}
+              </Text>
+              <Text mt={2}>
+                <strong>Description:</strong> {selectedClass?.Description}
+              </Text>
 
-            {/* Skill Points Per Level Section */}
-            <Text mt={2}>
-              <strong>Skill Points Per Level:</strong>{" "}
-              {skillPointsPerLevel[selectedClass?.Name]}
-            </Text>
-            {/* Proficiencies */}
-            <Box mt={4}>
-              <Text fontWeight="bold" fontSize="1.5rem">
-                Proficiencies:
+              {selectedClass && selectedClass.KeyAbility.includes("or") ? (
+                <>
+                  <Text fontWeight="bold">Select a Key Ability</Text>
+                  <RadioGroup
+                    onChange={(value) => handleKeyAbilityChange(selectedClass.Name, value)}
+
+                    value={selectedClass.KeyAbility}
+                  >
+                    <Stack spacing={3} direction="column">
+                      {selectedClass.KeyAbility.split("or").map(
+                        (abilityOption, idx) => (
+                          <Radio
+                            key={idx}
+                            value={abilityOption.trim()}
+                            border="1px solid white"
+                            borderRadius="50px"
+                            borderWidth="0.5rem"
+                          >
+                            {abilityOption.trim()}
+                          </Radio>
+                        )
+                      )}
+                    </Stack>
+                  </RadioGroup>
+                </>
+              ) : (
+                <Text mt={2}>
+                  <strong>Key Ability:</strong> {selectedClass?.KeyAbility}
+                </Text>
+              )}
+              <Text mt={2}>
+                <strong>Key Ability Description:</strong>{" "}
+                {selectedClass?.KeyAbilityDescription}
               </Text>
-              {proficiencies.map((proficiency, idx) => (
-                <Box key={idx} mt={2}>
-                  <Text fontWeight="bold">{proficiency.proficiency_type}:</Text>
-                  <Text>{proficiency.description}</Text>
-                </Box>
-              ))}
-            </Box>
-            <Text fontWeight="bold" fontSize="1.5rem">
-              Class Features:
-            </Text>
-            {/* Class progression table */}
-            {/* <ClassProgressionTable
+              {/* Class Skills Section */}
+              <Text mt={2}>
+                <strong>Class Skills:</strong>{" "}
+                {classSkills[selectedClass?.Name]?.join(", ")}
+              </Text>
+
+              {/* Skill Points Per Level Section */}
+              <Text mt={2}>
+                <strong>Skill Points Per Level:</strong>{" "}
+                {skillPointsPerLevel[selectedClass?.Name]}
+              </Text>
+              {/* Proficiencies */}
+              <Box mt={4}>
+                <Text fontWeight="bold" fontSize="1.5rem">
+                  Proficiencies:
+                </Text>
+                {proficiencies.map((proficiency, idx) => (
+                  <Box key={idx} mt={2}>
+                    <Text fontWeight="bold">
+                      {proficiency.proficiency_type}:
+                    </Text>
+                    <Text>{proficiency.description}</Text>
+                  </Box>
+                ))}
+              </Box>
+              <Text fontWeight="bold" fontSize="1.5rem">
+                Class Features:
+              </Text>
+              {/* Class progression table */}
+              {/* <ClassProgressionTable
               className={formData.class?.Name}
               updateFormData={updateFormData}
             /> */}
 
-            {/* Class Features Section */}
-            <Box mt={4}>
-              <Text fontWeight="bold" fontSize="1.5rem">
-                Class Feature Details:
-              </Text>
-              <Accordion allowMultiple>
-                {classAbilities.map((ability, idx) => (
-                  <AccordionItem key={idx}>
-                    <h2>
-                      <AccordionButton>
-                        <Box flex="1" textAlign="left" fontWeight="bold">
-                          {ability.ability_name} (Level {ability.ability_level}
-                          ):
-                        </Box>
-                        <AccordionIcon />
-                      </AccordionButton>
-                    </h2>
-                    <AccordionPanel pb={4}>
-                      {formatAbilityText(ability.ability_description)}
-                    </AccordionPanel>
-                  </AccordionItem>
-                ))}
-              </Accordion>
+              {/* Class Features Section */}
+              <Box mt={4}>
+                <Text fontWeight="bold" fontSize="1.5rem">
+                  Class Feature Details:
+                </Text>
+                <Accordion allowMultiple>
+                  {classAbilities.map((ability, idx) => (
+                    <AccordionItem key={idx}>
+                      <h2>
+                        <AccordionButton>
+                          <Box flex="1" textAlign="left" fontWeight="bold">
+                            {ability.ability_name} (Level{" "}
+                            {ability.ability_level}
+                            ):
+                          </Box>
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel pb={4}>
+                        {formatAbilityText(ability.ability_description)}
+                      </AccordionPanel>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </Box>
             </Box>
-          </Box>
-        ) )}
+          ))}
       </FormControl>
 
       {/* Modal for class details */}
