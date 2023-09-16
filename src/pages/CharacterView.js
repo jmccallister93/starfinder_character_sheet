@@ -25,6 +25,7 @@ import Hp from "../CharacterView/Hp";
 import Stamina from "../CharacterView/Stamina";
 import Resolve from "../CharacterView/Resolve";
 import SavingThrows from "../CharacterView/SavingThrows";
+import Skills from "../CharacterView/Skills";
 
 const CharacterView = () => {
   const contextValue = useContext(SessionContext);
@@ -77,10 +78,6 @@ const CharacterView = () => {
 
   //parse json data
   useEffect(() => {
-
-    if (character?.combineSkills) {
-      setSkillsObject(JSON.parse(character.combineSkills));
-    }
     if (character?.classSkills) {
       setClassSkillsArray(JSON.parse(character.classSkills));
     }
@@ -148,23 +145,12 @@ const CharacterView = () => {
           </Flex>
 
           {/* Saving Throws */}
+          
           <SavingThrows character={character} />
 
 
           {/* Skills */}
-          <Box mt={4}>
-            <Heading size="md">Skills</Heading>
-            <Flex flexDirection="column">
-              {Object.entries(skillsObject).map(([skillName, skillValue]) => (
-                <Box display="flex" alignItems="center" mb={2} key={skillName}>
-                  <Text mr={2}>{skillName}</Text>
-                  <Box border="1px solid black" p={2} display="inline-block">
-                    {skillValue}
-                  </Box>
-                </Box>
-              ))}
-            </Flex>
-          </Box>
+          <Skills character={character} />
 
           {/* Initiative */}
           <Box mt={4}>
