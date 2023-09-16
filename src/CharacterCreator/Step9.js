@@ -21,6 +21,8 @@ import { supabase } from "../client/supabaseClient";
 import { useEffect, useState } from "react";
 import { Alert, AlertIcon } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import { skillsList } from "./Step6";
+
 
 const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => {
   const [hp, setHp] = useState();
@@ -30,7 +32,6 @@ const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => 
   const [refSave, setRefSave] = useState();
   const [willSave, setWillSave] = useState();
   const [fortSave, setFortSave] = useState();
-  const [combinedSkills, setCombineSkills] = useState()
 
   // Step 9 validation
   const validateFormData = () => {
@@ -217,9 +218,31 @@ const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => 
     );
   };
 
-//  useEffect(() => {
-//   if(formData.skills && formData.classSkills)
-//  })
+  const combineSkillsData = (classSkills, skills) => {
+    let combinedSkills = {};
+  
+    skillsList.forEach(skillName => {
+      let total = 0;
+  
+      // Add 3 if it's a class skill
+      if (classSkills.includes(skillName)) {
+        total += 3;
+      }
+  
+      // Add the skill value if it's in the skills object
+      if (skills[skillName]) {
+        total += skills[skillName];
+      }
+  
+      // Add to the combinedSkills object
+      combinedSkills[skillName] = total;
+    });
+  
+    return combinedSkills;
+  };
+  
+  const combinedSkills = combineSkillsData(formData.classSkills, formData.skills);
+  
 
   useEffect(() => {
     setHp(HP);
@@ -238,7 +261,9 @@ const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => 
     updateFormData("fortSave", fortSave)
     updateFormData("refSave", refSave)
     updateFormData("willSave", willSave)
-  },[]);
+    updateFormData("combinedSkills", combinedSkills)
+    updateFormData("resolve", resolve)
+  },[hp, stamina, bab, fortSave, refSave,willSave, resolve]);
 
 //   useEffect(() => {
 //     validateFormData(); 
@@ -404,7 +429,7 @@ const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => 
             flexWrap="wrap"
             justifyContent="flex-start"
           >
-            {Object.entries(formData.skills).map(([key, value]) => (
+            {Object.entries(combinedSkills).map(([key, value]) => (
               <ListItem key={key} width="50%">
                 <b>{key}:</b> +{value}
               </ListItem>

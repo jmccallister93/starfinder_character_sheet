@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Text, Button, Input, Flex } from "@chakra-ui/react";
 
-const skillsList = [
+export const skillsList = [
   "Acrobatics",
   "Athletics",
   "Bluff",
@@ -207,7 +207,6 @@ const isClassSkill = (skillName) => {
   const incrementSkill = (skillName) => {
     const currentRank = skills[skillName] || 0;
     if (currentRank < 1) {
-      // Ensure that a skill doesn't get more than 1 rank
       handleSkillChange(skillName, currentRank + 1);
     }
   };

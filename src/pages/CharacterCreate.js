@@ -126,6 +126,8 @@ const CharacterCreate = () => {
       fortSave: character.fortSave,
       refSave: character.refSave,
       willSave: character.willSave,
+      resolve: character.resolve,
+      combinedSkills: character.combinedSkills
     };
   };
 
