@@ -80,13 +80,15 @@ const CharacterCreate = () => {
   useEffect(() => {
     console.log(formData);
   }, [formData]);
-  
+
   // HEREERERERE
   const transformCharacterForInsertion = (character) => {
     return {
       email: userEmail,
       // Top-level properties
       characterName: character.name,
+      classLevel: character.level,
+      sex: character.sex,
       alignment: character.alignment,
       deity: character.deity,
       homeWorld: character.homeWorld,
@@ -115,27 +117,50 @@ const CharacterCreate = () => {
       themeName: character.theme.Name,
       themeAbility: character.theme.Ability,
       themeClassSkill: character.theme.ClassSkill,
-      themeAbilityAdjustments: JSON.stringify(character.themeAbilityAdjustments),
-      // Add other properties as needed
+      themeAbilityAdjustments: JSON.stringify(
+        character.themeAbilityAdjustments
+      ),
+      stamina: character.stamina,
+      hp: character.hp,
+      bab: character.bab,
+      fortSave: character.fortSave,
+      refSave: character.refSave,
+      willSave: character.willSave,
     };
   };
-  
+
   const handleSubmit = async () => {
     const transformedCharacter = transformCharacterForInsertion(formData);
-
-    const { data, error } = await supabase
-        .from('DBCharacters')
-        .insert([transformedCharacter]);
-
-    if (error) {
-        console.error("Error inserting character:", error);
-        // Handle the error appropriately
+  
+    const { error: insertError } = await supabase
+      .from("DBCharacters")
+      .insert([transformedCharacter]);
+  
+    if (insertError) {
+      console.error("Error inserting character:", insertError);
+      // Handle the error appropriately
     } else {
-        // Handle successful insertion
-        console.log("Character inserted successfully");
+      // Handle successful insertion
+      console.log("Character inserted successfully");
+      
+      const { data, error: fetchError } = await supabase
+        .from("DBCharacters")
+        .select("*")
+        .eq("email", userEmail)
+        .order('created_at', { ascending: false })
+        .limit(1);
+  
+      if (fetchError) {
+        console.error("Error fetching characters:", fetchError);
+        return;
+      }
+  
+      if (data && data.length > 0) {
+        navigate(`/CharacterView/${data[0].uuid}`);
+      }
     }
-};
-
+  };
+  
 
   return (
     <Center

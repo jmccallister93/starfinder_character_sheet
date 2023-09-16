@@ -30,6 +30,7 @@ const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => 
   const [refSave, setRefSave] = useState();
   const [willSave, setWillSave] = useState();
   const [fortSave, setFortSave] = useState();
+  const [combinedSkills, setCombineSkills] = useState()
 
   // Step 9 validation
   const validateFormData = () => {
@@ -216,7 +217,9 @@ const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => 
     );
   };
 
-  useEffect(() => {});
+//  useEffect(() => {
+//   if(formData.skills && formData.classSkills)
+//  })
 
   useEffect(() => {
     setHp(HP);
@@ -227,6 +230,15 @@ const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => 
     setRefSave(Reflex);
     setWillSave(Will);
   }, [formData]);
+
+  useEffect(() => {
+    updateFormData("hp", hp)
+    updateFormData("stamina", stamina)
+    updateFormData("bab", bab)
+    updateFormData("fortSave", fortSave)
+    updateFormData("refSave", refSave)
+    updateFormData("willSave", willSave)
+  },[]);
 
 //   useEffect(() => {
 //     validateFormData(); 

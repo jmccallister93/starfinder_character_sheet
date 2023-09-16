@@ -38,7 +38,8 @@ const CharacterView = () => {
     useState({});
   const [currentInventoryArray, setCurrentInventoryArray] = useState({});
   const [classStatsArray, setClassStatsArray] = useState({});
-  const [totalHp, setTotalHp] = useState("")
+  const [totalHp, setTotalHp] = useState("");
+  const [currentHp, setCurrentHp] = useState();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -102,7 +103,7 @@ const CharacterView = () => {
       const raceHpValue = parseInt(character.raceHp, 10);
       const classHpValue = parseInt(character.classHp, 10);
       setTotalHp(raceHpValue + classHpValue);
-  }
+    }
   }, [character]);
 
   return (
@@ -121,7 +122,7 @@ const CharacterView = () => {
           <Divider mt={2} mb={2} />
 
           {/* Main Stats */}
-          <Box display="flex" justifyContent="space-evenly">
+          <Flex display="flex" justifyContent="space-evenly">
             {Object.keys(scoresObject).map((key) => {
               const score = scoresObject[key];
               const modifier = calculateModifier(score);
@@ -154,6 +155,23 @@ const CharacterView = () => {
               </Text>
               <Text>Speed</Text>
             </Box>
+            {/* health, stamina, resolve */}
+            <Box
+              display="flex"
+              flexDirection="column"
+              border="1px solid black"
+              textAlign="center"
+              justifyContent="space-evenly"
+              width="fit-content"
+            >
+              {/* Heal and damge */}
+              <Box display="flex" flexDirection="column">
+                <Button>Heal</Button>
+                <Input border="1px solid black"></Input>
+                <Button>Damage</Button>
+              </Box>
+            </Box>
+            {/* HP */}
             <Box
               display="flex"
               flexDirection="column"
@@ -161,61 +179,142 @@ const CharacterView = () => {
               textAlign="center"
               justifyContent="space-evenly"
             >
-              <Box display="flex" flexDirection="column">
-                <Button>Heal</Button>
-                <Input border="1px solid black"></Input>
-                <Button>Damage</Button>
-              </Box>
-            </Box>
-            <Box display="flex" flexDirection="column"
-              border="1px solid black"
-              textAlign="center"
-              justifyContent="space-evenly">
-              <Box
-                display="flex"
-                
-                justifyContent="space-evenly"
-              >
+              <Box display="flex" justifyContent="space-evenly">
                 <Text m={1}>Current</Text>
                 <Text m={1}>Total</Text>
                 <Text m={1}>Temp</Text>
               </Box>
-              <Box
-                display="flex"
-                justifyContent="space-evenly"
-              >
-                <Text m={1}>{totalHp}</Text>
-                /
-                <Text m={1}>{totalHp}</Text>
+              <Box display="flex" justifyContent="space-evenly">
+                <Text m={1}>{totalHp}</Text>/<Text m={1}>{totalHp}</Text>
                 <Text m={1}>--</Text>
               </Box>
-              <Box
-                display="flex"
-                justifyContent="center"
-              >
+              <Box display="flex" justifyContent="center">
                 <Text>Hit Points</Text>
               </Box>
             </Box>
-          </Box>
+            {/* Stamina */}
+            <Box
+              display="flex"
+              flexDirection="column"
+              border="1px solid black"
+              textAlign="center"
+              justifyContent="space-evenly"
+            >
+              <Box display="flex" justifyContent="space-evenly">
+                <Text m={1}>Current</Text>
+                <Text m={1}>Total</Text>
+                <Text m={1}>Temp</Text>
+              </Box>
+              <Box display="flex" justifyContent="space-evenly">
+                <Text m={1}>{totalHp}</Text>/<Text m={1}>{totalHp}</Text>
+                <Text m={1}>--</Text>
+              </Box>
+              <Box display="flex" justifyContent="center">
+                <Text>Stamina Points</Text>
+              </Box>
+            </Box>
+            {/* Resolve */}
+            <Box
+              display="flex"
+              flexDirection="column"
+              border="1px solid black"
+              textAlign="center"
+              justifyContent="space-evenly"
+            >
+              <Box display="flex" justifyContent="space-evenly">
+                <Text m={1}>Current</Text>
+                <Text m={1}>Total</Text>
+                <Text m={1}>Temp</Text>
+              </Box>
+              <Box display="flex" justifyContent="space-evenly">
+                <Text m={1}>{totalHp}</Text>/<Text m={1}>{totalHp}</Text>
+                <Text m={1}>--</Text>
+              </Box>
+              <Box display="flex" justifyContent="center">
+                <Text>Resolve Points</Text>
+              </Box>
+            </Box>
+          </Flex>
+
+          {/* Saving Throws */}
+          <Flex flexDirection="column">
+            <Heading size="md">Savings Throws</Heading>
+            <Box display="flex" alignItems="center" mb={2}>
+              <Text mr={2}>Fortitude Save</Text>
+              <Box border="1px solid black" p={2} display="inline-block">
+                +3
+              </Box>
+            </Box>
+
+            <Box display="flex" alignItems="center" mb={2}>
+              <Text mr={2}>Reflex Save</Text>
+              <Box border="1px solid black" p={2} display="inline-block">
+                +3
+              </Box>
+            </Box>
+
+            <Box display="flex" alignItems="center" mb={2}>
+              <Text mr={2}>Will Save</Text>
+              <Box border="1px solid black" p={2} display="inline-block">
+                +3
+              </Box>
+            </Box>
+            
+          </Flex>
+
 
           {/* Skills */}
-          <List spacing={2}>
-            {/* Example for skills; you'd likely map over an array of skills in your character object */}
-            <ListItem>
-              <Text>Acrobatics: +{character.acrobatics}</Text>
-            </ListItem>
-            {/* ... more skills */}
-          </List>
-
-          {/* Features and Traits */}
           <Box mt={4}>
-            <Heading size="md">Features & Traits</Heading>
-            <Text>{character.features}</Text>
+            <Heading size="md">Skills</Heading>
+            <Flex flexDirection="column">
+              {Object.entries(skillsObject).map(([skillName, skillValue]) => (
+                <Box display="flex" alignItems="center" mb={2} key={skillName}>
+                  <Text mr={2}>{skillName}</Text>
+                  <Box border="1px solid black" p={2} display="inline-block">
+                    {skillValue}
+                  </Box>
+                </Box>
+              ))}
+            </Flex>
           </Box>
 
-          {/* Equipment */}
+          {/* Initiative */}
           <Box mt={4}>
-            <Heading size="md">Equipment</Heading>
+            <Heading size="md">Initiative</Heading>
+          </Box>
+          {/* EAC */}
+          <Box mt={4}>
+            <Heading size="md">EAC</Heading>
+          </Box>
+          {/* KAC */}
+          <Box mt={4}>
+            <Heading size="md">KAC</Heading>
+          </Box>
+          {/* Condiitons */}
+          <Box mt={4}>
+            <Heading size="md">Conditons</Heading>
+          </Box>
+          {/* Proficiencies */}
+          <Box mt={4}>
+            <Heading size="md">Proficiencies</Heading>
+          </Box>
+          {/* Table for Actions/Spells/Invnentory/Features */}
+{/* Actions */}
+<Box mt={4}>
+            <Heading size="md">Actions</Heading>
+          </Box>
+          {/* Spells */}
+          <Box mt={4}>
+            <Heading size="md">Spells</Heading>
+          </Box>
+          {/* Features */}
+          <Box mt={4}>
+            <Heading size="md">Features</Heading>
+          </Box>
+          
+          {/* Inventory */}
+          <Box mt={4}>
+            <Heading size="md">Inventory</Heading>
             <Text>{character.equipment}</Text>
           </Box>
         </Box>
