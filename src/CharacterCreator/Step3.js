@@ -313,13 +313,10 @@ const Step3 = ({ updateFormData, formData }) => {
                 Class Features:
               </Text>
               {/* Class progression table */}
-              {allClasses.map((cls, idx) => (
-    <div key={idx}>
-        <ClassProgressionTable className={cls.Name} updateFormData={updateFormData} />
-    </div>
-))}
-
-
+              <ClassProgressionTable
+                className={selectedClass.Name}
+                updateFormData={updateFormData}
+              />
 
               {/* Class Features Section */}
               <Box mt={4}>

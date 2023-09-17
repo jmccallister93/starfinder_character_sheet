@@ -13,6 +13,7 @@ function ClassProgressionTable({ className, updateFormData }) {
   );
 }
 
+
 // This component renders a single class progression table.
 function SingleClassProgressionTable({ className }) {
   const classData = classProgressionData[className];
