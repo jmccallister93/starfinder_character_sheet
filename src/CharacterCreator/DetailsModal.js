@@ -158,7 +158,7 @@ const DetailsModal = ({
             <Accordion allowToggle>
               {options
                 .filter(
-                  (opt) => !selectedClasses.some((cls) => cls.Name === opt)
+                  (opt) => !selectedClasses?.some((cls) => cls.Name === opt)
                 )
                 .map((opt, index) => (
                   <AccordionItem key={index}>

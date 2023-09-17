@@ -32,7 +32,7 @@ const Step5 = ({ updateFormData, formData }) => {
   const [previousMethod, setPreviousMethod] = useState(null);
 
   //   KeyAbility highlights
-  const isKeyAbility = (stat) => formData.class?.KeyAbility === stat;
+  const isKeyAbility = (stat) => formData.classes[0]?.KeyAbility === stat;
 
   //   Adjsutments from race/theme
   const formatAdjustment = (adjustment, source) => {

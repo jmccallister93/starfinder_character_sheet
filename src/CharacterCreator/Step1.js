@@ -96,7 +96,7 @@ const Step1 = ({ updateFormData, formData }) => {
           <FormLabel>Sex</FormLabel>
           <Select
             placeholder="Select sex"
-            value={formData.alignment || ""}
+            value={formData.sex || ""}
             onChange={(e) => updateFormData("sex", e.target.value)}
             color="white"
             sx={{

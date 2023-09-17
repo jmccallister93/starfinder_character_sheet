@@ -169,14 +169,16 @@ const Step6 = ({ updateFormData, formData }) => {
     setSkills([]);
   };
 
-  // This function determines if the given skill is a class skill for the selected class
-  // This function determines if the given skill is a class skill 
 // for the selected class or from the selected theme
 const isClassSkill = (skillName) => {
-  const isFromClass = classSkills[formData.class?.Name]?.includes(skillName);
+  // Check if the skill is a class skill for any of the selected classes
+  const isFromClass = formData.classes.some(cls => classSkills[cls.Name]?.includes(skillName));
+
   const isFromTheme = formData.theme?.ClassSkill === skillName;
+
   return isFromClass || isFromTheme;
 };
+
 
 
   // This function handles the changes made to skill ranks by the user
@@ -200,9 +202,18 @@ const isClassSkill = (skillName) => {
 
   const getSkillBonus = (skillName) => {
     const rankBonus = skills[skillName] || 0; // Bonus from the ranks invested
-    const classSkillBonus = isClassSkill(skillName) ? 3 : 0; // +3 bonus if it's a class skill
+    
+    // Check if the skill is a class skill for the selected classes and sum the bonus
+    const classSkillBonus = formData.classes.reduce((total, cls) => {
+      if (classSkills[cls.Name]?.includes(skillName) && cls.level === 1) {
+        return total + 3;
+      }
+      return total;
+    }, 0);
+    
     return rankBonus + classSkillBonus;
   };
+  
 
   const incrementSkill = (skillName) => {
     const currentRank = skills[skillName] || 0;
