@@ -214,7 +214,33 @@ const isClassSkill = (skillName) => {
     return rankBonus + classSkillBonus;
   };
   
-
+  // ADDED HERE
+  // const getSkillBonus = (skillName) => {
+  //   let rankBonus = skills[skillName] || 0; // Bonus from the ranks invested
+  
+  //   // Check if the skill is a class skill for the selected classes and sum the bonus
+  //   const classSkillBonus = formData.classes.reduce((total, cls) => {
+  //     if (classSkills[cls.Name]?.includes(skillName)) {
+  //       // If it's a class skill for this class, and the character has level 1 in that class
+  //       total += 3;
+  //       // Assuming rank increases by 1 for each level
+  //       rankBonus += Math.min(cls.level, 5);
+  //     }
+  //     return total;
+  //   }, 0);
+  
+  //   // TODO: Add ability modifier based on the skill. 
+  //   // E.g., for Acrobatics, you would add the Dexterity modifier.
+  //   // const abilityMod = getAbilityModifier(skillName);
+  
+  //   return rankBonus + classSkillBonus; // + abilityMod;
+  // };
+  // const totalSkillPoints = formData.classes.reduce((total, cls) => {
+  //   return total + (skillPointsPerLevel[cls.Name] || 0) * cls.level;
+  // }, 0);
+  // const skillPointsRemaining = totalSkillPoints - totalSkillRanksAllocated;
+  
+  
   const incrementSkill = (skillName) => {
     const currentRank = skills[skillName] || 0;
     if (currentRank < 1) {
