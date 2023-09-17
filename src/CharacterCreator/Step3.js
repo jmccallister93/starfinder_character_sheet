@@ -99,26 +99,57 @@ const Step3 = ({ updateFormData, formData }) => {
       .select("*")
       .eq("class_id", classId);
 
-    setProficiencies(result.data || []);
-    updateFormData("proficiencies", result.data);
-  };
-  const fetchClassAbilities = async (classId) => {
-    const result = await supabase
-      .from("classAbilities")
-      .select("*")
-      .eq("class_id", classId);
+    setAllClasses((prevClasses) => {
+      const updatedClasses = prevClasses.map((cls) => {
+        if (cls.id === classId) {
+          return {
+            ...cls,
+            proficiencies: result.data || [],
+          };
+        }
+        return cls;
+      });
 
-    setClassAbilities(result.data || []);
-    updateFormData("abilities", result.data);
-  };
+      // Updating formData inside the setAllClasses to ensure synchronous behavior
+      updateFormData("classes", updatedClasses);
 
-  useEffect(() => {
-    if (formData.class) {
-      fetchProficiencies(formData.class.id);
-      fetchClassAbilities(formData.class.id);
-    }
-  }, []);
+      return updatedClasses;
+    });
+};
 
+
+const fetchClassAbilities = async (classId) => {
+  const result = await supabase
+    .from("classAbilities")
+    .select("*")
+    .eq("class_id", classId);
+
+  setAllClasses((prevClasses) => {
+    const updatedClasses = prevClasses.map((cls) => {
+      if (cls.id === classId) {
+        return {
+          ...cls,
+          abilities: result.data || [],
+        };
+      }
+      return cls;
+    });
+
+    // Updating formData inside the setAllClasses to ensure synchronous behavior
+    updateFormData("classes", updatedClasses);
+
+    return updatedClasses;
+  });
+};
+
+  // This useEffect listens for changes in allClasses and then fetches the necessary data
+  // useEffect(() => {
+  //   if (allClasses.length) {
+  //     const latestClass = allClasses[allClasses.length - 1];
+  //     fetchProficiencies(latestClass.id);
+  //     fetchClassAbilities(latestClass.id);
+  //   }
+  // }, []);
   const formatAbilityText = (abilityText) => {
     // Remove starting and ending quotes
     const cleanText = abilityText.slice(1, -1);
@@ -162,7 +193,7 @@ const Step3 = ({ updateFormData, formData }) => {
     <Box
       color="white"
       background="rgb(50, 50, 50)"
-      width="70vw"
+      width="fit-content"
       padding="20px"
       borderRadius="10px"
       boxShadow="0px 0px 15px rgba(0,0,0,0.2)"
@@ -300,14 +331,15 @@ const Step3 = ({ updateFormData, formData }) => {
                 <Text fontWeight="bold" fontSize="1.5rem">
                   Proficiencies:
                 </Text>
-                {proficiencies.map((proficiency, idx) => (
-                  <Box key={idx} mt={2}>
-                    <Text fontWeight="bold">
-                      {proficiency.proficiency_type}:
-                    </Text>
-                    <Text>{proficiency.description}</Text>
-                  </Box>
-                ))}
+                {selectedClass.proficiencies &&
+                  selectedClass.proficiencies.map((proficiency, idx) => (
+                    <Box key={idx} mt={2}>
+                      <Text fontWeight="bold">
+                        {proficiency.proficiency_type}:
+                      </Text>
+                      <Text>{proficiency.description}</Text>
+                    </Box>
+                  ))}
               </Box>
               <Text fontWeight="bold" fontSize="1.5rem">
                 Class Features:
@@ -324,23 +356,24 @@ const Step3 = ({ updateFormData, formData }) => {
                   Class Feature Details:
                 </Text>
                 <Accordion allowMultiple>
-                  {classAbilities.map((ability, idx) => (
-                    <AccordionItem key={idx}>
-                      <h2>
-                        <AccordionButton>
-                          <Box flex="1" textAlign="left" fontWeight="bold">
-                            {ability.ability_name} (Level{" "}
-                            {ability.ability_level}
-                            ):
-                          </Box>
-                          <AccordionIcon />
-                        </AccordionButton>
-                      </h2>
-                      <AccordionPanel pb={4}>
-                        {formatAbilityText(ability.ability_description)}
-                      </AccordionPanel>
-                    </AccordionItem>
-                  ))}
+                  {selectedClass.abilities &&
+                    selectedClass.abilities.map((ability, idx) => (
+                      <AccordionItem key={idx}>
+                        <h2>
+                          <AccordionButton>
+                            <Box flex="1" textAlign="left" fontWeight="bold">
+                              {ability.ability_name} (Level{" "}
+                              {ability.ability_level}
+                              ):
+                            </Box>
+                            <AccordionIcon />
+                          </AccordionButton>
+                        </h2>
+                        <AccordionPanel pb={4}>
+                          {formatAbilityText(ability.ability_description)}
+                        </AccordionPanel>
+                      </AccordionItem>
+                    ))}
                 </Accordion>
               </Box>
             </Box>
