@@ -32,7 +32,9 @@ const Step3 = ({ updateFormData, formData }) => {
   const [classProgressionData, setClassProgressionData] = useState({});
   const [classLevel, setClassLevel] = useState(1);
   const [allClasses, setAllClasses] = useState([]);
+  const [selectedAbility, setSelectedAbility] = useState()
 
+  // Key ability selector logic
   const handleKeyAbilityChange = (selectedClassName, selectedValue) => {
     setAllClasses((prevClasses) => {
       const updatedClasses = prevClasses.map((cls) => {
@@ -46,11 +48,13 @@ const Step3 = ({ updateFormData, formData }) => {
     });
   };
 
+  // Fires modal
   const handleButtonClick = (options) => {
     setModalOptions(options);
     onOpen();
   };
 
+  // Selects class
   const handleClassSelect = (value) => {
     value.level = 1;
 
@@ -92,7 +96,7 @@ const Step3 = ({ updateFormData, formData }) => {
       setClassDetails(classDetailsObj);
     });
   }, []);
-
+// Fetch proficiencies
   const fetchProficiencies = async (classId) => {
     const result = await supabase
       .from("classProficiency")
@@ -117,7 +121,7 @@ const Step3 = ({ updateFormData, formData }) => {
     });
 };
 
-
+// Fetches Abilities(features)
 const fetchClassAbilities = async (classId) => {
   const result = await supabase
     .from("classAbilities")
@@ -142,14 +146,7 @@ const fetchClassAbilities = async (classId) => {
   });
 };
 
-  // This useEffect listens for changes in allClasses and then fetches the necessary data
-  // useEffect(() => {
-  //   if (allClasses.length) {
-  //     const latestClass = allClasses[allClasses.length - 1];
-  //     fetchProficiencies(latestClass.id);
-  //     fetchClassAbilities(latestClass.id);
-  //   }
-  // }, []);
+// Formats abilities into text
   const formatAbilityText = (abilityText) => {
     // Remove starting and ending quotes
     const cleanText = abilityText.slice(1, -1);
@@ -174,6 +171,7 @@ const fetchClassAbilities = async (classId) => {
     );
   };
 
+  // Clear selections
   const clearSelection = () => {
     // Resetting formData
     updateFormData("classes", []);
@@ -188,6 +186,11 @@ const fetchClassAbilities = async (classId) => {
     setClassLevel(1);
     setSelectedKeyAbility(null);
   };
+
+  const removeClass = (idx) =>{
+    updateFormData(formData?.classes.splice(idx,1))
+  }
+  
 
   return (
     <Box
@@ -219,7 +222,7 @@ const fetchClassAbilities = async (classId) => {
           Add Class
         </Button>
         <Button mb="20px" ml={2} onClick={clearSelection}>
-          Clear All Selections
+          Remove All Classes
         </Button>
 
         {formData.classes &&
@@ -231,9 +234,11 @@ const fetchClassAbilities = async (classId) => {
               borderRadius="10px"
               boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
             >
-              <Text mt={2}>
-                <strong>Name:</strong> {selectedClass?.Name}
+              <Button onClick={() => removeClass(idx)}>Remove Class</Button>
+              <Text mt={2} fontSize="1.2rem">
+                <strong>Class:</strong> {selectedClass?.Name}
               </Text>
+              
               {/* Adding the classLevel dropdown here after class is selected */}
               {selectedClass ? (
                 <FormControl id="classLevel" display="flex" alignItems="center">
