@@ -160,6 +160,7 @@ const DetailsModal = ({
                 .filter(
                   (opt) => !selectedClasses?.some((cls) => cls.Name === opt)
                 )
+                .sort((a, b) => a.localeCompare(b))
                 .map((opt, index) => (
                   <AccordionItem key={index}>
                     <h2>

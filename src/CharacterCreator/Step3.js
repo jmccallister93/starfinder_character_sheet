@@ -32,7 +32,7 @@ const Step3 = ({ updateFormData, formData }) => {
   const [classProgressionData, setClassProgressionData] = useState({});
   const [classLevel, setClassLevel] = useState(1);
   const [allClasses, setAllClasses] = useState([]);
-  const [selectedAbility, setSelectedAbility] = useState()
+  const [selectedAbility, setSelectedAbility] = useState();
 
   // Key ability selector logic
   const handleKeyAbilityChange = (selectedClassName, selectedValue) => {
@@ -96,7 +96,7 @@ const Step3 = ({ updateFormData, formData }) => {
       setClassDetails(classDetailsObj);
     });
   }, []);
-// Fetch proficiencies
+  // Fetch proficiencies
   const fetchProficiencies = async (classId) => {
     const result = await supabase
       .from("classProficiency")
@@ -119,34 +119,35 @@ const Step3 = ({ updateFormData, formData }) => {
 
       return updatedClasses;
     });
-};
+  };
 
-// Fetches Abilities(features)
-const fetchClassAbilities = async (classId) => {
-  const result = await supabase
-    .from("classAbilities")
-    .select("*")
-    .eq("class_id", classId);
+  // Fetches Abilities(features)
+  const fetchClassAbilities = async (classId) => {
+    const result = await supabase
+      .from("classAbilities")
+      .select("*")
+      .eq("class_id", classId);
+    
+    setAllClasses((prevClasses) => {
+      const updatedClasses = prevClasses.map((cls) => {
+        if (cls.id === classId) {
+          return {
+            ...cls,
+            abilities: result.data || [],
+          };
+        }
 
-  setAllClasses((prevClasses) => {
-    const updatedClasses = prevClasses.map((cls) => {
-      if (cls.id === classId) {
-        return {
-          ...cls,
-          abilities: result.data || [],
-        };
-      }
-      return cls;
+        return cls;
+      });
+
+      // Updating formData inside the setAllClasses to ensure synchronous behavior
+      updateFormData("classes", updatedClasses);
+
+      return updatedClasses;
     });
+  };
 
-    // Updating formData inside the setAllClasses to ensure synchronous behavior
-    updateFormData("classes", updatedClasses);
-
-    return updatedClasses;
-  });
-};
-
-// Formats abilities into text
+  // Formats abilities into text
   const formatAbilityText = (abilityText) => {
     // Remove starting and ending quotes
     const cleanText = abilityText.slice(1, -1);
@@ -187,10 +188,16 @@ const fetchClassAbilities = async (classId) => {
     setSelectedKeyAbility(null);
   };
 
-  const removeClass = (idx) =>{
-    updateFormData(formData?.classes.splice(idx,1))
-  }
-  
+  // Remove single class
+  const removeClass = (idx) => {
+    updateFormData(formData?.classes.splice(idx, 1));
+  };
+  // 
+  useEffect(() => {
+    if(formData?.classes && formData.classes[0]?.Name === "Vanguard"){
+      console.log(formData)
+    }
+  }, [formData])
 
   return (
     <Box
@@ -238,7 +245,7 @@ const fetchClassAbilities = async (classId) => {
               <Text mt={2} fontSize="1.2rem">
                 <strong>Class:</strong> {selectedClass?.Name}
               </Text>
-              
+
               {/* Adding the classLevel dropdown here after class is selected */}
               {selectedClass ? (
                 <FormControl id="classLevel" display="flex" alignItems="center">
@@ -349,12 +356,13 @@ const fetchClassAbilities = async (classId) => {
               <Text fontWeight="bold" fontSize="1.5rem">
                 Class Features:
               </Text>
-              {/* Class progression table */}
-              <ClassProgressionTable
-                className={selectedClass.Name}
-                updateFormData={updateFormData}
-              />
-
+          
+                    {/* Class progression table */}
+                    <ClassProgressionTable
+                      className={selectedClass.Name}
+                      updateFormData={updateFormData}
+                    />
+          
               {/* Class Features Section */}
               <Box mt={4}>
                 <Text fontWeight="bold" fontSize="1.5rem">

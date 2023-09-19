@@ -1,4 +1,4 @@
-import { Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react";
+import { Table, Thead, Tbody, Tr, Th, Td, AccordionItem, Accordion } from "@chakra-ui/react";
 import classProgressionData from "./classProgressionData";
 import { useEffect } from "react";
 
@@ -46,6 +46,7 @@ function SingleClassProgressionTable({ className }) {
 
 
   return (
+
     <Table variant="simple" mt={4}>
       <Thead>
         <Tr
