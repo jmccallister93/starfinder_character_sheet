@@ -11,7 +11,7 @@ import CharacterView from "./pages/CharacterView";
 import SessionContext from "./client/SessionContex";
 import { supabase } from "./client/supabaseClient";
 import SessionProvider from "./client/SessionProvider";
-import { ChakraProvider } from "@chakra-ui/react";
+import { CSSReset, ChakraProvider } from "@chakra-ui/react";
 
 function App() {
   const { session } = useContext(SessionContext);
@@ -19,6 +19,7 @@ function App() {
   return (
     <SessionProvider>
       <ChakraProvider>
+      <CSSReset />
         <Router>
           <Header />
           <Routes>
