@@ -115,7 +115,7 @@ const Step4 = ({ formData, updateFormData }) => {
                   .filter(
                     (choice) =>
                       choice.class_id === cls.id &&
-                      choice.level_id === cls.level
+                      choice.level_id <= cls.level
                   )
                   .map((choice, cIdx) => (
                     <Box key={cIdx}>
@@ -139,7 +139,7 @@ const Step4 = ({ formData, updateFormData }) => {
                 <Accordion allowToggle>
                   {cls.features &&
                     cls.features
-                      .filter((feature) => feature.feature_level === cls.level) // Filtering based on level
+                      .filter((feature) => feature.feature_level <= cls.level) // Filtering based on level
                       .map((feature, fIdx) => (
                         <AccordionItem key={fIdx}>
                           <h2>
