@@ -5,35 +5,33 @@ import { supabase } from "../client/supabaseClient";
 const Step4 = ({formData, updateFormData}) => {
     const [allClasses, setAllClasses] = useState([])
 
-   // Fetches Abilities(features)
-   const fetchClassAbilities = async (classId) => {
-    const result = await supabase
-        .from("classChoices")
-        .select("*")
-        .eq("class_id", classId);
-    console.log("Class Choicess ", result.data);
+// Formats the feature text
+const formatFeatureText = (featureText) => {
+    // Remove starting and ending quotes
+    const cleanText = featureText?.slice(1, -1);
 
-    return result.data || [];
-};
+    // Split the text on periods
+    const sections = cleanText?.split(".");
 
-  useEffect(() => {
-    // When formData changes, fetch abilities for each class and update allClasses
-    (async () => {
-        const classesWithAbilities = await Promise.all(
-            formData.classes.map(async (cls) => {
-                const abilities = await fetchClassAbilities(cls.id);
-                return {
-                    ...cls,
-                    abilities: abilities
-                };
-            })
-        );
-
-        setAllClasses(classesWithAbilities);
-    })();
-}, [formData]);
+    return (
+      <Box background="rgb(70,70,70)" p={4} borderRadius={10}>
+        {sections.map((section, idx) => {
+          // If the section is not empty, render it
+          if (section.trim()) {
+            return (
+              <Text mt={2} key={idx}>
+                {section.trim() + "."}
+              </Text>
+            );
+          }
+          return null; // If the section is empty, don't render anything
+        })}
+      </Box>
+    );
+  };
   
-  
+//   Set all classes
+
     return ( 
      <Box
       color="white"
@@ -55,20 +53,22 @@ const Step4 = ({formData, updateFormData}) => {
       </Text>
        {/* 2. Display the level for each class */}
        <VStack spacing={3}>
-                { formData?.classes && formData?.classes.map((cls, idx) => (
-                    <Box key={idx}>
-                        <Text fontSize="1.2rem">Class: {cls.Name} | Level: {cls.level}</Text>
-                        {/* 3. Render out abilities for each class */}
-                        <VStack spacing={2} alignItems="start">
-                            {cls.abilities.map((ability, aIdx) => (
-                                <Text key={aIdx} fontSize="1rem">
-                                    {ability.ability_name} (Level {ability.level_id}): {ability.ability_description}
-                                </Text>
-                            ))}
-                        </VStack>
-                    </Box>
+    {formData?.classes && formData.classes.map((cls, idx) => (
+        <Box key={idx}>
+            <Text fontSize="1.2rem">Class: {cls.Name} | Level: {cls.level}</Text>
+            <VStack spacing={2} alignItems="start">
+                {cls.features && cls.features
+                    .filter(feature => feature.feature_level === cls.level) // Filtering based on level
+                    .map((feature, fIdx) => (
+                    <Text key={fIdx} fontSize="1rem">
+                        <b>{feature.feature_name}</b> (Level {feature.feature_level}): {formatFeatureText(feature.feature_description)}
+                    </Text>
                 ))}
             </VStack>
+        </Box>
+    ))}
+</VStack>
+
       </Box> );
 }
  
