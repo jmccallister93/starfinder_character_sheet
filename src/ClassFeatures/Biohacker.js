@@ -19,19 +19,41 @@ const Biohacker = ({ formData, updateFormData, feature, classId }) => {
   const [selectedInhibitor, setSelectedInhibitor] = useState();
 
   const handleBoosterChange = (value) => {
+    if (!formData) return;
+    if (!formData.feature_choices) formData.feature_choices = {};
+    // Clear out existing booster choice if it exists
+    if (Array.isArray(formData?.feature_choices[`${feature}_booster`])) {
+        formData.feature_choices[`${feature}_booster`] = null;
+    }
     setSelectedBooster(value);
-    handleChoiceSelection(value);
+    handleChoiceSelection(value, 'booster');
 };
 
 const handleInhibitorChange = (value) => {
+    if (!formData) return;
+    if (!formData.feature_choices) formData.feature_choices = {};
+    // Clear out existing inhibitor choice if it exists
+    if (Array.isArray(formData?.feature_choices[`${feature}_inhibitor`])) {
+        formData.feature_choices[`${feature}_inhibitor`] = null;
+    }
     setSelectedInhibitor(value);
-    handleChoiceSelection(value);
+    handleChoiceSelection(value, 'inhibitor');
+};
+
+const handleChoiceSelection = (selectedChoice, choiceType) => {
+    // Ensure feature_choices exists in formData
+    if (!formData.feature_choices) {
+        formData.feature_choices = {};
+    }
+
+    // Set the array with the new choice inside feature_choices based on choiceType
+    formData.feature_choices[`${feature}_${choiceType}`] = [selectedChoice];
+
+    // Update the parent state with the updated form data
+    updateFormData(formData);
 };
 
 
-const handleChoiceSelection = (selectedChoice) => {
-    updateFormData(`feature_choice_${classId.Name}`, selectedBooster);
-};
 
 
   
@@ -70,14 +92,6 @@ const handleChoiceSelection = (selectedChoice) => {
         </Stack>
       </RadioGroup>
 
-      <Heading as="h4" size="sm">
-        Minor Biohacks
-      </Heading>
-      <Text>
-        You can create minor biohacks from less...
-        {/* Truncated for brevity */}
-      </Text>
-      {/* You can add more sections similarly */}
     </>
   );
 };

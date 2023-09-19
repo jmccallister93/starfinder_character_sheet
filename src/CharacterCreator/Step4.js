@@ -126,7 +126,7 @@ const Step4 = ({ formData, updateFormData }) => {
                       <Text>Category: {choice.category}</Text>
                       <Text>Details: {choice.choices}</Text>
                       {choice.category === "Core" ? null : (
-                        <Button onClick={() => showClassOption(choice, cls)}>Select Choice</Button>
+                        <Button onClick={() => showClassOption(choice.feature_name, cls)}>Select Choice</Button>
 
                       )}
                     </Box>
