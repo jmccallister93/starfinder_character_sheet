@@ -269,6 +269,8 @@ const Biohacker = ({ formData, updateFormData, feature, classId }) => {
     handleChoiceSelection(value, "theorem_10");
   };
 
+
+
   // Update selection
   const handleChoiceSelection = (selectedChoice, choiceType) => {
     formData.feature_choices = formData.feature_choices || {};

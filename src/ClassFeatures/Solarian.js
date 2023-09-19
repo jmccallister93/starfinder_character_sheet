@@ -1,4 +1,4 @@
-const Nanocyte = ({ formData, updateFormData, feature, classId }) => {
+const Solarian = ({ formData, updateFormData, feature, classId }) => {
   // Update selection
   const handleChoiceSelection = (selectedChoice, choiceType) => {
     formData.feature_choices = formData.feature_choices || {};
@@ -13,4 +13,4 @@ const Nanocyte = ({ formData, updateFormData, feature, classId }) => {
   return <></>;
 };
 
-export default Nanocyte;
+export default Solarian;
