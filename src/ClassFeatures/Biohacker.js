@@ -6,6 +6,15 @@ const Biohacker = ({ formData, updateFormData, feature, classId }) => {
   const [selectedInhibitor, setSelectedInhibitor] = useState();
   const [selectedFieldOfStudy, setSelectedFieldOfStudy] = useState();
   const [selectedTheorems1, setSelectedTheorems1] = useState();
+  const [selectedTheorems2, setSelectedTheorems2] = useState();
+  const [selectedTheorems3, setSelectedTheorems3] = useState();
+  const [selectedTheorems4, setSelectedTheorems4] = useState();
+  const [selectedTheorems5, setSelectedTheorems5] = useState();
+  const [selectedTheorems6, setSelectedTheorems6] = useState();
+  const [selectedTheorems7, setSelectedTheorems7] = useState();
+  const [selectedTheorems8, setSelectedTheorems8] = useState();
+  const [selectedTheorems9, setSelectedTheorems9] = useState();
+  const [selectedTheorems10, setSelectedTheorems10] = useState();
   // Biohacks feature
   const biohacks = {
     basic_booster: [
@@ -223,6 +232,42 @@ const handleTheorems1Change = (value) => {
     setSelectedTheorems1(value);
     handleChoiceSelection(value, "theorem_1");
   };
+  const handleTheorems2Change = (value) => {
+    setSelectedTheorems2(value);
+    handleChoiceSelection(value, "theorem_2");
+  };
+  const handleTheorems3Change = (value) => {
+    setSelectedTheorems3(value);
+    handleChoiceSelection(value, "theorem_3");
+  };
+  const handleTheorems4Change = (value) => {
+    setSelectedTheorems4(value);
+    handleChoiceSelection(value, "theorem_4");
+  };
+  const handleTheorems5Change = (value) => {
+    setSelectedTheorems5(value);
+    handleChoiceSelection(value, "theorem_5");
+  };
+  const handleTheorems6Change = (value) => {
+    setSelectedTheorems6(value);
+    handleChoiceSelection(value, "theorem_6");
+  };
+  const handleTheorems7Change = (value) => {
+    setSelectedTheorems7(value);
+    handleChoiceSelection(value, "theorem_7");
+  };
+  const handleTheorems8Change = (value) => {
+    setSelectedTheorems8(value);
+    handleChoiceSelection(value, "theorem_8");
+  };
+  const handleTheorems9Change = (value) => {
+    setSelectedTheorems9(value);
+    handleChoiceSelection(value, "theorem_19");
+  };
+  const handleTheorems10Change = (value) => {
+    setSelectedTheorems10(value);
+    handleChoiceSelection(value, "theorem_10");
+  };
 
   // Update selection
   const handleChoiceSelection = (selectedChoice, choiceType) => {
@@ -303,7 +348,7 @@ const handleTheorems1Change = (value) => {
         </>
       ) : null}
 
-      {/* Theorums  */}
+      {/* Theorums 1 */}
       {feature === "Theorem 1" ? (
         <>
           <Heading fontSize="1.5rem">Theorems 1</Heading>
@@ -318,6 +363,249 @@ const handleTheorems1Change = (value) => {
                     <b>{theorem1}</b>
                   </Radio>
                   {theoremsLevel2[theorem1]
+                    .split("\n")
+                    .map((paragraph, pIdx) => (
+                      <Text mt={2} key={pIdx}>
+                        {paragraph.trim()}
+                      </Text>
+                    ))}
+                </Box>
+              ))}
+            </Stack>
+          </RadioGroup>
+        </>
+      ) : null}
+       {/* Theorums 2 */}
+       {feature === "Theorem 2" ? (
+        <>
+          <Heading fontSize="1.5rem">Theorems 2</Heading>
+          <RadioGroup
+            value={selectedTheorems2}
+            onChange={handleTheorems2Change}
+          >
+            <Stack spacing={4}>
+              {Object.keys(theoremsLevel2).map((theorem1, idx) => (
+                <Box key={idx}>
+                  <Radio value={theorem1}>
+                    <b>{theorem1}</b>
+                  </Radio>
+                  {theoremsLevel2[theorem1]
+                    .split("\n")
+                    .map((paragraph, pIdx) => (
+                      <Text mt={2} key={pIdx}>
+                        {paragraph.trim()}
+                      </Text>
+                    ))}
+                </Box>
+              ))}
+            </Stack>
+          </RadioGroup>
+        </>
+      ) : null}
+       {/* Theorums 3 */}
+       {feature === "Theorem 3" ? (
+        <>
+          <Heading fontSize="1.5rem">Theorems 3</Heading>
+          <RadioGroup
+            value={selectedTheorems3}
+            onChange={handleTheorems3Change}
+          >
+            <Stack spacing={4}>
+              {Object.keys(theoremsLevel2).map((theorem1, idx) => (
+                <Box key={idx}>
+                  <Radio value={theorem1}>
+                    <b>{theorem1}</b>
+                  </Radio>
+                  {theoremsLevel2[theorem1]
+                    .split("\n")
+                    .map((paragraph, pIdx) => (
+                      <Text mt={2} key={pIdx}>
+                        {paragraph.trim()}
+                      </Text>
+                    ))}
+                </Box>
+              ))}
+            </Stack>
+          </RadioGroup>
+        </>
+      ) : null}
+       {/* Theorums 4 */}
+       {feature === "Theorem 4" ? (
+        <>
+          <Heading fontSize="1.5rem">Theorems 4</Heading>
+          <RadioGroup
+            value={selectedTheorems4}
+            onChange={handleTheorems4Change}
+          >
+            <Stack spacing={4}>
+              {Object.keys(theoremsLevel8).map((theorem8, idx) => (
+                <Box key={idx}>
+                  <Radio value={theorem8}>
+                    <b>{theorem8}</b>
+                  </Radio>
+                  {theoremsLevel8[theorem8]
+                    .split("\n")
+                    .map((paragraph, pIdx) => (
+                      <Text mt={2} key={pIdx}>
+                        {paragraph.trim()}
+                      </Text>
+                    ))}
+                </Box>
+              ))}
+            </Stack>
+          </RadioGroup>
+        </>
+      ) : null}
+       {/* Theorums 5 */}
+       {feature === "Theorem 5" ? (
+        <>
+          <Heading fontSize="1.5rem">Theorems 5</Heading>
+          <RadioGroup
+            value={selectedTheorems5}
+            onChange={handleTheorems5Change}
+          >
+            <Stack spacing={4}>
+              {Object.keys(theoremsLevel8).map((theorem8, idx) => (
+                <Box key={idx}>
+                  <Radio value={theorem8}>
+                    <b>{theorem8}</b>
+                  </Radio>
+                  {theoremsLevel8[theorem8]
+                    .split("\n")
+                    .map((paragraph, pIdx) => (
+                      <Text mt={2} key={pIdx}>
+                        {paragraph.trim()}
+                      </Text>
+                    ))}
+                </Box>
+              ))}
+            </Stack>
+          </RadioGroup>
+        </>
+      ) : null}
+       {/* Theorums 6 */}
+       {feature === "Theorem 6" ? (
+        <>
+          <Heading fontSize="1.5rem">Theorems 6</Heading>
+          <RadioGroup
+            value={selectedTheorems6}
+            onChange={handleTheorems6Change}
+          >
+            <Stack spacing={4}>
+              {Object.keys(theoremsLevel8).map((theorem8, idx) => (
+                <Box key={idx}>
+                  <Radio value={theorem8}>
+                    <b>{theorem8}</b>
+                  </Radio>
+                  {theoremsLevel8[theorem8]
+                    .split("\n")
+                    .map((paragraph, pIdx) => (
+                      <Text mt={2} key={pIdx}>
+                        {paragraph.trim()}
+                      </Text>
+                    ))}
+                </Box>
+              ))}
+            </Stack>
+          </RadioGroup>
+        </>
+      ) : null}
+       {/* Theorums 7 */}
+       {feature === "Theorem 7" ? (
+        <>
+          <Heading fontSize="1.5rem">Theorems 7</Heading>
+          <RadioGroup
+            value={selectedTheorems7}
+            onChange={handleTheorems7Change}
+          >
+            <Stack spacing={4}>
+              {Object.keys(theoremsLevel14).map((theorem14, idx) => (
+                <Box key={idx}>
+                  <Radio value={theorem14}>
+                    <b>{theorem14}</b>
+                  </Radio>
+                  {theoremsLevel14[theorem14]
+                    .split("\n")
+                    .map((paragraph, pIdx) => (
+                      <Text mt={2} key={pIdx}>
+                        {paragraph.trim()}
+                      </Text>
+                    ))}
+                </Box>
+              ))}
+            </Stack>
+          </RadioGroup>
+        </>
+      ) : null}
+       {/* Theorums 8 */}
+       {feature === "Theorem 8" ? (
+        <>
+          <Heading fontSize="1.5rem">Theorems 8</Heading>
+          <RadioGroup
+            value={selectedTheorems8}
+            onChange={handleTheorems8Change}
+          >
+            <Stack spacing={4}>
+              {Object.keys(theoremsLevel14).map((theorem14, idx) => (
+                <Box key={idx}>
+                  <Radio value={theorem14}>
+                    <b>{theorem14}</b>
+                  </Radio>
+                  {theoremsLevel14[theorem14]
+                    .split("\n")
+                    .map((paragraph, pIdx) => (
+                      <Text mt={2} key={pIdx}>
+                        {paragraph.trim()}
+                      </Text>
+                    ))}
+                </Box>
+              ))}
+            </Stack>
+          </RadioGroup>
+        </>
+      ) : null}
+       {/* Theorums 9 */}
+       {feature === "Theorem 9" ? (
+        <>
+          <Heading fontSize="1.5rem">Theorems 9</Heading>
+          <RadioGroup
+            value={selectedTheorems9}
+            onChange={handleTheorems9Change}
+          >
+            <Stack spacing={4}>
+              {Object.keys(theoremsLevel14).map((theorem14, idx) => (
+                <Box key={idx}>
+                  <Radio value={theorem14}>
+                    <b>{theorem14}</b>
+                  </Radio>
+                  {theoremsLevel14[theorem14]
+                    .split("\n")
+                    .map((paragraph, pIdx) => (
+                      <Text mt={2} key={pIdx}>
+                        {paragraph.trim()}
+                      </Text>
+                    ))}
+                </Box>
+              ))}
+            </Stack>
+          </RadioGroup>
+        </>
+      ) : null}
+       {/* Theorums 10 */}
+       {feature === "Theorem 10" ? (
+        <>
+          <Heading fontSize="1.5rem">Theorems 10</Heading>
+          <RadioGroup
+            value={selectedTheorems10}
+            onChange={handleTheorems10Change}
+          >
+            <Stack spacing={4}>
+              {Object.keys(theoremsLevel14).map((theorem10, idx) => (
+                <Box key={idx}>
+                  <Radio value={theorem10}>
+                    <b>{theorem10}</b>
+                  </Radio>
+                  {theoremsLevel14[theorem10]
                     .split("\n")
                     .map((paragraph, pIdx) => (
                       <Text mt={2} key={pIdx}>
