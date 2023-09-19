@@ -119,7 +119,7 @@ const Step4 = ({ formData, updateFormData }) => {
                   )
                   .sort((a, b) => a.level_id - b.level_id)
                   .map((choice, cIdx) => (
-                    <Box key={cIdx}>
+                    <Box key={cIdx} borderBottom="1px solid white" pb={2}>
                       <Text fontSize="1.4rem" fontWeight="bold">
                         Feature: {choice.feature_name}
                       </Text>

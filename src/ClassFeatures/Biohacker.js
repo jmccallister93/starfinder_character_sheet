@@ -193,42 +193,42 @@ const Biohacker = ({ formData, updateFormData, feature, classId }) => {
     "Treatment Mastery (Ex)": `You gain a +2 circumstance bonus to your Medicine check when using the treat disease and treat drugs or poison tasks, and can do so with greater speed. It takes you 1 minute to treat disease, and a move action to treat drugs or poison. You can also attempt these tasks without a medkit, medical lab, or medical bay, though doing so takes the normal amount of time for both tasks and you do not gain the bonus to the checks.`,
   };
   const theoremsLevel8 = {
-    "Advanced Locomotive Adaptation (Ex)":`You can use locomotive adaptation twice per day, and the climb and swim speeds you grant with this theorem increase to 30 feet each. When selecting the movement speed you give the targets, you add a burrow speed of 20 feet as well as an extraordinary fly speed of 20 feet with average maneuverability to the options from which you can choose. You must have the locomotive adaptation theorem to choose this theorem.`,
-    "Arms Expert (Ex)":`If you have the weapon specialization class feature, add your full class level to damage (rather than half your class level) with small arms and weapons with which you have gained proficiency through the injection expert class feature.`,
-    "Elongation Mutation (Ex)":`Any booster you successfully use on yourself or an ally causes the target’s limbs to become elastic and capable of stretching a great distance. The creature increases its reach by 5 feet. This effect lasts a number of rounds equal to your primary ability score modifier (minimum 1 round), in addition to the booster’s other effects.`,
-    "Enhanced Senses (Ex)":`Following a regimen of experimental treatments, you have altered your senses to notice even the faintest traces of sounds or movement. You gain blindsense (vibration) with a range of 5 feet as well as a +2 enhancement bonus to Will saving throws against illusions.
+    "Advanced Locomotive Adaptation (Ex)": `You can use locomotive adaptation twice per day, and the climb and swim speeds you grant with this theorem increase to 30 feet each. When selecting the movement speed you give the targets, you add a burrow speed of 20 feet as well as an extraordinary fly speed of 20 feet with average maneuverability to the options from which you can choose. You must have the locomotive adaptation theorem to choose this theorem.`,
+    "Arms Expert (Ex)": `If you have the weapon specialization class feature, add your full class level to damage (rather than half your class level) with small arms and weapons with which you have gained proficiency through the injection expert class feature.`,
+    "Elongation Mutation (Ex)": `Any booster you successfully use on yourself or an ally causes the target’s limbs to become elastic and capable of stretching a great distance. The creature increases its reach by 5 feet. This effect lasts a number of rounds equal to your primary ability score modifier (minimum 1 round), in addition to the booster’s other effects.`,
+    "Enhanced Senses (Ex)": `Following a regimen of experimental treatments, you have altered your senses to notice even the faintest traces of sounds or movement. You gain blindsense (vibration) with a range of 5 feet as well as a +2 enhancement bonus to Will saving throws against illusions.
     As a move action, you can spend 1 Resolve Point to enter a state of heightened awareness. This state allows you see invisible creatures as per see invisibility, your enhancement bonus to Will saving throws against illusions increases to +4, and you take a –2 penalty to Fortitude saving throws due to the enhanced strain on your body. This state lasts for a number of minutes equal to 10 × your biohacker level, and you can end the state before then as a swift action.`,
-    "Far Injection (Ex)":`Constant tinkering allows you to increase the range of ranged injection weapons with which you gained proficiency through your injection expert class feature. The range increments of these weapons double when you use them. At 16th level, their range increments instead triple when you use them.`,
-    "First Aid Expert (Ex)":`When you use your custom microlab as a medkit, advanced medkit, or medical lab to treat deadly wounds and exceed the DC by 5, rather than add your Intelligence modifier to the amount healed, you add either twice your Intelligence modifier or twice your Wisdom modifier to the amount healed.`,
-    "Grounding Inhibitor (Ex)":`Any biohack inhibitor you successfully use against a foe that has a nonmagical fly speed severely inhibits that target’s ability to fly. In addition to taking the inhibitor’s normal effects, the target has its maneuverability reduced to clumsy; if its maneuverability is already clumsy, its fly speed is halved.`,
-    "Improved Instant Recalibration (Ex)":`You’ve learned to spot a disaster before it happens. You can use the instant recalibration theorem when an attuned creature fails a skill check by 3 or less. If you also spend a Resolve Point when activating this ability, you can instead affect an attuned creature who would fail a skill check by 5 or less. You must know the instant recalibration theorem to select this theorem.`,
-    "Improved Treat Condition (Ex)":`Add the following conditions to the list of those you can remove with the treat condition theorem: frightened and nauseated. You must know the treat condition theorem to select this theorem.`,
-    "Powerful Biohacks (Ex)":`You can use fringe science to tweak your biohacks so that you can affect any creature with biohacks that normally don’t affect creatures with the unliving universal creature rule. If the biohack had the poison descriptor, you can remove that descriptor each time you use that biohack.`,
-    "Stable Biohacks (Ex)":`You have ironed out many of the kinks in your formulas, and your biohacks now remain effective even when they leave your possession. This allows you to give your biohacks to others to use at their convenience. Other creatures must load a biohacks into an injection weapon before use as a move action, or apply the biohack to themself or an adjacent willing or unconscious ally as a standard action. Biohacks you create that are not used count against your maximum until they are used or become inert 24 hours after creation.`,
-    "Sure-Step Booster (Ex)":`Any booster you successfully use on yourself or an ally grants the target the ability to take a guarded step through difficult terrain for a number of rounds equal to your key ability score modifier, in addition to its normal effects.`,
-    "Technological Biohacks (Ex)":`Your biohacks that affect only living creatures can also affect creatures with the construct type or technological subtype. Your biohacks ignore such creatures’ immunities to poison.`,
-    "Thickened Bones (Ex)":`Through extensive biochemical treatments, you’ve permanently reinforced your bones, making it less taxing to carry heavy loads and helping you resist catastrophic harm. Your bulk carrying limit increases by 2, and you don’t become fatigued from the long-term effects of living in a high-gravity environment. You gain a +2 bonus to saving throws made to resist the wound and severe wound critical hit effects, as well as other effects that would sever or mutilate your limbs.`,
-    "Tranq Dart (Ex)":`Once per day, you can target a living creature with a special biohack as a standard action. This doesn’t deal any damage and doesn’t count against your total uses of biohacks, but it otherwise functions as a biohack. If you hit the target, they must succeed at a Fortitude saving throw or fall into a deep sleep after 1 round, gaining the asleep condition. On a successful saving throw, the target is unaffected. At 14th level, you can use this ability twice per day. This is a poison effect.`,
-    "Treat Radiation (Ex)":`Using your custom microlab, you can spend 1 hour to treat the effects of radiation in one living creature, after which you make a special check, rolling 1d20 and adding your biohacker level and any insight bonus you have to Medicine checks to the result. The check’s DC equals the radiation effect’s save DC. If you succeed, the target is cured of both the radiation’s poison effects and the radiation sickness disease, moving the target to the healthy state on both tracks. At 14th level, it takes you only 10 minutes to perform this treatment, though this doesn’t count as a 10-minute rest to regain Stamina Points.`,
-  }
-  const theoremsLevel14= {
-    "Ampoule Mastery (Su)":`You have surpassed conventional spell ampoule science, allowing you to prepare one 3rd-level spell amp each day from your list of known spell amps using the ampoule expertise theorem. When you gain this theorem, you also add one additional spell to your list of spell amps that you can prepare.
+    "Far Injection (Ex)": `Constant tinkering allows you to increase the range of ranged injection weapons with which you gained proficiency through your injection expert class feature. The range increments of these weapons double when you use them. At 16th level, their range increments instead triple when you use them.`,
+    "First Aid Expert (Ex)": `When you use your custom microlab as a medkit, advanced medkit, or medical lab to treat deadly wounds and exceed the DC by 5, rather than add your Intelligence modifier to the amount healed, you add either twice your Intelligence modifier or twice your Wisdom modifier to the amount healed.`,
+    "Grounding Inhibitor (Ex)": `Any biohack inhibitor you successfully use against a foe that has a nonmagical fly speed severely inhibits that target’s ability to fly. In addition to taking the inhibitor’s normal effects, the target has its maneuverability reduced to clumsy; if its maneuverability is already clumsy, its fly speed is halved.`,
+    "Improved Instant Recalibration (Ex)": `You’ve learned to spot a disaster before it happens. You can use the instant recalibration theorem when an attuned creature fails a skill check by 3 or less. If you also spend a Resolve Point when activating this ability, you can instead affect an attuned creature who would fail a skill check by 5 or less. You must know the instant recalibration theorem to select this theorem.`,
+    "Improved Treat Condition (Ex)": `Add the following conditions to the list of those you can remove with the treat condition theorem: frightened and nauseated. You must know the treat condition theorem to select this theorem.`,
+    "Powerful Biohacks (Ex)": `You can use fringe science to tweak your biohacks so that you can affect any creature with biohacks that normally don’t affect creatures with the unliving universal creature rule. If the biohack had the poison descriptor, you can remove that descriptor each time you use that biohack.`,
+    "Stable Biohacks (Ex)": `You have ironed out many of the kinks in your formulas, and your biohacks now remain effective even when they leave your possession. This allows you to give your biohacks to others to use at their convenience. Other creatures must load a biohacks into an injection weapon before use as a move action, or apply the biohack to themself or an adjacent willing or unconscious ally as a standard action. Biohacks you create that are not used count against your maximum until they are used or become inert 24 hours after creation.`,
+    "Sure-Step Booster (Ex)": `Any booster you successfully use on yourself or an ally grants the target the ability to take a guarded step through difficult terrain for a number of rounds equal to your key ability score modifier, in addition to its normal effects.`,
+    "Technological Biohacks (Ex)": `Your biohacks that affect only living creatures can also affect creatures with the construct type or technological subtype. Your biohacks ignore such creatures’ immunities to poison.`,
+    "Thickened Bones (Ex)": `Through extensive biochemical treatments, you’ve permanently reinforced your bones, making it less taxing to carry heavy loads and helping you resist catastrophic harm. Your bulk carrying limit increases by 2, and you don’t become fatigued from the long-term effects of living in a high-gravity environment. You gain a +2 bonus to saving throws made to resist the wound and severe wound critical hit effects, as well as other effects that would sever or mutilate your limbs.`,
+    "Tranq Dart (Ex)": `Once per day, you can target a living creature with a special biohack as a standard action. This doesn’t deal any damage and doesn’t count against your total uses of biohacks, but it otherwise functions as a biohack. If you hit the target, they must succeed at a Fortitude saving throw or fall into a deep sleep after 1 round, gaining the asleep condition. On a successful saving throw, the target is unaffected. At 14th level, you can use this ability twice per day. This is a poison effect.`,
+    "Treat Radiation (Ex)": `Using your custom microlab, you can spend 1 hour to treat the effects of radiation in one living creature, after which you make a special check, rolling 1d20 and adding your biohacker level and any insight bonus you have to Medicine checks to the result. The check’s DC equals the radiation effect’s save DC. If you succeed, the target is cured of both the radiation’s poison effects and the radiation sickness disease, moving the target to the healthy state on both tracks. At 14th level, it takes you only 10 minutes to perform this treatment, though this doesn’t count as a 10-minute rest to regain Stamina Points.`,
+  };
+  const theoremsLevel14 = {
+    "Ampoule Mastery (Su)": `You have surpassed conventional spell ampoule science, allowing you to prepare one 3rd-level spell amp each day from your list of known spell amps using the ampoule expertise theorem. When you gain this theorem, you also add one additional spell to your list of spell amps that you can prepare.
     At 18th level, you can prepare one 4th-level spell amp each day from your list of known spell amps; this exceeds the normal level limit for spell ampoules, though any 4th-level spells you add to your list of spell amps must still follow all other rules for creating spell amps.
     You must have Ampoule Expertise to select this theorem.`,
-    "Bleeding Biohacks (Ex)":`Your biohacks include insidious anticoagulants. Any biohack inhibitor that you successfully use against a target also afflicts them with an amount of bleed damage equal to 1d10 + your key ability score modifier, in addition to the inhibitor’s standard effects.`,
-    "Energetic Booster (Ex)":`Any booster you successfully use on yourself or an ally grants the benefits of Agile Casting, Shot on the Run, or Spring Attack (your choice) for a number of rounds equal to your key ability score, in addition to its normal effect. The ally does not have to meet any of these feats’ prerequisites to gain these benefits.`,
-    "Greater Field Dressing (Ex)":`When you use the field dressing theorem, the target instead regains a number of Hit Points or Stamina Points (whichever you normally restore with field dressing) equal to 4d8 + your key ability score modifier, or 6d8 + your key ability score modifier if you are 18th level or higher. You must know the field dressing theorem to select this theorem.`,
-    "Greater Treat Condition (Ex)":`Add the following conditions to the list of those you can remove with the treat condition theorem: cowering, dazed, panicked, paralyzed, and stunned. You must know the treat condition and improved treat condition theorems to select this theorem.`,
-    "Iron Gut (Ex)":`You know how to fight through nausea. You are immune to the sickened condition. While you are nauseated, you can take either a swift action and move action during your turn or two move actions. The nauseated condition still prevents you from attacking, casting spells, concentrating on spells, or doing anything else that requires attention.`,
-    "Liquid Bravery (Ex)":`You have consumed enough fortifying chemical concoctions to have negated some of the fear you feel. You are immune to the shaken condition. If you are frightened, you need not flee or fight, and if you are panicked, you need not drop all held items and flee, but you still cower if you are cornered. You still take the penalties associated with frightened and panicked as normal.`,
-    "Ooze Form (Ex)":`Once per day, you can spend 10 minutes creating and administering a mutagen that gives your body ooze-like qualities for a number of hours equal to your key ability score modifier. For this duration, you gain the compression and unflankable universal creature rules, as well as immunity to the additional damage from critical hits (though you are still affected by critical hit effects).
+    "Bleeding Biohacks (Ex)": `Your biohacks include insidious anticoagulants. Any biohack inhibitor that you successfully use against a target also afflicts them with an amount of bleed damage equal to 1d10 + your key ability score modifier, in addition to the inhibitor’s standard effects.`,
+    "Energetic Booster (Ex)": `Any booster you successfully use on yourself or an ally grants the benefits of Agile Casting, Shot on the Run, or Spring Attack (your choice) for a number of rounds equal to your key ability score, in addition to its normal effect. The ally does not have to meet any of these feats’ prerequisites to gain these benefits.`,
+    "Greater Field Dressing (Ex)": `When you use the field dressing theorem, the target instead regains a number of Hit Points or Stamina Points (whichever you normally restore with field dressing) equal to 4d8 + your key ability score modifier, or 6d8 + your key ability score modifier if you are 18th level or higher. You must know the field dressing theorem to select this theorem.`,
+    "Greater Treat Condition (Ex)": `Add the following conditions to the list of those you can remove with the treat condition theorem: cowering, dazed, panicked, paralyzed, and stunned. You must know the treat condition and improved treat condition theorems to select this theorem.`,
+    "Iron Gut (Ex)": `You know how to fight through nausea. You are immune to the sickened condition. While you are nauseated, you can take either a swift action and move action during your turn or two move actions. The nauseated condition still prevents you from attacking, casting spells, concentrating on spells, or doing anything else that requires attention.`,
+    "Liquid Bravery (Ex)": `You have consumed enough fortifying chemical concoctions to have negated some of the fear you feel. You are immune to the shaken condition. If you are frightened, you need not flee or fight, and if you are panicked, you need not drop all held items and flee, but you still cower if you are cornered. You still take the penalties associated with frightened and panicked as normal.`,
+    "Ooze Form (Ex)": `Once per day, you can spend 10 minutes creating and administering a mutagen that gives your body ooze-like qualities for a number of hours equal to your key ability score modifier. For this duration, you gain the compression and unflankable universal creature rules, as well as immunity to the additional damage from critical hits (though you are still affected by critical hit effects).
     Once during the mutagen’s duration as a reaction when you take piercing or slashing damage, you can split into two copies of yourself. Divide your current Hit Points and Stamina Points evenly between the two, but otherwise, the copies share the same statistics and equipment. If one of the copies casts a spell, expends ammunition, or uses other limited-use resources, that resource is consumed for both copies. Any item dropped by just one copy becomes inert, shapeless biomatter. The copies share the same initiative count, with one acting immediately after the other. Each turn, one of the copies can use a full round’s worth of actions, and the other can take only a move action.
     The effect lasts 5 rounds, after which one of the copies dissolves, and the other copy becomes you. Combine the copies’ Hit Point totals and Stamina Point totals to determine your HP and SP totals when the effect ends; these totals cannot exceed their normal maximums. If the copies are adjacent to each other, one copy can meld with the other as a move action, ending the effect prematurely. If one of the copies is reduced to 0 HP, the effect ends; your remaining copy becomes the “real” version, and you are staggered until the end of your next turn.`,
-    "Poison Extraction (Ex)":`You’ve modified your custom microlab to deal with poisonous substances. When you fail a saving throw against a poison effect, you can activate your custom microlab as a reaction to attempt to extract the toxin. Reroll the saving throw with a +2 bonus, and use the second result. If you succeed, you cure the poison, shunt the toxin into a small reservoir in your custom microlab, and create a dose of the poison that you can use. The extracted poison becomes harmless if not used within 1 hour. Once you use this theorem, you can’t do so again until you spend 1 Resolve Point to recover Stamina Points.`,
-  }
+    "Poison Extraction (Ex)": `You’ve modified your custom microlab to deal with poisonous substances. When you fail a saving throw against a poison effect, you can activate your custom microlab as a reaction to attempt to extract the toxin. Reroll the saving throw with a +2 bonus, and use the second result. If you succeed, you cure the poison, shunt the toxin into a small reservoir in your custom microlab, and create a dose of the poison that you can use. The extracted poison becomes harmless if not used within 1 hour. Once you use this theorem, you can’t do so again until you spend 1 Resolve Point to recover Stamina Points.`,
+  };
 
-//   Selecte Theorems
-const handleTheorems1Change = (value) => {
+  //   Selecte Theorems
+  const handleTheorems1Change = (value) => {
     setSelectedTheorems1(value);
     handleChoiceSelection(value, "theorem_1");
   };
@@ -375,8 +375,8 @@ const handleTheorems1Change = (value) => {
           </RadioGroup>
         </>
       ) : null}
-       {/* Theorums 2 */}
-       {feature === "Theorem 2" ? (
+      {/* Theorums 2 */}
+      {feature === "Theorem 2" ? (
         <>
           <Heading fontSize="1.5rem">Theorems 2</Heading>
           <RadioGroup
@@ -402,8 +402,8 @@ const handleTheorems1Change = (value) => {
           </RadioGroup>
         </>
       ) : null}
-       {/* Theorums 3 */}
-       {feature === "Theorem 3" ? (
+      {/* Theorums 3 */}
+      {feature === "Theorem 3" ? (
         <>
           <Heading fontSize="1.5rem">Theorems 3</Heading>
           <RadioGroup
@@ -429,8 +429,8 @@ const handleTheorems1Change = (value) => {
           </RadioGroup>
         </>
       ) : null}
-       {/* Theorums 4 */}
-       {feature === "Theorem 4" ? (
+      {/* Theorums 4 */}
+      {feature === "Theorem 4" ? (
         <>
           <Heading fontSize="1.5rem">Theorems 4</Heading>
           <RadioGroup
@@ -456,8 +456,8 @@ const handleTheorems1Change = (value) => {
           </RadioGroup>
         </>
       ) : null}
-       {/* Theorums 5 */}
-       {feature === "Theorem 5" ? (
+      {/* Theorums 5 */}
+      {feature === "Theorem 5" ? (
         <>
           <Heading fontSize="1.5rem">Theorems 5</Heading>
           <RadioGroup
@@ -483,8 +483,8 @@ const handleTheorems1Change = (value) => {
           </RadioGroup>
         </>
       ) : null}
-       {/* Theorums 6 */}
-       {feature === "Theorem 6" ? (
+      {/* Theorums 6 */}
+      {feature === "Theorem 6" ? (
         <>
           <Heading fontSize="1.5rem">Theorems 6</Heading>
           <RadioGroup
@@ -510,8 +510,8 @@ const handleTheorems1Change = (value) => {
           </RadioGroup>
         </>
       ) : null}
-       {/* Theorums 7 */}
-       {feature === "Theorem 7" ? (
+      {/* Theorums 7 */}
+      {feature === "Theorem 7" ? (
         <>
           <Heading fontSize="1.5rem">Theorems 7</Heading>
           <RadioGroup
@@ -537,8 +537,8 @@ const handleTheorems1Change = (value) => {
           </RadioGroup>
         </>
       ) : null}
-       {/* Theorums 8 */}
-       {feature === "Theorem 8" ? (
+      {/* Theorums 8 */}
+      {feature === "Theorem 8" ? (
         <>
           <Heading fontSize="1.5rem">Theorems 8</Heading>
           <RadioGroup
@@ -564,8 +564,8 @@ const handleTheorems1Change = (value) => {
           </RadioGroup>
         </>
       ) : null}
-       {/* Theorums 9 */}
-       {feature === "Theorem 9" ? (
+      {/* Theorums 9 */}
+      {feature === "Theorem 9" ? (
         <>
           <Heading fontSize="1.5rem">Theorems 9</Heading>
           <RadioGroup
@@ -591,8 +591,8 @@ const handleTheorems1Change = (value) => {
           </RadioGroup>
         </>
       ) : null}
-       {/* Theorums 10 */}
-       {feature === "Theorem 10" ? (
+      {/* Theorums 10 */}
+      {feature === "Theorem 10" ? (
         <>
           <Heading fontSize="1.5rem">Theorems 10</Heading>
           <RadioGroup
