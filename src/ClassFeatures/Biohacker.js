@@ -1,5 +1,9 @@
+import { Text } from "@chakra-ui/react";
+
 const Biohacker = ({formData, updateFormData}) => {
-    return ( <></> );
+    return ( <>
+    <Text>{formData?.abilities}</Text>
+    </> );
 }
  
 export default Biohacker;

@@ -22,6 +22,7 @@ import skillPointsPerLevel from "./skillPointsPerLevel";
 import classSkills from "./classSkills";
 import classFeatures from "./classFeatures";
 import ClassProgressionTable from "./ClassProgressionTable";
+import Biohacker from "../ClassFeatures/Biohacker";
 
 const Step3 = ({ updateFormData, formData }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -33,6 +34,7 @@ const Step3 = ({ updateFormData, formData }) => {
   const [classLevel, setClassLevel] = useState(1);
   const [allClasses, setAllClasses] = useState([]);
   const [selectedAbility, setSelectedAbility] = useState();
+  const [features, setFeatures] = useState();
 
   // Key ability selector logic
   const handleKeyAbilityChange = (selectedClassName, selectedValue) => {
@@ -67,7 +69,7 @@ const Step3 = ({ updateFormData, formData }) => {
 
     // Fetch proficiencies and class abilities for the selected class
     fetchProficiencies(value.id);
-    fetchClassAbilities(value.id);
+    fetchClassFeatures(value.id);
     onClose();
   };
 
@@ -122,18 +124,18 @@ const Step3 = ({ updateFormData, formData }) => {
   };
 
   // Fetches Abilities(features)
-  const fetchClassAbilities = async (classId) => {
+  const fetchClassFeatures= async (classId) => {
     const result = await supabase
-      .from("classAbilities")
+      .from("classFeatures")
       .select("*")
       .eq("class_id", classId);
-    
+      
     setAllClasses((prevClasses) => {
       const updatedClasses = prevClasses.map((cls) => {
         if (cls.id === classId) {
           return {
             ...cls,
-            abilities: result.data || [],
+            features: result.data || [],
           };
         }
 
@@ -148,12 +150,12 @@ const Step3 = ({ updateFormData, formData }) => {
   };
 
   // Formats abilities into text
-  const formatAbilityText = (abilityText) => {
+  const formatFeatureText = (featureText) => {
     // Remove starting and ending quotes
-    const cleanText = abilityText.slice(1, -1);
+    const cleanText = featureText?.slice(1, -1);
 
     // Split the text on periods
-    const sections = cleanText.split(".");
+    const sections = cleanText?.split(".");
 
     return (
       <Box background="rgb(70,70,70)" p={4} borderRadius={10}>
@@ -192,12 +194,14 @@ const Step3 = ({ updateFormData, formData }) => {
   const removeClass = (idx) => {
     updateFormData(formData?.classes.splice(idx, 1));
   };
-  // 
-  useEffect(() => {
-    if(formData?.classes && formData.classes[0]?.Name === "Vanguard"){
-      console.log(formData)
-    }
-  }, [formData])
+  //
+  // useEffect(() => {
+  //   if (formData?.classes && formData.classes[0]?.Name === "Biohacker") {
+  //     setFeatures(
+  //       <Biohacker formData={formData} updateFormData={updateFormData} />
+  //     );
+  //   }
+  // }, [formData]);
 
   return (
     <Box
@@ -354,36 +358,37 @@ const Step3 = ({ updateFormData, formData }) => {
                   ))}
               </Box>
               <Text fontWeight="bold" fontSize="1.5rem">
-                Class Features:
+                Class Progression:
               </Text>
-          
-                    {/* Class progression table */}
-                    <ClassProgressionTable
-                      className={selectedClass.Name}
-                      updateFormData={updateFormData}
-                    />
-          
+
+              {/* Class progression table */}
+              <ClassProgressionTable
+                className={selectedClass.Name}
+                updateFormData={updateFormData}
+              />
+
               {/* Class Features Section */}
               <Box mt={4}>
                 <Text fontWeight="bold" fontSize="1.5rem">
                   Class Feature Details:
                 </Text>
+
                 <Accordion allowMultiple>
-                  {selectedClass.abilities &&
-                    selectedClass.abilities.map((ability, idx) => (
+                  {selectedClass?.features &&
+                    selectedClass?.features.map((feature, idx) => (
                       <AccordionItem key={idx}>
                         <h2>
                           <AccordionButton>
                             <Box flex="1" textAlign="left" fontWeight="bold">
-                              {ability.ability_name} (Level{" "}
-                              {ability.ability_level}
+                              {feature.feature_name} (Level{" "}
+                              {feature.feature_level}
                               ):
                             </Box>
                             <AccordionIcon />
                           </AccordionButton>
                         </h2>
                         <AccordionPanel pb={4}>
-                          {formatAbilityText(ability.ability_description)}
+                          {formatFeatureText(feature.feature_description)}
                         </AccordionPanel>
                       </AccordionItem>
                     ))}
@@ -392,7 +397,7 @@ const Step3 = ({ updateFormData, formData }) => {
             </Box>
           ))}
       </FormControl>
-
+      
       {/* Modal for class details */}
       <DetailsModal
         isOpen={isOpen}

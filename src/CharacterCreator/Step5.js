@@ -1,387 +1,247 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
+  FormControl,
+  FormLabel,
   Button,
-  Flex,
-  Input,
+  Text,
   Radio,
   RadioGroup,
   Stack,
-  Text,
+  useDisclosure,
 } from "@chakra-ui/react";
+import DetailsModal from "./DetailsModal";
+import { supabase } from "../client/supabaseClient";
 
-const Step5 = ({ updateFormData, formData }) => {
-  const [method, setMethod] = useState(formData.method || "");
+const Step5 = ({ updateFormData, formData, themeData }) => {
+  const [selectedAbility, setSelectedAbility] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [modalOptions, setModalOptions] = useState([]);
+  const [selectedClassSkill, setSelectedClassSkill] = useState(null);
 
-  const initialScores = formData.scores || {
-    STR: 10,
-    DEX: 10,
-    CON: 10,
-    INT: 10,
-    WIS: 10,
-    CHA: 10,
-  };
-  const [scores, setScores] = useState(initialScores);
-  const initialRemainingPoints = formData.remainingPoints || 10;
-  const [remainingPoints, setRemainingPoints] = useState(
-    initialRemainingPoints
-  );
-  const initialRolledScores = formData.rolledScores || [];
-  const [allocatableScores, setAllocatableScores] =
-    useState(initialRolledScores);
-  const [previousMethod, setPreviousMethod] = useState(null);
+  // Format Description property
+  const formatDescription = (desc) => {
+    if (!desc) return null;
 
-  //   KeyAbility highlights
-  const isKeyAbility = (stat) => formData.classes[0]?.KeyAbility === stat;
-
-  //   Adjsutments from race/theme
-  const formatAdjustment = (adjustment, source) => {
-    if (!adjustment) return null;
-    const sign = adjustment > 0 ? "+" : "";
-    return `${sign}${adjustment} from ${source}`;
-  };
-  const totalAdjustment = (ability) => {
-    const raceAdj = formData.raceAbilityAdjustments?.[ability] || 0;
-    const themeAdj = formData.themeAbilityAdjustments?.[ability] || 0;
-    return { raceAdj, themeAdj };
-  };
-
-  // Reset logic
-  const resetToBaseScores = () => {
-    const adjustedScores = {
-      STR:
-        10 +
-        (totalAdjustment("STR").raceAdj || 0) +
-        (totalAdjustment("STR").themeAdj || 0),
-      DEX:
-        10 +
-        (totalAdjustment("DEX").raceAdj || 0) +
-        (totalAdjustment("DEX").themeAdj || 0),
-      CON:
-        10 +
-        (totalAdjustment("CON").raceAdj || 0) +
-        (totalAdjustment("CON").themeAdj || 0),
-      INT:
-        10 +
-        (totalAdjustment("INT").raceAdj || 0) +
-        (totalAdjustment("INT").themeAdj || 0),
-      WIS:
-        10 +
-        (totalAdjustment("WIS").raceAdj || 0) +
-        (totalAdjustment("WIS").themeAdj || 0),
-      CHA:
-        10 +
-        (totalAdjustment("CHA").raceAdj || 0) +
-        (totalAdjustment("CHA").themeAdj || 0),
-    };
-    setRemainingPoints(10)
-    setScores(adjustedScores);
-  };
-  
-
-  // Point Buy
-  const calculateRemainingPoints = (currentScores) => {
-    // Calculate the total points used excluding adjustments
-    const totalPointsUsed = Object.keys(currentScores).reduce(
-      (acc, ability) => {
-        const adj =
-          totalAdjustment(ability).raceAdj + totalAdjustment(ability).themeAdj;
-        return acc + (currentScores[ability] - 10 - adj);
-      },
-      0
-    );
-    // console.log("Remaining p from calc: " + remainingPoints)
-    return 10 - totalPointsUsed;
-  };
-
-  const handlePointBuy = (stat, change) => {
-    setScores((prevScores) => {
-      const newScores = { ...prevScores, [stat]: prevScores[stat] + change };
-      const newRemainingPoints = calculateRemainingPoints(newScores);
-
-      // Update the formData right here
-      updateFormData("scores", newScores);
-
-      // Update the remaining points
-      setRemainingPoints(newRemainingPoints);
-
-      return newScores;
+    return desc.split(".").map((chunk, index) => {
+      const parts = chunk.split(":");
+      if (parts.length > 1) {
+        return (
+          <Text key={index}>
+            <strong>{parts[0].trim() + ":"}</strong> {parts[1]}
+          </Text>
+        );
+      }
+      return <Text key={index}>{chunk}</Text>;
     });
-    // console.log("Remaining p from pointbuy: " + remainingPoints)
   };
 
-  // Roll for scores
-  const [manualScores, setManualScores] = useState({
-    STR: "",
-    DEX: "",
-    CON: "",
-    INT: "",
-    WIS: "",
-    CHA: "",
+  const handleAbilityChange = (value) => {
+    setSelectedAbility(value);
+
+    // Extract the ability name from the value (e.g., extract "STR" from "+1 STR")
+    const abilityName = value.split(" ").pop();
+
+    // Define the adjustments based on the selected ability only
+    const updatedAdjustments = {
+      [abilityName]: parseInt(value),
+    };
+
+    // Update the formData with the new adjustments and selected ability
+    updateFormData("theme", {
+      ...formData.theme,
+      Ability: value,
+    });
+    updateFormData("themeAbilityAdjustments", updatedAdjustments);
+  };
+
+  const handleClassSkillChange = (value) => {
+    setSelectedClassSkill(value);
+
+    const updatedThemeData = {
+      ...formData.theme,
+      ClassSkill: value,
+    };
+
+    updateFormData("theme", updatedThemeData);
+  };
+
+  // Handle button click for each to show popup
+  const handleButtonClick = (options) => {
+    setModalOptions(options);
+    onOpen();
+  };
+
+  const handleThemeSelect = (value) => {
+    if (value.Ability && typeof value.Ability === "string") {
+      const adjustments = extractAbilityAdjustments(value.Ability);
+      updateFormData("theme", value);
+      updateFormData("themeAbilityAdjustments", adjustments);
+    } else {
+      updateFormData("theme", value);
+    }
+    onClose();
+  };
+
+  const extractAbilityAdjustments = (adjustmentString) => {
+    const adjustments = adjustmentString.split(",").map((s) => s.trim());
+    const result = {};
+    adjustments.forEach((adj) => {
+      const match = adj.match(/([+-]\d+)\s+(\w+)/);
+      if (match) {
+        const value = parseInt(match[1], 10);
+        const ability = match[2];
+        result[ability] = (result[ability] || 0) + value;
+      }
+    });
+    return result;
+  };
+  // Fetch data function
+  const fetchData = async () => {
+    const result = await supabase.from("themes").select("*");
+    return result.data || [];
+  };
+
+  // Empty data arrays
+  const [data, setData] = useState({
+    themes: [],
   });
 
-  //Manual/Dice Roll entry logic
-  const rollDice = () => {
-    let rolls = [];
-    for (let i = 0; i < 4; i++) {
-      rolls.push(Math.ceil(Math.random() * 6));
-    }
-    rolls.sort((a, b) => b - a); // Sort in descending order
-    rolls.pop(); // Remove the smallest roll
-    return rolls.reduce((a, b) => a + b); // Sum up the rolls
-  };
-  //Roll button click
-  const handleRollForScore = () => {
-    let rolledScores = [];
-    for (let i = 0; i < 6; i++) {
-      rolledScores.push(rollDice());
-    }
-    setAllocatableScores(rolledScores);
-  };
-  const handleScoreAdjust = (stat, change) => {
-    const newScores = { ...scores, [stat]: scores[stat] + change };
-    setScores(newScores);
-    updateFormData("scores", newScores);
-  };
+  const [themeDetails, setThemeDetails] = useState({});
 
-  //Set adjusted base scores
+  // Fetch Data
+  useEffect(() => {
+    fetchData().then((fetchedData) => {
+      setData({ themes: fetchedData });
 
-  //Needed for previous rerender
-  useEffect(() => {
-    if (method === "pointBuy") {
-      const newRemainingPoints = calculateRemainingPoints(scores);
-      setRemainingPoints(newRemainingPoints);
-    }
-    setPreviousMethod(method);
-  }, [method]);
-  // Neede dfor previous rerender
-  useEffect(() => {
-    if (formData.method !== method) {
-      const adjustedScores = {
-        STR:
-          10 +
-          (totalAdjustment("STR").raceAdj || 0) +
-          (totalAdjustment("STR").themeAdj || 0),
-        DEX:
-          10 +
-          (totalAdjustment("DEX").raceAdj || 0) +
-          (totalAdjustment("DEX").themeAdj || 0),
-        CON:
-          10 +
-          (totalAdjustment("CON").raceAdj || 0) +
-          (totalAdjustment("CON").themeAdj || 0),
-        INT:
-          10 +
-          (totalAdjustment("INT").raceAdj || 0) +
-          (totalAdjustment("INT").themeAdj || 0),
-        WIS:
-          10 +
-          (totalAdjustment("WIS").raceAdj || 0) +
-          (totalAdjustment("WIS").themeAdj || 0),
-        CHA:
-          10 +
-          (totalAdjustment("CHA").raceAdj || 0) +
-          (totalAdjustment("CHA").themeAdj || 0),
-      };
+      const themeDetailsObj = {};
+      fetchedData.forEach((theme) => {
+        themeDetailsObj[theme.Name] = theme;
+      });
+      setThemeDetails(themeDetailsObj);
+    });
+  }, []);
 
-      setScores(adjustedScores);
-    }
-  }, [formData]);
-
-  // Keep method persistent
-  useEffect(() => {
-    updateFormData("method", method);
-  }, [method]);
-  // Keep points persistent
-  useEffect(() => {
-    updateFormData("remainingPoints", remainingPoints);
-  }, [remainingPoints]);
-  // Keep rolled scores persistent
-  useEffect(() => {
-    updateFormData("rolledScores", allocatableScores);
-  }, [allocatableScores]);
-  //Update Scores to formData
-  useEffect(() => {
-    updateFormData("scores", scores);
-  }, [scores]);
+  const clearSelection = () => {
+    updateFormData("theme", null);
+}
 
   return (
-    <Box color="white"
-    background="rgb(50, 50, 50)"
-    width="70vw"
-    padding="20px"
-    borderRadius="10px"
-    boxShadow="0px 0px 15px rgba(0,0,0,0.2)">
-      <Text fontSize="2.5rem" mb="20px" borderBottom="2px solid white" paddingBottom="10px" textAlign="center" fontWeight="bold" >
-        Step 5: Ability Scores
+    <Box
+      color="white"
+      background="rgb(50, 50, 50)"
+      width="70vw"
+      padding="20px"
+      borderRadius="10px"
+      boxShadow="0px 0px 15px rgba(0,0,0,0.2)"
+    >
+      <Text
+        fontSize="2.5rem"
+        mb="20px"
+        borderBottom="2px solid white"
+        paddingBottom="10px"
+        textAlign="center"
+        fontWeight="bold"
+      >
+        Step 5: Theme
       </Text>
-      <RadioGroup onChange={setMethod} value={method}>
-        <Stack spacing={5}>
-          <Radio value="pointBuy">Point Buy</Radio>
-          <Radio value="manualEntry">Manual/Rolled Entry</Radio>
-        </Stack>
-      </RadioGroup>
-      <Button onClick={resetToBaseScores} mt={4}>Reset to Base Scores</Button>
-
-      {method === "pointBuy" && (
-        <Box textAlign="center" background="rgb(60, 60, 60)" padding="20px" borderRadius="10px" boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)">
-          <Text fontSize="1.5rem">Remaining Points: {remainingPoints}</Text>
-          <Flex
-            wrap="wrap"
-            justifyContent="space-around"
-            flexDirection="row"
-            height="fit-content"
+      <FormControl id="theme" mb={4}>
+        <FormLabel fontSize="1.8rem">Theme</FormLabel>
+        <Button
+        mb="20px" 
+          onClick={() =>
+            handleButtonClick(data.themes.map((theme) => theme.Name))
+          }
+        >
+          Select Theme
+        </Button>
+        <Button  mb="20px" ml={2} onClick={clearSelection}>Clear Selection</Button>
+        {formData.theme ? (
+          <Box
+            background="rgb(60, 60, 60)"
+            padding="20px"
+            borderRadius="10px"
+            boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
           >
-            {Object.keys(scores).map((stat, index) => (
-              <Box
-                key={index}
-                w="33.33%"
-                p={4}
-                textAlign="center"
-                borderRadius="md"
-                // border="1px solid gray"
-                mb={index >= 3 ? "0" : "2rem"}
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                background="rgb(60, 60, 60)" padding="20px"  boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
-                border={isKeyAbility(stat) ? "1px solid blue" : "1px solid grey"}
-              >
-                {isKeyAbility(stat) && <Text>* Key Ability</Text>}
-                <Text fontSize="1.5rem" mb={2}>
-                  {stat}
-                </Text>
-                <Text fontSize="2rem" fontWeight="bold" mb={4}>
-                  {scores[stat]}
-                </Text>
-                {totalAdjustment(stat).raceAdj !== 0 && (
-                  <Box>
-                    <Text as="span" fontSize="1.2rem">
-                      {" "}
-                      {formatAdjustment(totalAdjustment(stat).raceAdj, "Race")}
-                    </Text>
-                  </Box>
-                )}
-                {totalAdjustment(stat).themeAdj !== 0 && (
-                  <Box>
-                    <Text as="span" fontSize="1.2rem">
-                      {" "}
-                      {formatAdjustment(
-                        totalAdjustment(stat).themeAdj,
-                        "Theme"
-                      )}
-                    </Text>
-                  </Box>
-                )}
-                <Box>
-                  <Button
-                    size="sm"
-                    onClick={() => handlePointBuy(stat, -1)}
-                    isDisabled={scores[stat] <= 0 || remainingPoints <= 0}
-                  >
-                    -
-                  </Button>
-                  <Button
-                    size="sm"
-                    ml={4}
-                    onClick={() => handlePointBuy(stat, 1)}
-                    isDisabled={scores[stat] >= 30 || remainingPoints <= 0}
-                  >
-                    +
-                  </Button>
-                </Box>
-              </Box>
-            ))}
-          </Flex>
-        </Box>
-      )}
-
-      {method === "manualEntry" && (
-        <Box mb={4} textAlign="center" >
-          <Button onClick={handleRollForScore}>Roll</Button>
-          {allocatableScores.length > 0 && (
-            <Text mt={4} fontSize="1.5rem">
-              You rolled: {allocatableScores.join(", ")}
+            <Text mt={2}>
+              <strong>Name:</strong> {formData.theme?.Name}
             </Text>
-          )}
-        </Box>
-      )}
-      {method === "manualEntry" && (
-        <Box mt={4} textAlign="center" >
-          <Text fontSize="1.5rem">Adjust your scores from roll:</Text>
-          <Text fontSize="1rem">Roll 4 x d6 take the highest 3.</Text>
-          <Flex
-            wrap="wrap"
-            justifyContent="space-around"
-            flexDirection="row"
-            height="fit-content"
-          >
-            {Object.keys(manualScores).map((stat, index) => (
-              <Box
-                key={index}
-                w="33.33%"
-                p={4}
-                textAlign="center"
-                borderRadius="md"
-                
-                mb={index >= 3 ? "0" : "2rem"}
-                display="flex"
-                flexDirection="column"
-                justifyContent="center"
-                background="rgb(60, 60, 60)" padding="20px"  boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
-                border={isKeyAbility(stat) ? "1px solid blue" : "1px solid grey"}
-              >
-                <Box>
-                  {isKeyAbility(stat) && <Text>* Key Ability</Text>}
-                  <Text fontSize="1.5rem" mb={2}>
-                    {stat}
-                  </Text>
-                  <Text fontSize="2rem" fontWeight="bold" mb={4}>
-                    {scores[stat]}
-                  </Text>
-                  {totalAdjustment(stat).raceAdj !== 0 && (
-                    <Box>
-                      <Text as="span" fontSize="1.2rem">
-                        {" "}
-                        {formatAdjustment(
-                          totalAdjustment(stat).raceAdj,
-                          "Race"
-                        )}
-                      </Text>
-                    </Box>
-                  )}
-                  {totalAdjustment(stat).themeAdj !== 0 && (
-                    <Box>
-                      <Text as="span" fontSize="1.2rem">
-                        {" "}
-                        {formatAdjustment(
-                          totalAdjustment(stat).themeAdj,
-                          "Theme"
-                        )}
-                      </Text>
-                    </Box>
-                  )}
-                  <Box>
-                    <Button
-                      size="sm"
-                      onClick={() => handleScoreAdjust(stat, -1)}
-                    >
-                      -
-                    </Button>
-                    <Button
-                      size="sm"
-                      ml={4}
-                      onClick={() => handleScoreAdjust(stat, 1)}
-                    >
-                      +
-                    </Button>
-                  </Box>
-                </Box>
-              </Box>
-            ))}
-          </Flex>
-        </Box>
-      )}
+            {formData.theme.Ability.includes(",") ? (
+              <>
+                <Text fontWeight="bold">Select an Ability</Text>
+                <RadioGroup
+                  onChange={handleAbilityChange}
+                  value={selectedAbility}
+                >
+                  <Stack spacing={3} direction="column">
+                    {formData.theme.Ability.split(", ").map(
+                      (abilityOption, idx) => (
+                        <Radio
+                          key={idx}
+                          value={abilityOption.trim()}
+                          border="1px solid white"
+                          borderRadius="50px"
+                          borderWidth="0.5rem"
+                        >
+                          {abilityOption.trim()}
+                        </Radio>
+                      )
+                    )}
+                  </Stack>
+                </RadioGroup>
+              </>
+            ) : (
+              <Text mt={2}>
+                <strong>Ability:</strong> {formData.theme?.Ability}
+              </Text>
+            )}
+
+            {formData.theme?.ClassSkill?.includes("or") ? (
+              <>
+                <Text fontWeight="bold">Select a Class Skill</Text>
+                <RadioGroup
+                  onChange={handleClassSkillChange}
+                  value={selectedClassSkill}
+                >
+                  <Stack spacing={3} direction="column">
+                    {formData.theme.ClassSkill.split("or").map(
+                      (abilityOption, idx) => (
+                        <Radio
+                          key={idx}
+                          value={abilityOption.trim()}
+                          border="1px solid white"
+                          borderRadius="50px"
+                          borderWidth="0.5rem"
+                        >
+                          {abilityOption.trim()}
+                        </Radio>
+                      )
+                    )}
+                  </Stack>
+                </RadioGroup>
+              </>
+            ) : (
+              <Text mt={2}>
+                <strong>Class Skill:</strong> {formData.theme?.ClassSkill}
+              </Text>
+            )}
+
+            <Text mt={2}>
+              <strong>Description:</strong> {formData.theme?.Description}
+            </Text>
+          </Box>
+        ) : null}
+      </FormControl>
+
+      {/* Modal for theme details */}
+      <DetailsModal
+        isOpen={isOpen}
+        onClose={onClose}
+        option="theme"
+        options={modalOptions}
+        onSelect={handleThemeSelect}
+        details={themeDetails}
+      />
     </Box>
   );
 };

@@ -1,274 +1,201 @@
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
   Box,
   Button,
-  Heading,
-  List,
-  ListItem,
-  Popover,
-  PopoverArrow,
-  PopoverBody,
-  PopoverContent,
-  PopoverHeader,
-  PopoverTrigger,
   Text,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  useDisclosure,
+  useToast,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverArrow,
+  PopoverHeader,
+  PopoverBody,
 } from "@chakra-ui/react";
-import { supabase } from "../client/supabaseClient";
 import { useEffect, useState } from "react";
-import { Alert, AlertIcon } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
-import { skillsList } from "./Step6";
+import { supabase } from "../client/supabaseClient";
+import EquipmentModal from "./EquipmentModal";
 
+const Step9 = ({ updateFormData, formData }) => {
+  const [isLoading, setIsLoading] = useState(true);
 
-const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => {
-  const [hp, setHp] = useState();
-  const [stamina, setStamina] = useState();
-  const [resolve, setResolve] = useState();
-  const [bab, setBab] = useState();
-  const [refSave, setRefSave] = useState();
-  const [willSave, setWillSave] = useState();
-  const [fortSave, setFortSave] = useState();
-
-  // Step 9 validation
-  const validateFormData = () => {
-    let warnings = [];
-    if (!formData.name) {
-      warnings.push(
-        <div>
-          Please enter Character Name in{" "}
-          <b
-            fontWeight="bold"
-            onClick={() => setCurrentStep(1)}
-            style={{ cursor: "pointer", textDecoration: "underline" }}
-          >
-            Step 1
-          </b>
-        </div>
-      );
-    }
-    if (!formData.race) {
-      warnings.push(
-        <div>
-          Please complete Race selection in{" "}
-          <b
-            fontWeight="bold"
-            onClick={() => setCurrentStep(2)}
-            style={{ cursor: "pointer", textDecoration: "underline" }}
-          >
-            Step 2
-          </b>
-        </div>
-      );
-    }
-    if (!formData.class) {
-      warnings.push(
-        <div>
-          Please complete Class selection in{" "}
-          <b
-            fontWeight="bold"
-            onClick={() => setCurrentStep(3)}
-            style={{ cursor: "pointer", textDecoration: "underline" }}
-          >
-            Step 3
-          </b>
-        </div>
-      );
-    }
-    if (
-      formData.class?.KeyAbility &&
-      formData.class.KeyAbility.includes("or")
-    ) {
-      warnings.push(
-        <div>
-          Please choose a single Key Ability in{" "}
-          <b
-            fontWeight="bold"
-            onClick={() => setCurrentStep(3)}
-            style={{ cursor: "pointer", textDecoration: "underline" }}
-          >
-            Step 3
-          </b>
-        </div>
-      );
-    }
-
-    if (formData.remainingPoints !== 0) {
-      warnings.push(
-        <div>
-          Please allocate all Ability Points in{" "}
-          <b
-            fontWeight="bold"
-            onClick={() => setCurrentStep(5)}
-            style={{ cursor: "pointer", textDecoration: "underline" }}
-          >
-            Step 5
-          </b>
-        </div>
-      );
-    }
-    if (formData.skillPointsRemaining !== 0) {
-      warnings.push(
-        <div>
-          Please allocate all Skill Points in{" "}
-          <b
-            fontWeight="bold"
-            onClick={() => setCurrentStep(6)}
-            style={{ cursor: "pointer", textDecoration: "underline" }}
-          >
-            Step 6
-          </b>
-        </div>
-      );
-    }
-    if (!formData.feats || formData.feats.length === 0) {
-      warnings.push(
-        <div>
-          Please select a Feat in{" "}
-          <b
-            fontWeight="bold"
-            onClick={() => setCurrentStep(7)}
-            style={{ cursor: "pointer", textDecoration: "underline" }}
-          >
-            Step 7
-          </b>
-        </div>
-      );
-    }
-    // setValidationMessages(warnings);
-    
-    return warnings.length ? warnings : null;
-  };
-
-  const warnings = validateFormData();
-
-  useEffect(() => {
-    if(warnings?.length > 0){
-        setValidateForm(false)
-    } else (
-        setValidateForm(true)
-    )
-  }, [warnings])
-  // Getting HP Value form Race
-  const extractNumericValue = (value) => {
-    const result = value.match(/\d+/);
-    return result ? parseInt(result[0], 10) : 0;
-  };
-
-  // Parsing function for extracting number from strings like "6 + CON" or "6 HP"
-  const parseStatValue = (statString) => {
-    if (typeof statString !== "string") return 0; // Safety check
-    const match = statString.match(/\d+/);
-    return match ? parseInt(match[0]) : 0;
-  };
-
-  // Calculate CON modifier
-  const STR_modifier = Math.floor((formData?.scores.STR - 10) / 2);
-  const DEX_modifier = Math.floor((formData?.scores.DEX - 10) / 2);
-  const CON_modifier = Math.floor((formData?.scores.CON - 10) / 2);
-  const INT_modifier = Math.floor((formData?.scores.INT - 10) / 2);
-  const WIS_modifier = Math.floor((formData?.scores.WIS - 10) / 2);
-  const CHA_modifier = Math.floor((formData?.scores.CHA - 10) / 2);
-
-  const HP = formData?.class.HP + extractNumericValue(formData?.race.HP);
-
-  const Stamina = parseStatValue(formData?.class.StaminaPoints) + CON_modifier;
-
-  // Calculate key ability score modifier
-  const keyAbilityScore = formData?.class?.KeyAbility; // Assuming it's named like "CHA", "DEX", etc.
-  const key_ability_modifier = Math.floor(
-    (formData?.scores[keyAbilityScore] - 10) / 2
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [modalOption, setModalOption] = useState([]);
+  const [remainingCredits, setRemainingCredits] = useState(
+    formData.remainingCredits || 1000
   );
+  const [currentInventory, setCurrentInventory] = useState(
+    formData.currentInventory || []
+  );
+  const [fetchedData, setFetchedData] = useState([]);
 
-  // Assuming character level is 1 for this example. Adjust accordingly.
-  const character_level = 1; // Replace this with actual value if available
+  const categories = {
+    Armor: ["Basic", "Upgrades", "Shields", "Powered"],
+    Items: [
+      "Drugs",
+      "Hybrid",
+      "Magic",
+      "Medicine",
+      "Personal",
+      "Poisons",
+      "Technological",
+      "Trade Goods",
+    ],
+    Weapons: [
+      "Melee",
+      "Ranged",
+      "Special",
+      "Solarian",
+      "Accessories",
+      "Ammunition",
+      "Fusions",
+      "Grenades",
+    ],
+  };
 
-  // Calculations
-  const Resolve =
-    Math.max(1, Math.floor(character_level / 2)) + key_ability_modifier;
-  const BaseAttackBonus = formData?.classStats[0]?.bab; // Update the attribute name if different
-  const Fortitude = formData?.classStats[0]?.fort; // Update the attribute name if different
-  const Reflex = formData?.classStats[0]?.ref; // Update the attribute name if different
-  const Will = formData?.classStats[0]?.will; // Update the attribute name if different
+  //   Fetch data fucntion
+  const fetchDataFromTable = async (tableName) => {
+    const { data, error } = await supabase.from(tableName).select("*");
+    if (error) {
+      console.error(`Error fetching data from ${tableName}:`, error);
+      setIsLoading(false);
+    } else {
+      setFetchedData(data || []);
+      setIsLoading(false)
+    }
+  };
 
-  const formatAbilityText = (abilityText) => {
-    // Remove starting and ending quotes
-    const cleanText = abilityText.slice(1, -1);
+  // Button click when item type is clicked
+  const handleButtonClick = (options) => {
+    setModalOption(options);
+    setIsLoading(true)
+    let tableName = "";
+    switch (options) {
+      case "Basic":
+        tableName = "armorBasic";
+        break;
+      case "Upgrades":
+        tableName = "armorUpgrades";
+        break;
+      case "Shields":
+        tableName = "armorShields";
+        break;
+      case "Powered":
+        tableName = "armorPowered";
+        break;
+      case "Drugs":
+        tableName = "armorUpgrades";
+        break;
+      case "Hybrid":
+        tableName = "itemsHybrid";
+        break;
+      case "Magic":
+        tableName = "itemsMagic";
+        break;
+      case "Medicine":
+        tableName = "itemsMedicine";
+        break;
+      case "Personal":
+        tableName = "itemsPersonal";
+        break;
+      case "Poisons":
+        tableName = "itemsPoisons";
+        break;
+      case "Technological":
+        tableName = "itemsTechnological";
+        break;
+      case "Trade Goods":
+        tableName = "itemsTradeGood";
+        break;
+      case "Melee":
+        tableName = "weaponsMelee";
+        break;
+      case "Ranged":
+        tableName = "weaponsRanged";
+        break;
+      case "Special":
+        tableName = "weaponsSpecial";
+        break;
+      case "Solarian":
+        tableName = "solarianWeaponCrystals";
+        break;
+      case "Accessories":
+        tableName = "weaponsAccessories";
+        break;
+      case "Ammunition":
+        tableName = "weaponsAmmunition";
+        break;
+      case "Fusions":
+        tableName = "weaponsFusions";
+        break;
+      case "Grenades":
+        tableName = "weaponsGrenades";
+        break;
+      default:
+        console.error("Unknown category:", options);
+        break;
+    }
+    if (tableName) {
+      fetchDataFromTable(tableName);
+    }
+    onOpen();
+  };
 
-    // Split the text on periods
-    const sections = cleanText.split(".");
+  //   const handleEquipmentSelect = (value => {
+  //     updateFormData("equipment", value)
+  //     onClose()
+  //   })
 
-    return (
-      <Box background="rgb(70,70,70)" p={4} borderRadius={10}>
-        {sections.map((section, idx) => {
-          // If the section is not empty, render it
-          if (section.trim()) {
-            return (
-              <Text mt={2} key={idx}>
-                {section.trim() + "."}
-              </Text>
-            );
-          }
-          return null; // If the section is empty, don't render anything
-        })}
-      </Box>
+  const toast = useToast();
+
+  const handlePurchase = (item) => {
+    console.log(item.Price);
+    if (item.Price > remainingCredits) {
+      toast({
+        title: "Purchase Error",
+        description: "Cannot afford the selected item.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top"
+      })
+      return;
+    } else{
+      toast({
+        title: "Item Purchased",
+        description: ("Pruchased: " + item.Name +" for " + item.Price),
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top"
+      })
+    }
+    // Otherwise, proceed with the purchase
+    setCurrentInventory((prevInventory) => [...prevInventory, item]);
+    setRemainingCredits((prevCredits) => prevCredits - item.Price);
+    // Update formData
+  };
+
+  const handleRemoveFromInventory = (itemToRemove) => {
+    setCurrentInventory((prevInventory) =>
+      prevInventory.filter((item) => item !== itemToRemove)
     );
+    setRemainingCredits((prevCredits) => prevCredits + itemToRemove.Price);
   };
 
-  const combineSkillsData = (classSkills, skills) => {
-    let combinedSkills = {};
-  
-    skillsList.forEach(skillName => {
-      let total = 0;
-  
-      // Add 3 if it's a class skill
-      if (classSkills.includes(skillName)) {
-        total += 3;
-      }
-  
-      // Add the skill value if it's in the skills object
-      if (skills[skillName]) {
-        total += skills[skillName];
-      }
-  
-      // Add to the combinedSkills object
-      combinedSkills[skillName] = total;
-    });
-  
-    return combinedSkills;
-  };
-  
-  const combinedSkills = combineSkillsData(formData.classSkills, formData.skills);
-  
+  useEffect(() => {
+    updateFormData("remainingCredits", remainingCredits);
+  }, [remainingCredits]);
 
   useEffect(() => {
-    setHp(HP);
-    setStamina(Stamina);
-    setResolve(Resolve);
-    setBab(BaseAttackBonus);
-    setFortSave(Fortitude);
-    setRefSave(Reflex);
-    setWillSave(Will);
-  }, [formData]);
-
-  useEffect(() => {
-    updateFormData("hp", hp)
-    updateFormData("stamina", stamina)
-    updateFormData("bab", bab)
-    updateFormData("fortSave", fortSave)
-    updateFormData("refSave", refSave)
-    updateFormData("willSave", willSave)
-    updateFormData("combinedSkills", combinedSkills)
-    updateFormData("resolve", resolve)
-  },[hp, stamina, bab, fortSave, refSave,willSave, resolve]);
-
-//   useEffect(() => {
-//     validateFormData(); 
-//     // You can call this function whenever formData changes or at other appropriate times
-//   }, [formData]);
+    updateFormData("currentInventory", currentInventory);
+  }, [currentInventory]);
 
   return (
     <Box
@@ -279,13 +206,6 @@ const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => 
       borderRadius="10px"
       boxShadow="0px 0px 15px rgba(0,0,0,0.2)"
     >
-      {warnings &&
-        warnings.map((warning, index) => (
-          <Alert status="warning" mb={4} background="red" key={index}>
-            <AlertIcon color="yellow" />
-            {warning}
-          </Alert>
-        ))}
       <Text
         fontSize="2.5rem"
         mb="20px"
@@ -294,223 +214,95 @@ const Step9 = ({ formData, updateFormData, setCurrentStep,setValidateForm }) => 
         textAlign="center"
         fontWeight="bold"
       >
-        Step 9: Confirm Character Creation
+        Step 9: Equipment
       </Text>
       <Box
+        color="white"
         display="flex"
-        flexDirection="row"
-        justifyContent="space-evenly"
-        alignItems="flex-start"
-        flexWrap="auto"
+        flexWrap="wrap"
+        justifyContent="space-between"
+        background="rgb(60, 60, 60)"
+        padding="20px"
+        borderRadius="10px"
+        boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
       >
-        <Box width="25%">
-          <Heading size="md" marginBottom="10px">
-            Basic Details
-          </Heading>
-          <List>
-            <ListItem>
-              <b>Name:</b>{" "}
-              {formData?.name || (
-                <span style={{ background: "red", padding: "1px" }}>None</span>
-              )}
-            </ListItem>
-            <ListItem>
-              <b>Race:</b> {formData?.race.Name}
-            </ListItem>
-            <ListItem>
-              <b>Class:</b> {formData?.class.Name}
-            </ListItem>
-            <ListItem>
-              <b>Theme:</b> {formData?.theme.Name}
-            </ListItem>
-            <ListItem>
-              <b>Alignment:</b>{" "}
-              {formData?.alignment || (
-                <span
-                  style={{
-                    background: "rgb(255,255,0, 0.5)",
-                    color: "black",
-                    padding: "1px",
-                  }}
-                >
-                  None
-                </span>
-              )}
-            </ListItem>
-            <ListItem>
-              <b>Home World:</b>{" "}
-              {formData?.homeWorld || (
-                <span
-                  style={{
-                    background: "rgb(255,255,0, 0.5)",
-                    color: "black",
-                    padding: "1px",
-                  }}
-                >
-                  None
-                </span>
-              )}
-            </ListItem>
-            <ListItem>
-              <b>Deity:</b>{" "}
-              {formData?.deity || (
-                <span
-                  style={{
-                    background: "rgb(255,255,0, 0.5)",
-                    color: "black",
-                    padding: "1px",
-                  }}
-                >
-                  None
-                </span>
-              )}
-            </ListItem>
-            {/* <ListItem>
-              <b>Description:</b> {formData.description}
-            </ListItem> */}
-          </List>
-        </Box>
-
-        <Box width="25%">
-          <Heading size="md" marginBottom="10px">
-            Stats
-          </Heading>
-          <List>
-            <ListItem>
-              <b>HP:</b> {hp}
-            </ListItem>
-            <ListItem>
-              <b>Stamina:</b> {stamina}
-            </ListItem>
-            <ListItem>
-              <b>Resolve:</b> {resolve}
-            </ListItem>
-            <ListItem>
-              <b>Base Attack Bonus:</b> +{bab}
-            </ListItem>
-            <ListItem>
-              <b>Reflex Save:</b> +{refSave}
-            </ListItem>
-            <ListItem>
-              <b>Fortitude Save:</b> +{fortSave}
-            </ListItem>
-            <ListItem>
-              <b>Will Save:</b> +{willSave}
-            </ListItem>
-          </List>
-        </Box>
-
-        <Box width="25%">
-          <Heading size="md" marginBottom="10px">
-            Ability Scores
-          </Heading>
-          <List>
-            <ListItem>
-              <b>Key Ability:</b> {formData.class.KeyAbility}
-            </ListItem>
-            {Object.entries(formData.scores).map(([key, value]) => {
-              const modifier = Math.floor((value - 10) / 2);
-              return (
-                <ListItem key={key}>
-                  <b>{key}:</b> {value} (+{modifier})
-                </ListItem>
-              );
-            })}
-          </List>
-        </Box>
-
-        <Box width="40%">
-          <Heading size="md" marginBottom="10px" textAlign="center">
-            Skills
-          </Heading>
-          <List
-            display="flex"
-            flexDirection="row"
-            flexWrap="wrap"
-            justifyContent="flex-start"
-          >
-            {Object.entries(combinedSkills).map(([key, value]) => (
-              <ListItem key={key} width="50%">
-                <b>{key}:</b> +{value}
-              </ListItem>
-            ))}
-          </List>
-        </Box>
-
-        <Box width="25%">
-          <Heading size="md" marginBottom="10px">
-            Inventory
-          </Heading>
-          <List>
-            {formData?.currentInventory.length > 0 ? (
-              formData.currentInventory.map((item, index) => (
-                <ListItem key={index} display="flex" alignItems="center" m={2}>
-                  <Text>
-                    {item.Name}
-                    <Popover>
-                      <PopoverTrigger>
-                        <Button size="xs" ml="1">
-                          ?
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent bg="black">
-                        <PopoverArrow />
-                        <PopoverHeader>{item.Name}</PopoverHeader>
-                        <PopoverBody>
-                          {Object.entries(item).map(([key, value]) => {
-                            // Exclude properties you don't want to display, like "id" in this case
-                            if (key !== "id") {
-                              return (
-                                <div key={key}>
-                                  <strong>{key}:</strong> {value}
-                                </div>
-                              );
-                            }
-                            return null;
-                          })}
-                        </PopoverBody>
-                      </PopoverContent>
-                    </Popover>
-                  </Text>
-                </ListItem>
-              ))
-            ) : (
-              <span
-                style={{
-                  background: "rgb(255,255,0, 0.5)",
-                  color: "black",
-                  padding: "1px",
-                }}
+        <Box>
+          <Text>
+            <b>Inventory:</b>
+          </Text>
+          {currentInventory.map((item, index) => (
+            <Box key={index} display="flex" alignItems="center" m={2}>
+              <Text fontSize="1.2rem" p="0.25rem" flex="1">
+                {item.Name}
+                <Popover>
+                  <PopoverTrigger>
+                    <Button size="xs" ml="2">
+                      ?
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent bg="black">
+                    <PopoverArrow />
+                    <PopoverHeader>{item.Name}</PopoverHeader>
+                    <PopoverBody>
+                      {Object.entries(item).map(([key, value]) => {
+                        // Exclude properties you don't want to display, like "id" in this case
+                        if (key !== "id") {
+                          return (
+                            <div key={key}>
+                              <strong>{key}:</strong> {value}
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+              </Text>
+              <Button
+                ml={2}
+                size="sm"
+                onClick={() => handleRemoveFromInventory(item)}
               >
-                None
-              </span>
-            )}
-          </List>
-        </Box>
-      </Box>
-      <Box mt={4}>
-        <Heading size="md" marginBottom="10px">
-          Class Feature Details:
-        </Heading>
-        <Accordion allowMultiple>
-          {formData.abilities.map((ability, idx) => (
-            <AccordionItem key={idx}>
-              <h2>
-                <AccordionButton>
-                  <Box flex="1" textAlign="left" fontWeight="bold">
-                    {ability.ability_name} (Level {ability.ability_level}
-                    ):
-                  </Box>
-                  <AccordionIcon />
-                </AccordionButton>
-              </h2>
-              <AccordionPanel pb={4}>
-                {formatAbilityText(ability.ability_description)}
-              </AccordionPanel>
-            </AccordionItem>
+                Remove
+              </Button>
+            </Box>
           ))}
-        </Accordion>
+        </Box>
+
+        <Text>
+          <b>Credits: </b> {remainingCredits}
+        </Text>
       </Box>
+
+      {Object.keys(categories).map((category) => (
+        <Box mt={4} key={category}>
+          <Text fontWeight="bold" mb={2}>
+            {category}:
+          </Text>
+          {categories[category].map((item) => (
+            <Button
+              key={item}
+              onClick={() => handleButtonClick(item)}
+              mr={2}
+              mb={2}
+            >
+              {item}
+            </Button>
+          ))}
+        </Box>
+      ))}
+
+      {/* Modal */}
+      <EquipmentModal
+        isOpen={isOpen}
+        onClose={onClose}
+        fetchedData={fetchedData}
+        option={modalOption}
+        handlePurchase={handlePurchase}
+        remainingCredits={remainingCredits}
+        isLoading={isLoading}
+      />
     </Box>
   );
 };

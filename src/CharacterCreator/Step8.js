@@ -1,201 +1,64 @@
+import React, { useEffect, useState } from "react";
 import {
   Box,
-  Button,
   Text,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  useDisclosure,
-  useToast,
+  Button,
+  Flex,
   Popover,
   PopoverTrigger,
   PopoverContent,
   PopoverArrow,
   PopoverHeader,
   PopoverBody,
+  Skeleton,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
 import { supabase } from "../client/supabaseClient";
-import EquipmentModal from "./EquipmentModal";
+import featPrerequisites from "./featsPrerequisites";
+
+const MAX_FEATS = 1;
 
 const Step8 = ({ updateFormData, formData }) => {
+  const [featsList, setFeatsList] = useState([]);
+  const [selectedFeats, setSelectedFeats] = useState(formData?.feats || []);
   const [isLoading, setIsLoading] = useState(true);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [modalOption, setModalOption] = useState([]);
-  const [remainingCredits, setRemainingCredits] = useState(
-    formData.remainingCredits || 1000
-  );
-  const [currentInventory, setCurrentInventory] = useState(
-    formData.currentInventory || []
-  );
-  const [fetchedData, setFetchedData] = useState([]);
+  useEffect(() => {
+    const fetchFeats = async () => {
+      const { data, error } = await supabase
+        .from("feats")
+        .select("Name, Prerequisites, Description");
 
-  const categories = {
-    Armor: ["Basic", "Upgrades", "Shields", "Powered"],
-    Items: [
-      "Drugs",
-      "Hybrid",
-      "Magic",
-      "Medicine",
-      "Personal",
-      "Poisons",
-      "Technological",
-      "Trade Goods",
-    ],
-    Weapons: [
-      "Melee",
-      "Ranged",
-      "Special",
-      "Solarian",
-      "Accessories",
-      "Ammunition",
-      "Fusions",
-      "Grenades",
-    ],
-  };
+      if (data) {
+        setFeatsList(data);
+      }
+      if (error) {
+        console.error("Error fetching feats:", error);
+      }
+    };
+    setIsLoading(false);
+    fetchFeats();
+  }, []);
 
-  //   Fetch data fucntion
-  const fetchDataFromTable = async (tableName) => {
-    const { data, error } = await supabase.from(tableName).select("*");
-    if (error) {
-      console.error(`Error fetching data from ${tableName}:`, error);
-      setIsLoading(false);
-    } else {
-      setFetchedData(data || []);
-      setIsLoading(false)
-    }
-  };
+  const toggleFeatSelection = (feat) => { 
+    setSelectedFeats(prev => {
+        if (prev.some(selectedFeat => selectedFeat.Name === feat.Name)) {
+            return prev.filter(selectedFeat => selectedFeat.Name !== feat.Name);
+        } else if (prev.length < MAX_FEATS) {
+            return [...prev, feat];
+        } else {
+            return prev;
+        }
+    });
+};
 
-  // Button click when item type is clicked
-  const handleButtonClick = (options) => {
-    setModalOption(options);
-    setIsLoading(true)
-    let tableName = "";
-    switch (options) {
-      case "Basic":
-        tableName = "armorBasic";
-        break;
-      case "Upgrades":
-        tableName = "armorUpgrades";
-        break;
-      case "Shields":
-        tableName = "armorShields";
-        break;
-      case "Powered":
-        tableName = "armorPowered";
-        break;
-      case "Drugs":
-        tableName = "armorUpgrades";
-        break;
-      case "Hybrid":
-        tableName = "itemsHybrid";
-        break;
-      case "Magic":
-        tableName = "itemsMagic";
-        break;
-      case "Medicine":
-        tableName = "itemsMedicine";
-        break;
-      case "Personal":
-        tableName = "itemsPersonal";
-        break;
-      case "Poisons":
-        tableName = "itemsPoisons";
-        break;
-      case "Technological":
-        tableName = "itemsTechnological";
-        break;
-      case "Trade Goods":
-        tableName = "itemsTradeGood";
-        break;
-      case "Melee":
-        tableName = "weaponsMelee";
-        break;
-      case "Ranged":
-        tableName = "weaponsRanged";
-        break;
-      case "Special":
-        tableName = "weaponsSpecial";
-        break;
-      case "Solarian":
-        tableName = "solarianWeaponCrystals";
-        break;
-      case "Accessories":
-        tableName = "weaponsAccessories";
-        break;
-      case "Ammunition":
-        tableName = "weaponsAmmunition";
-        break;
-      case "Fusions":
-        tableName = "weaponsFusions";
-        break;
-      case "Grenades":
-        tableName = "weaponsGrenades";
-        break;
-      default:
-        console.error("Unknown category:", options);
-        break;
-    }
-    if (tableName) {
-      fetchDataFromTable(tableName);
-    }
-    onOpen();
-  };
 
-  //   const handleEquipmentSelect = (value => {
-  //     updateFormData("equipment", value)
-  //     onClose()
-  //   })
-
-  const toast = useToast();
-
-  const handlePurchase = (item) => {
-    console.log(item.Price);
-    if (item.Price > remainingCredits) {
-      toast({
-        title: "Purchase Error",
-        description: "Cannot afford the selected item.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top"
-      })
-      return;
-    } else{
-      toast({
-        title: "Item Purchased",
-        description: ("Pruchased: " + item.Name +" for " + item.Price),
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-        position: "top"
-      })
-    }
-    // Otherwise, proceed with the purchase
-    setCurrentInventory((prevInventory) => [...prevInventory, item]);
-    setRemainingCredits((prevCredits) => prevCredits - item.Price);
-    // Update formData
-  };
-
-  const handleRemoveFromInventory = (itemToRemove) => {
-    setCurrentInventory((prevInventory) =>
-      prevInventory.filter((item) => item !== itemToRemove)
-    );
-    setRemainingCredits((prevCredits) => prevCredits + itemToRemove.Price);
+  const clearSelection = () => {
+    setSelectedFeats([]);
   };
 
   useEffect(() => {
-    updateFormData("remainingCredits", remainingCredits);
-  }, [remainingCredits]);
-
-  useEffect(() => {
-    updateFormData("currentInventory", currentInventory);
-  }, [currentInventory]);
+    updateFormData("feats", selectedFeats);
+  }, [selectedFeats]);
 
   return (
     <Box
@@ -214,95 +77,80 @@ const Step8 = ({ updateFormData, formData }) => {
         textAlign="center"
         fontWeight="bold"
       >
-        Step 8: Equipment
+        Step 8: Feats
       </Text>
-      <Box
-        color="white"
-        display="flex"
-        flexWrap="wrap"
-        justifyContent="space-between"
-        background="rgb(60, 60, 60)"
-        padding="20px"
-        borderRadius="10px"
-        boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
-      >
-        <Box>
-          <Text>
-            <b>Inventory:</b>
-          </Text>
-          {currentInventory.map((item, index) => (
-            <Box key={index} display="flex" alignItems="center" m={2}>
-              <Text fontSize="1.2rem" p="0.25rem" flex="1">
-                {item.Name}
-                <Popover>
-                  <PopoverTrigger>
-                    <Button size="xs" ml="2">
-                      ?
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent bg="black">
-                    <PopoverArrow />
-                    <PopoverHeader>{item.Name}</PopoverHeader>
-                    <PopoverBody>
-                      {Object.entries(item).map(([key, value]) => {
-                        // Exclude properties you don't want to display, like "id" in this case
-                        if (key !== "id") {
-                          return (
-                            <div key={key}>
-                              <strong>{key}:</strong> {value}
-                            </div>
-                          );
-                        }
-                        return null;
-                      })}
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-              </Text>
-              <Button
-                ml={2}
-                size="sm"
-                onClick={() => handleRemoveFromInventory(item)}
-              >
-                Remove
-              </Button>
-            </Box>
-          ))}
-        </Box>
 
-        <Text>
-          <b>Credits: </b> {remainingCredits}
+      <Flex direction="column" mb={4}>
+        <Text fontSize="1.2rem">
+          Selected Feats ({selectedFeats.length}/{MAX_FEATS}):
         </Text>
-      </Box>
+        <Box pl={4}>
+        {selectedFeats.map(feat => (
+    <Text key={feat.Name} fontSize="1.1rem">{feat.Name}</Text>
+))}
 
-      {Object.keys(categories).map((category) => (
-        <Box mt={4} key={category}>
-          <Text fontWeight="bold" mb={2}>
-            {category}:
-          </Text>
-          {categories[category].map((item) => (
-            <Button
-              key={item}
-              onClick={() => handleButtonClick(item)}
-              mr={2}
-              mb={2}
-            >
-              {item}
-            </Button>
-          ))}
+          <Button onClick={clearSelection}>Clear Selection</Button>
         </Box>
-      ))}
+      </Flex>
 
-      {/* Modal */}
-      <EquipmentModal
-        isOpen={isOpen}
-        onClose={onClose}
-        fetchedData={fetchedData}
-        option={modalOption}
-        handlePurchase={handlePurchase}
-        remainingCredits={remainingCredits}
-        isLoading={isLoading}
-      />
+      {isLoading ? (
+        <Skeleton height="60vh" w="full" />
+      ) : (
+        <Flex
+          wrap="wrap"
+          mt={4}
+          direction="row"
+          // height="80vw"
+          overflowY="auto"
+        >
+          {featsList.map((feat, index) => (
+            <Flex
+              key={index}
+              mb={3}
+              w="25%"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Box
+                textAlign="center"
+                flex="1"
+                background="rgb(60, 60, 60)"
+                padding="20px"
+                borderRadius="10px"
+                boxShadow="inset 0px 0px 10px rgba(0,0,0,0.4)"
+              >
+                <Text fontSize="1.2rem" p="0.25rem">
+                  {feat.Name}
+                  <Popover>
+                    <PopoverTrigger>
+                      <Button size="xs" ml="2">
+                        ?
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent bg="black">
+                      <PopoverArrow />
+                      <PopoverHeader>{feat.Name}</PopoverHeader>
+                      <PopoverBody>
+                        <strong>Prerequisites:</strong>
+                        <br />
+                        {feat.Prerequisites}
+                        <br />
+                        <strong>Description:</strong>
+                        <br />
+                        {feat.Description}
+                      </PopoverBody>
+                    </PopoverContent>
+                  </Popover>
+                </Text>
+                <Button size="sm" p="1rem" onClick={() => toggleFeatSelection(feat)}>
+    {selectedFeats.some(selectedFeat => selectedFeat.Name === feat.Name) ? "Deselect" : "Select"}
+</Button>
+
+              </Box>
+            </Flex>
+          ))}
+        </Flex>
+      )}
     </Box>
   );
 };
