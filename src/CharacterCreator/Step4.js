@@ -8,13 +8,27 @@ import {
   Button,
   Text,
   VStack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { supabase } from "../client/supabaseClient";
+import Biohacker from "../ClassFeatures/Biohacker";
 
 const Step4 = ({ formData, updateFormData }) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [allClasses, setAllClasses] = useState([]);
   const [classChoices, setClassChoices] = useState([]);
+  const [currentFeatureId, setCurrentFeatureId] = useState(null);
+  const [currentClassId, setCurrentClassId] = useState(null)
+
 
   // Formats the feature text
   const formatFeatureText = (featureText) => {
@@ -47,7 +61,6 @@ const Step4 = ({ formData, updateFormData }) => {
       .from("classChoices")
       .select("*")
       .eq("class_id", classId);
-    console.log("Class Choices for class ID", classId, ":", result.data);
     setClassChoices(result.data);
 
     return result.data || [];
@@ -60,6 +73,15 @@ const Step4 = ({ formData, updateFormData }) => {
       });
     }
   }, [formData]);
+
+  const showClassOption = (feature, cls) => {
+    
+    // Set the currentFeatureId in the state
+    setCurrentClassId(cls)
+    setCurrentFeatureId(feature);
+    onOpen();
+  };
+  
 
   return (
     <Box
@@ -104,10 +126,8 @@ const Step4 = ({ formData, updateFormData }) => {
                       <Text>Category: {choice.category}</Text>
                       <Text>Details: {choice.choices}</Text>
                       {choice.category === "Core" ? null : (
-                        <Button>
-                          Select Choice
-                          {/* Choice Tree */}
-                        </Button>
+                        <Button onClick={() => showClassOption(choice, cls)}>Select Choice</Button>
+
                       )}
                     </Box>
                   ))}
@@ -146,6 +166,24 @@ const Step4 = ({ formData, updateFormData }) => {
             </Box>
           ))}
       </VStack>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Class Option</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+          <Biohacker formData={formData} updateFormData={updateFormData} feature={currentFeatureId} classId={currentClassId}/>
+
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
     </Box>
   );
 };
