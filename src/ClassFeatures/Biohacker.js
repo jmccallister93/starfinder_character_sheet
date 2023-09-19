@@ -7,7 +7,7 @@ const Biohacker = ({ formData, updateFormData, feature, classId }) => {
   const [selectedFieldOfStudy, setSelectedFieldOfStudy] = useState();
   // Biohacks feature
   const biohacks = {
-    basic_boost: [
+    basic_booster: [
       "The target gains a +1 enhancement bonus to AC.",
       "The target gains a +2 enhancement bonus to skill checks.",
       "The target gains a +10-foot enhancement bonus to their speed. If the creature has more than one movement type, choose one to receive this bonus.",
@@ -21,22 +21,10 @@ const Biohacker = ({ formData, updateFormData, feature, classId }) => {
 
   // Selected Biohacks
   const handleBoosterChange = (value) => {
-    if (!formData) return;
-    if (!formData.feature_choices) formData.feature_choices = {};
-    // Clear out existing booster choice if it exists
-    if (Array.isArray(formData?.feature_choices[`${feature}_booster`])) {
-      formData.feature_choices[`${feature}_booster`] = null;
-    }
     setSelectedBooster(value);
     handleChoiceSelection(value, "booster");
   };
   const handleInhibitorChange = (value) => {
-    if (!formData) return;
-    if (!formData.feature_choices) formData.feature_choices = {};
-    // Clear out existing inhibitor choice if it exists
-    if (Array.isArray(formData?.feature_choices[`${feature}_inhibitor`])) {
-      formData.feature_choices[`${feature}_inhibitor`] = null;
-    }
     setSelectedInhibitor(value);
     handleChoiceSelection(value, "inhibitor");
   };
@@ -158,29 +146,24 @@ const Biohacker = ({ formData, updateFormData, feature, classId }) => {
 
   //   Selceted Field of Study
   const handleFieldOfStudyChange = (value) => {
-    if (!formData) return;
-    if (!formData.feature_choices) formData.feature_choices = {};
-    // Clear out existing booster choice if it exists
-    if (Array.isArray(formData?.feature_choices[`${feature}_field_of_study`])) {
-      formData.feature_choices[`${feature}_field_of_study`] = null;
-    }
     setSelectedFieldOfStudy(value);
     handleChoiceSelection(value, "field_of_study");
   };
+
+
   // Update selection
   const handleChoiceSelection = (selectedChoice, choiceType) => {
-    // Ensure feature_choices exists in formData
-    if (!formData.feature_choices) {
-      formData.feature_choices = {};
-    }
-
-    // Set the array with the new choice inside feature_choices based on choiceType
-    formData.feature_choices[`${feature}_${choiceType}`] = [selectedChoice];
-
+    formData.feature_choices = formData.feature_choices || {};
+  
+    // Always ensure nested structure, even for non-"Biohacks"
+    formData.feature_choices[feature] = formData.feature_choices[feature] || {};
+    formData.feature_choices[feature][choiceType] = selectedChoice;
+  
     // Update the parent state with the updated form data
     updateFormData(formData);
   };
-  console.log(feature);
+  
+//   console.log(feature);
 
   return (
     <>
@@ -193,7 +176,7 @@ const Biohacker = ({ formData, updateFormData, feature, classId }) => {
           </Heading>
           <RadioGroup value={selectedBooster} onChange={handleBoosterChange}>
             <Stack spacing={4}>
-              {biohacks.basic_boost.map((option, idx) => (
+              {biohacks.basic_booster.map((option, idx) => (
                 <Radio key={idx} value={option}>
                   {option}
                 </Radio>
