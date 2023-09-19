@@ -117,6 +117,7 @@ const Step4 = ({ formData, updateFormData }) => {
                       choice.class_id === cls.id &&
                       choice.level_id <= cls.level
                   )
+                  .sort((a, b) => a.level_id - b.level_id)
                   .map((choice, cIdx) => (
                     <Box key={cIdx}>
                       <Text fontSize="1.4rem" fontWeight="bold">
