@@ -107,7 +107,7 @@ const Step4 = ({ formData, updateFormData }) => {
         {formData?.classes &&
           formData.classes.map((cls, idx) => (
             <Box key={idx}>
-              <Text fontSize="1.5rem" fontWeight="bold">
+              <Text fontSize="1.5rem" fontWeight="bold" borderBottom="1px solid white">
                 Class: {cls.Name} | Level: {cls.level}
               </Text>
               <Box m={0} p={0} alignItems="start">
@@ -168,9 +168,9 @@ const Step4 = ({ formData, updateFormData }) => {
           ))}
       </VStack>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} >
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent >
           <ModalHeader>Class Option</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
